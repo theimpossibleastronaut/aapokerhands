@@ -1,7 +1,9 @@
 # aa-pokerhands
 Will analyze for poker hands
 
-I wrote this (809629820fe14868cae5f2a675d8f51f55cd729c) 6 years ago.
+I wrote this
+(see [first uploaded version](https://github.com/andy5995/aa-pokerhands/commit/809629820fe14868cae5f2a675d8f51f55cd729c))
+6 years ago.
 
 ```
 andy@oceanus:~/src/aa-pokerhands$ ./pokerhands -n 100000
