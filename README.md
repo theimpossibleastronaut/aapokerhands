@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/theimpossibleastronaut/aa-pokerhands.svg?branch=master)](https://travis-ci.org/theimpossibleastronaut/aa-pokerhands)
+
 # aa-pokerhands
 Will analyze for poker hands
 
