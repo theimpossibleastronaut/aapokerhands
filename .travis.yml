@@ -17,4 +17,4 @@ matrix:
 
 script:
   - make
-  - ./pokerhands
+  - ./pokerhands -n 100
