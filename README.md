@@ -7,6 +7,12 @@ I wrote this
 (see [first uploaded version](https://github.com/andy5995/aa-pokerhands/commit/809629820fe14868cae5f2a675d8f51f55cd729c))
 6 years ago.
 
+## Building
+  ./configure
+  make
+
+The binary will be built in src/
+
 ## Usage
    ./pokerhands: -n [hands] -s -v
 

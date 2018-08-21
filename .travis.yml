@@ -16,5 +16,6 @@ matrix:
       env: BUILD=osx_xcode9_2
 
 script:
+  - ./configure
   - make
-  - ./pokerhands -n 100
+  - src/pokerhands -n 100
