@@ -8,13 +8,13 @@ I wrote this
 6 years ago.
 
 ## Building
-  ./configure
-  make
+    ./configure
+    make
 
 The binary will be built in src/
 
 ## Usage
-   ./pokerhands: -n [hands] -s -v
+    ./pokerhands: -n [hands] -s -v
 
 ## Example Output
 
