@@ -31,6 +31,8 @@
 #include <stdbool.h>
 #include <limits.h>
 
+#include "config.h"
+
 /* Number of hands to deal out */
 /* can be changed from the command line with -n [hands] */
 int RUN_COUNT = 20;
