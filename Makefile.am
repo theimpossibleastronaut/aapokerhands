@@ -1,7 +1,7 @@
 SUBDIRS = src
-#packextrasdir=@docdir@
-# EXTRA_DIST = COPYING README.md
-#packextras_DATA=$(EXTRA_DIST)
+packextrasdir=@docdir@
+EXTRA_DIST = COPYING INSTALL README.md NEWS ChangeLog AUTHORS
+packextras_DATA=$(EXTRA_DIST)
 
 PACKAGE = @PACKAGE@
 VERSION = @VERSION@
