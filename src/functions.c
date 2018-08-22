@@ -153,6 +153,11 @@ void isFlush(void) {
   }
 }
 
+static void usage(const char *argv_one) {
+  printf("Usage: %s: -n [hands] -s -v\n",argv_one);
+  exit(1);
+}
+
 void getopts (int argc, char *argv[]) {
   /* fetch command line arguments */
   loop i;
@@ -292,8 +297,3 @@ void hand_eval(int run_count, const char **ranks) {
   if (run_count == RUN_COUNT)
     show_totals(totals, run_count, ranks);
 }
-
-void usage(const char *argv_one) {
-  printf("Usage: %s: -n [hands] -s -v\n",argv_one);
-  exit(1);
-  }

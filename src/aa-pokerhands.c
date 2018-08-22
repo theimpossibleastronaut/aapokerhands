@@ -33,6 +33,8 @@ int main(int argc, char *argv[]) {
   SHOW_HAND = 0;
   PLAY = 0;
 
+  getopts(argc, argv);
+
   char *suits[] = {
   "Hearts  ",
   "Diamonds",
@@ -69,8 +71,6 @@ int main(int argc, char *argv[]) {
     short paired;
 
     int run_count = 0;
-
-    getopts(argc, argv);
 
   if (RUN_COUNT > INT_MAX - 1)
     {
@@ -188,8 +188,6 @@ int main(int argc, char *argv[]) {
 
     }while (++k < HAND);
 
-
-
     for (i = 0; i < HAND; i++) {
 
       /* if hand[i][0] is 13 (King), valuen will equal 12
@@ -238,5 +236,4 @@ int main(int argc, char *argv[]) {
   CR
 
   return 0;
-
 }

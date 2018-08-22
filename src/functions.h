@@ -38,5 +38,3 @@ void getopts (int argc, char *argv[]);
 short int find_matches(void);
 
 void hand_eval(int run_count, const char **ranks);
-
-void usage(const char *argv_one);
