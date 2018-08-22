@@ -23,12 +23,8 @@
  *
  */
 
-#ifndef INC_POKERHANDS_H
-  #define INC_POKERHANDS_H
-  #include "aa-pokerhands.h"
-#endif
-
 #include "aa-pokerhands.h"
+#include "functions.h"
 
 void shuffle(void)  {
 
@@ -64,7 +60,6 @@ void shuffle(void)  {
       deck.values[j][1] = shuffled.values[j][1];
     }
 }
-
 
 void zero(void) {
   loop i, j;
@@ -158,8 +153,6 @@ void isFlush(void) {
   }
 }
 
-
-
 void getopts (int argc, char *argv[]) {
   /* fetch command line arguments */
   loop i;
@@ -222,7 +215,17 @@ short int find_matches(void) {
   return paired;
 }
 
-void hand_eval(int run_count) {
+static void show_totals(int *totals, int run_count, const char **ranks) {
+  loop n;
+
+  printf("Out of %d hands:\n\n",RUN_COUNT);
+
+  for (n = 0; n < RANKS; n++) {
+    printf("%20s: %9d\n", ranks[n], totals[n]);
+  }
+}
+
+void hand_eval(int run_count, const char **ranks) {
 
   loop i;
 
@@ -287,18 +290,7 @@ void hand_eval(int run_count) {
 
   /* Show totals for all hands */
   if (run_count == RUN_COUNT)
-    show_totals(totals, run_count);
-}
-
-
-void show_totals(int *totals, int run_count) {
-  loop n;
-
-  printf("Out of %d hands:\n\n",RUN_COUNT);
-
-  for (n = 0; n < RANKS; n++) {
-    printf("%20s: %9d\n", ranks[n], totals[n]);
-  }
+    show_totals(totals, run_count, ranks);
 }
 
 void usage(const char *argv_one) {

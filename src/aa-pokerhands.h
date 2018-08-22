@@ -35,18 +35,18 @@
 
 /* Number of hands to deal out */
 /* can be changed from the command line with -n [hands] */
-int RUN_COUNT = 20;
+int RUN_COUNT;
 
 /* can be set on the command line with -v */
 /* Show all 52 cards after the deck has been shuffled */
-bool MORE_OUTPUT = 0;
+bool MORE_OUTPUT;
 
 /* can be set on the command line with -s */
 /* Show the hand that was dealt */
-bool SHOW_HAND = 0;
+bool SHOW_HAND;
 
 /* Leave set to 0, PLAY feature not finished */
-bool PLAY = 0;
+bool PLAY;
 
 enum { HEARTS, DIAMONDS, SPADES, CLUBS };
 #define SUITS 4
@@ -71,43 +71,12 @@ short hand[HAND + 4][2];
 short int hand_seq[ACE_HIGH];
 short int hand_suits[SUITS];
 
-const char *suits[] = {
-  "Hearts  ",
-  "Diamonds",
-  "Spades  ",
-  "Clubs   "
-};
+char *suits[4];
 
-const char *faces[] = {
-  "Ace",
-    "2",
-  "3",
-  "4",
-  "5",
-  "6",
-  "7",
-  "8",
-  "9",
-  "10",
-  "Jack",
-  "Queen",
-  "King",
-};
-
-const char *ranks[] = {
-  "Pair",
-    "Two Pair",
-  "Three-of-a-Kind",
-  "Straight",
-  "Flush",
-  "Full House",
-  "Four-of-a-Kind",
-  "Straight Flush",
-  "Royal Flush",
-};
+char *faces[13];
 
 bool final[RANKS];
 
-bool high_straight = 0;
+bool high_straight;
 
 typedef short int loop;
