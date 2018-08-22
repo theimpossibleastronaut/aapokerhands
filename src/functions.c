@@ -154,7 +154,14 @@ void isFlush(void) {
 }
 
 static void usage(const char *argv_one) {
-  printf("Usage: %s: -n [hands] -s -v\n",argv_one);
+  printf("Usage: %s: -n [hands] -s -v -V\n",argv_one);
+  printf ("\n\
+-n [hands]          number of hands to deal\n\
+-s                  show the hands that were dealt\n\
+-v                  show the deck for each hand\n\
+-V                  display Version information\n\
+");
+
   exit(1);
 }
 
@@ -175,19 +182,18 @@ void getopts (int argc, char *argv[]) {
       else usage(argv[0]);
           break;
         case 'v':
-            MORE_OUTPUT = 1;
+          MORE_OUTPUT = 1;
           break;
         case 's':
             SHOW_HAND = 1;
           break;
-        /* case 'p':
-      PLAY = 1;
-      break; */
+        case 'V':
+          printf ("%s\n", PACKAGE_STRING);
+          break;
         default:
           usage(argv[0]);
-            break;
-
-          }
+          break;
+      }
   }
 
   else usage(argv[0]);
