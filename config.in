@@ -1,4 +1,4 @@
-/* ./config.in.  Generated from configure.ac by autoheader.  */
+/* config.in.  Generated from configure.ac by autoheader.  */
 
 /* Name of package */
 #undef PACKAGE
