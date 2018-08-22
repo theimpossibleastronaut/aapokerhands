@@ -99,7 +99,7 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
-am_pokerhands_OBJECTS = aa-pokerhands.$(OBJEXT)
+am_pokerhands_OBJECTS = aa-pokerhands.$(OBJEXT) functions.$(OBJEXT)
 pokerhands_OBJECTS = $(am_pokerhands_OBJECTS)
 pokerhands_LDADD = $(LDADD)
 AM_V_P = $(am__v_P_@AM_V@)
@@ -244,7 +244,9 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AUTOMAKE_OPTIONS = subdir-objects foreign no-dependencies
 AM_CFLAGS = -Wall -Wpedantic -g
-pokerhands_SOURCES = aa-pokerhands.c
+pokerhands_SOURCES = aa-pokerhands.c \
+			functions.c
+
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
@@ -557,7 +559,6 @@ uninstall-am: uninstall-binPROGRAMS
 
 .PRECIOUS: Makefile
 
-			functions.c
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
