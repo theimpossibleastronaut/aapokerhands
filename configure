@@ -582,7 +582,7 @@ PACKAGE_TARNAME='pokerhands'
 PACKAGE_VERSION='0.04.0'
 PACKAGE_STRING='pokerhands 0.04.0'
 PACKAGE_BUGREPORT='andy400-dev@yahoo.com'
-PACKAGE_URL=''
+PACKAGE_URL=''https://github.com/theimpossibleastronaut/aa-pokerhands''
 
 ac_subst_vars='am__EXEEXT_FALSE
 am__EXEEXT_TRUE
@@ -1330,6 +1330,7 @@ Use these variables to override the choices made by `configure' or to help
 it to find libraries and programs with nonstandard names/locations.
 
 Report bugs to <andy400-dev@yahoo.com>.
+pokerhands home page: <'https://github.com/theimpossibleastronaut/aa-pokerhands'>.
 _ACEOF
 ac_status=$?
 fi
@@ -4040,7 +4041,8 @@ $config_headers
 Configuration commands:
 $config_commands
 
-Report bugs to <andy400-dev@yahoo.com>."
+Report bugs to <andy400-dev@yahoo.com>.
+pokerhands home page: <'https://github.com/theimpossibleastronaut/aa-pokerhands'>."
 
 _ACEOF
 cat >>$CONFIG_STATUS <<_ACEOF || ac_write_fail=1
