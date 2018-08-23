@@ -45,6 +45,18 @@ Out of 1000000 hands:
       Straight Flush:        15
          Royal Flush:         1
 
+andy@oceanus:~/src/aa-pokerhands/src$ nice -n 19 ./pokerhands -n 1000000000
+Out of 1000000000 hands:
+
+                Pair: 422573272
+            Two Pair:  47540875
+     Three-of-a-Kind:  21118955
+            Straight:   3927170
+               Flush:   1963944
+          Full House:   1439822
+      Four-of-a-Kind:    241218
+      Straight Flush:     13920
+         Royal Flush:      1552
 ```
 
 [More Example Output](https://github.com/theimpossibleastronaut/aa-pokerhands/blob/master/example_output01.txt)
