@@ -128,7 +128,9 @@ int main(int argc, char *argv[]) {
     if (SHOW_HAND)
       CR
 
-    zero();
+    int hand[HAND + 4][2];
+
+    zero(hand);
 
     /* Deal out a hand */
 

@@ -66,8 +66,6 @@ struct card_info {
   short int values[52][2];
 } deck, shuffled ;
 
-
-short hand[HAND + 4][2];
 short int hand_seq[ACE_HIGH];
 short int hand_suits[SUITS];
 

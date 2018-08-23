@@ -25,7 +25,7 @@
 
 void shuffle(void);
 
-void zero(void);
+void zero(int (*hand)[2]);
 
 void make_real(void);
 
