@@ -200,23 +200,23 @@ void getopts (int argc, char *argv[]) {
 }
 
 short int find_matches(void) {
-  loop i;
+  int face_val;
   short paired = 0;
 
-  for (i = 0; i < ACE_HIGH; ++i) {
-    if ( hand_seq[i] > 1 ) {
+  for (face_val = 0; face_val < ACE_HIGH; ++face_val) {
+    if ( hand_seq[face_val] > 1 ) {
       paired++;
     }
-    if ( hand_seq[i] == 2 && ! final[PAIR] ) {
+    if ( hand_seq[face_val] == 2 && ! final[PAIR] ) {
       final[PAIR] = 1;
     }
-    else if (hand_seq[i] == 2) {
+    else if (hand_seq[face_val] == 2) {
       final[TWO_PAIR] = 1;
       final[PAIR] = 0;
     }
-    else if (hand_seq[i] == 3)
+    else if (hand_seq[face_val] == 3)
       final[THREE_OF_A_KIND] = 1;
-    else if (hand_seq[i] == 4) {
+    else if (hand_seq[face_val] == 4) {
       final[FOUR_OF_A_KIND] = 1;
       break;
     }
