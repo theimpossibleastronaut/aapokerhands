@@ -25,16 +25,16 @@
 
 void shuffle (void);
 
-void zero (int (*hand)[2]);
+void zero (int (*hand)[2], int *hand_seq);
 
 void make_real (void);
 
-void isStraight (void);
+void isStraight (int *hand_seq);
 
 void isFlush (void);
 
 void getopts (int argc, char *argv[]);
 
-short int find_matches (void);
+short int find_matches (int *hand_seq);
 
 void hand_eval (int run_count, const char **ranks);

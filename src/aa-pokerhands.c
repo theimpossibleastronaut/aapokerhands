@@ -137,7 +137,8 @@ main (int argc, char *argv[])
       CR;
     int hand[HAND + 4][2];
 
-    zero (hand);
+    int hand_seq[ACE_HIGH];
+    zero (hand, hand_seq);
 
     /* Deal out a hand */
 
@@ -227,14 +228,14 @@ main (int argc, char *argv[])
     }
 
     /* Evaluate the hand */
-    paired = find_matches ();
+    paired = find_matches (hand_seq);
 
     /* if no matches were found, check for flush and straight
      * if there were any matches, flush or straight is impossible,
      * so don't bother checking               */
     if (!paired)
     {
-      isStraight ();
+      isStraight (hand_seq);
       isFlush ();
     }
 

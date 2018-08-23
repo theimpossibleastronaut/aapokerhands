@@ -70,7 +70,6 @@ struct card_info
   short int values[52][2];
 } deck, shuffled;
 
-short int hand_seq[ACE_HIGH];
 short int hand_suits[SUITS];
 
 bool final[RANKS];

@@ -45,29 +45,29 @@ shuffle (void)
   j = 0;
 
   while (j < 52)
-    {
-      card = rand () % 52;
+  {
+    card = rand () % 52;
 
-      if (status[card])
-	{
-	  shuffled.values[j][0] = deck.values[card][0];
-	  shuffled.values[j][1] = deck.values[card][1];
-	  status[card] = 0;
-	  j++;
-	}
+    if (status[card])
+    {
+      shuffled.values[j][0] = deck.values[card][0];
+      shuffled.values[j][1] = deck.values[card][1];
+      status[card] = 0;
+      j++;
     }
+  }
 
   /* No need to store the values unless RUN_COUNT > 1 */
   if (RUN_COUNT > 1)
     for (j = 0; j < 52; j++)
-      {
-	deck.values[j][0] = shuffled.values[j][0];
-	deck.values[j][1] = shuffled.values[j][1];
-      }
+    {
+      deck.values[j][0] = shuffled.values[j][0];
+      deck.values[j][1] = shuffled.values[j][1];
+    }
 }
 
 void
-zero (int (*hand)[2])
+zero (int (*hand)[2], int *hand_seq)
 {
   loop i, j;
 
@@ -95,34 +95,34 @@ make_real (void)
   short suitn;
 
   for (i = 0; i < 52; ++i)
+  {
+    if (deck.values[i][0] > 39)
     {
-      if (deck.values[i][0] > 39)
-	{
-	  deck.values[i][0] -= 39;
-	  suitn = CLUBS;
-	}
-      else if (deck.values[i][0] > 26)
-	{
-	  deck.values[i][0] -= 26;
-	  suitn = SPADES;
-	}
-      else if (deck.values[i][0] > 13)
-	{
-	  deck.values[i][0] -= 13;
-	  suitn = DIAMONDS;
-	}
-      else
-	{
-	  suitn = HEARTS;
-	}
-
-      deck.values[i][1] = suitn;
-
+      deck.values[i][0] -= 39;
+      suitn = CLUBS;
     }
+    else if (deck.values[i][0] > 26)
+    {
+      deck.values[i][0] -= 26;
+      suitn = SPADES;
+    }
+    else if (deck.values[i][0] > 13)
+    {
+      deck.values[i][0] -= 13;
+      suitn = DIAMONDS;
+    }
+    else
+    {
+      suitn = HEARTS;
+    }
+
+    deck.values[i][1] = suitn;
+
+  }
 }
 
 void
-isStraight (void)
+isStraight (int *hand_seq)
 {
 
 
@@ -138,28 +138,28 @@ isStraight (void)
   /* The hand is never sorted numerically, instead, just look for
    * 5 consecutive 1's.*/
   do
+  {
+
+    /* May be a baby straight, not breaking if k == 13 */
+    if (hand_seq[k] == 1 && hand_seq[k - 1] == 0 && k != 13)
     {
-
-      /* May be a baby straight, not breaking if k == 13 */
-      if (hand_seq[k] == 1 && hand_seq[k - 1] == 0 && k != 13)
-	{
-	  break;
-	}
-      else if (hand_seq[k] == 1 && hand_seq[k - 1] == 1)
-	{
-	  state++;
-	  if (state == 4)
-	    {
-	      final[STRAIGHT] = 1;
-	      if (k == 10)
-		{
-		  /* printf("High Straight"); */
-		  high_straight = 1;
-		}
-	    }
-	}
-
+      break;
     }
+    else if (hand_seq[k] == 1 && hand_seq[k - 1] == 1)
+    {
+      state++;
+      if (state == 4)
+      {
+        final[STRAIGHT] = 1;
+        if (k == 10)
+        {
+          /* printf("High Straight"); */
+          high_straight = 1;
+        }
+      }
+    }
+
+  }
   while (--k && !final[STRAIGHT]);
 }
 
@@ -168,15 +168,15 @@ isFlush (void)
 {
   loop i;
   for (i = 0; i < SUITS; ++i)
+  {
+    if (hand_suits[i] != HAND && hand_suits[i])
+      break;
+    else if (hand_suits[i] == HAND)
     {
-      if (hand_suits[i] != HAND && hand_suits[i])
-	break;
-      else if (hand_suits[i] == HAND)
-	{
-	  final[FLUSH] = 1;
-	  break;
-	}
+      final[FLUSH] = 1;
+      break;
     }
+  }
 }
 
 static void
@@ -199,71 +199,71 @@ getopts (int argc, char *argv[])
   /* fetch command line arguments */
   loop i;
   if (argc > 1)
-    {
-      for (i = 1; i < argc; i++)
-	if (argv[i][0] == '-')
-	  switch (argv[i][1])
-	    {
-	    case 'n':
-	      if (i < argc - 1)
-		{
-		  RUN_COUNT = atoi (argv[i++ + 1]);
-		  if (RUN_COUNT < 1)
-		    usage (argv[0]);
-		}
-	      else
-		usage (argv[0]);
-	      break;
-	    case 'v':
-	      MORE_OUTPUT = 1;
-	      break;
-	    case 's':
-	      SHOW_HAND = 1;
-	      break;
-	    case 'V':
-	      printf ("%s\n", PACKAGE_STRING);
-	      break;
-	    default:
-	      usage (argv[0]);
-	      break;
-	    }
-    }
+  {
+    for (i = 1; i < argc; i++)
+      if (argv[i][0] == '-')
+        switch (argv[i][1])
+        {
+        case 'n':
+          if (i < argc - 1)
+          {
+            RUN_COUNT = atoi (argv[i++ + 1]);
+            if (RUN_COUNT < 1)
+              usage (argv[0]);
+          }
+          else
+            usage (argv[0]);
+          break;
+        case 'v':
+          MORE_OUTPUT = 1;
+          break;
+        case 's':
+          SHOW_HAND = 1;
+          break;
+        case 'V':
+          printf ("%s\n", PACKAGE_STRING);
+          break;
+        default:
+          usage (argv[0]);
+          break;
+        }
+  }
 
   else
     usage (argv[0]);
 }
 
 short int
-find_matches (void)
+find_matches (int *hand_seq)
 {
   int face_val;
   short paired = 0;
 
   for (face_val = 0; face_val < ACE_HIGH; ++face_val)
+  {
+    if (hand_seq[face_val] > 1)
     {
-      if (hand_seq[face_val] > 1)
-	{
-	  paired++;
-	}
-      if (hand_seq[face_val] == 2 && !final[PAIR])
-	{
-	  final[PAIR] = 1;
-	}
-      else if (hand_seq[face_val] == 2)
-	{
-	  final[TWO_PAIR] = 1;
-	  final[PAIR] = 0;
-	}
-      else if (hand_seq[face_val] == 3)
-	final[THREE_OF_A_KIND] = 1;
-      else if (hand_seq[face_val] == 4)
-	{
-	  final[FOUR_OF_A_KIND] = 1;
-	  break;
-	}
-      if (paired > 1)
-	break;
+      paired++;
     }
+    if (hand_seq[face_val] == 2 && !final[PAIR])
+    {
+      final[PAIR] = 1;
+    }
+    else if (hand_seq[face_val] == 2)
+    {
+      final[TWO_PAIR] = 1;
+      final[PAIR] = 0;
+    }
+    else if (hand_seq[face_val] == 3)
+      final[THREE_OF_A_KIND] = 1;
+    else if (hand_seq[face_val] == 4)
+    {
+      final[FOUR_OF_A_KIND] = 1;
+      break;
+    }
+    if (paired > 1)
+      break;
+  }
   return paired;
 }
 
@@ -275,9 +275,9 @@ show_totals (int *totals, int run_count, const char **ranks)
   printf ("Out of %d hands:\n\n", RUN_COUNT);
 
   for (n = 0; n < RANKS; n++)
-    {
-      printf ("%20s: %9d\n", ranks[n], totals[n]);
-    }
+  {
+    printf ("%20s: %9d\n", ranks[n], totals[n]);
+  }
 }
 
 void
@@ -296,64 +296,64 @@ hand_eval (int run_count, const char **ranks)
 
 
   if (final[PAIR] && final[THREE_OF_A_KIND] != 1)
-    {
-      eval = PAIR;
-      totals[PAIR]++;
-    }
+  {
+    eval = PAIR;
+    totals[PAIR]++;
+  }
   else if (final[TWO_PAIR])
-    {
-      eval = TWO_PAIR;
-      totals[TWO_PAIR]++;
-    }
+  {
+    eval = TWO_PAIR;
+    totals[TWO_PAIR]++;
+  }
   else if (final[THREE_OF_A_KIND] && final[PAIR] != 1)
-    {
-      eval = THREE_OF_A_KIND;
-      totals[THREE_OF_A_KIND]++;
-    }
+  {
+    eval = THREE_OF_A_KIND;
+    totals[THREE_OF_A_KIND]++;
+  }
   else if (final[STRAIGHT] && final[FLUSH] != 1)
-    {
-      eval = STRAIGHT;
-      totals[STRAIGHT]++;
-    }
+  {
+    eval = STRAIGHT;
+    totals[STRAIGHT]++;
+  }
   else if (final[FLUSH] == 1 && final[STRAIGHT] != 1)
-    {
-      eval = FLUSH;
-      totals[FLUSH]++;
-    }
+  {
+    eval = FLUSH;
+    totals[FLUSH]++;
+  }
   else if (final[PAIR] && final[THREE_OF_A_KIND])
-    {
-      /* final[FULL_HOUSE] = 1; */
-      eval = FULL_HOUSE;
-      totals[FULL_HOUSE]++;
-    }
+  {
+    /* final[FULL_HOUSE] = 1; */
+    eval = FULL_HOUSE;
+    totals[FULL_HOUSE]++;
+  }
   else if (final[FOUR_OF_A_KIND])
-    {
-      eval = FOUR_OF_A_KIND;
-      totals[FOUR_OF_A_KIND]++;
-    }
+  {
+    eval = FOUR_OF_A_KIND;
+    totals[FOUR_OF_A_KIND]++;
+  }
   else if (final[STRAIGHT] && final[FLUSH] && high_straight != 1)
-    {
-      /* final[7] = 1;    */
-      eval = STRAIGHT_FLUSH;
-      totals[STRAIGHT_FLUSH]++;
-    }
+  {
+    /* final[7] = 1;    */
+    eval = STRAIGHT_FLUSH;
+    totals[STRAIGHT_FLUSH]++;
+  }
   else if (final[STRAIGHT] && final[FLUSH] && high_straight)
-    {
-      eval = ROYAL_FLUSH;
-      totals[ROYAL_FLUSH]++;
-    }
+  {
+    eval = ROYAL_FLUSH;
+    totals[ROYAL_FLUSH]++;
+  }
 
 
   if (SHOW_HAND)
-    {
-      printf ("\n\t\t-->");
-      if (eval > -1)
-	printf ("%s", ranks[eval]);
-      else
-	printf ("Nothing");
+  {
+    printf ("\n\t\t-->");
+    if (eval > -1)
+      printf ("%s", ranks[eval]);
+    else
+      printf ("Nothing");
 
-      printf ("<--\n\n");
-    }
+    printf ("<--\n\n");
+  }
 
   /* Show totals for all hands */
   if (run_count == RUN_COUNT)
