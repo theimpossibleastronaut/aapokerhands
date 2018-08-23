@@ -26,20 +26,22 @@
 #include "aa-pokerhands.h"
 #include "functions.h"
 
-int main(int argc, char *argv[]) {
+int
+main (int argc, char *argv[])
+{
 
   RUN_COUNT = 20;
   MORE_OUTPUT = 0;
   SHOW_HAND = 0;
   PLAY = 0;
 
-  getopts(argc, argv);
+  getopts (argc, argv);
 
   const char *suits[] = {
-  "Hearts  ",
-  "Diamonds",
-  "Spades  ",
-  "Clubs   "
+    "Hearts  ",
+    "Diamonds",
+    "Spades  ",
+    "Clubs   "
   };
 
   const char *faces[] = {
@@ -60,90 +62,98 @@ int main(int argc, char *argv[]) {
 
   high_straight = 0;
 
-  srand( time ( 0 ) );
+  srand (time (0));
 
   register loop i, j, k;
 
-    register short suitn, valuen;
+  register short suitn, valuen;
 
-    short discard, next;
+  short discard, next;
 
-    short paired;
+  short paired;
 
-    int run_count = 0;
+  int run_count = 0;
 
   if (RUN_COUNT > INT_MAX - 1)
-    {
-      printf("Your RUN_COUNT should be lower than INT_MAX\n");
-      exit(1);
-    }
+  {
+    printf ("Your RUN_COUNT should be lower than INT_MAX\n");
+    exit (1);
+  }
 
-    if (PLAY && MORE_OUTPUT)
-    {
-      MORE_OUTPUT = 0;
-    }
+  if (PLAY && MORE_OUTPUT)
+  {
+    MORE_OUTPUT = 0;
+  }
 
-    if (PLAY && SHOW_HAND)
-    {
-        SHOW_HAND = 1;
-    }
+  if (PLAY && SHOW_HAND)
+  {
+    SHOW_HAND = 1;
+  }
 
   /* deck will have initial values 1 - 52 */
 
-  for (i = 0; i < 52; i++) {
+  for (i = 0; i < 52; i++)
+  {
     deck.values[i][0] = i + 1;
     deck.values[i][1] = 0;
   }
 
-  make_real();
+  make_real ();
 
   /* Start main program loop */
 
-    while (run_count++ < RUN_COUNT) {
+  while (run_count++ < RUN_COUNT)
+  {
 
-    shuffle();
+    shuffle ();
 
-    if (MORE_OUTPUT) {
+    if (MORE_OUTPUT)
+    {
 
       i = j = 0;
-      do {
+      do
+      {
         suitn = shuffled.values[i][1];
         valuen = shuffled.values[i][0] - 1;
-        printf("%5s of %2s", faces[valuen], suits[suitn]);
+        printf ("%5s of %2s", faces[valuen], suits[suitn]);
 
         /* print newline every 4 cards */
         if (++j != 4)
-          printf(" | ");
-        else {
-          CR
+          printf (" | ");
+        else
+        {
+          CR;
           j = 0;
         }
 
 
-      } while (++i < 52);
-      CR
+      }
+      while (++i < 52);
+      CR;
     }
 
 
     if (SHOW_HAND)
-      CR
-
+      CR;
     int hand[HAND + 4][2];
 
-    zero(hand);
+    zero (hand);
 
     /* Deal out a hand */
 
     i = j = k = 0;
-    do {
-      if (PLAY && k < 5) {
+    do
+    {
+      if (PLAY && k < 5)
+      {
         suitn = shuffled.values[i][1];
         valuen = shuffled.values[i][0] - 1;
-        printf("(%d)%5s of %2s",k + 1, faces[valuen], suits[suitn]);
+        printf ("(%d)%5s of %2s", k + 1, faces[valuen], suits[suitn]);
         if (++j != 4)
-          printf(" | ");
-        else {
-          CR
+          printf (" | ");
+        else
+        {
+          CR;
           j = 0;
         }
       }
@@ -154,33 +164,40 @@ int main(int argc, char *argv[]) {
       /* Deal out every other card */
       i += 2;
 
-    }while (++k < HAND + (PLAY * 4) );
+    }
+    while (++k < HAND + (PLAY * 4));
 
-    /* CR */
+    /* CR; */
 
-    if (PLAY) {
+    if (PLAY)
+    {
       next = 5;
-      for (j = 5; j < 9; j++){
-        scanf("%hd",&discard);
-        if (discard != 0) {
+      for (j = 5; j < 9; j++)
+      {
+        scanf ("%hd", &discard);
+        if (discard != 0)
+        {
           suitn = hand[next][1];
           hand[discard - 1][0] = hand[next++][0];
           hand[discard - 1][1] = suitn;
         }
       }
-      CR
+      CR;
     }
 
     i = j = k = 0;
-    do {
-      if (SHOW_HAND) {
+    do
+    {
+      if (SHOW_HAND)
+      {
         suitn = hand[k][1];
         valuen = hand[k][0] - 1;
-        printf("%5s of %2s", faces[valuen],suits[suitn]);
+        printf ("%5s of %2s", faces[valuen], suits[suitn]);
         if (++j != 4)
-          printf(" | ");
-        else {
-          CR
+          printf (" | ");
+        else
+        {
+          CR;
           j = 0;
         }
       }
@@ -188,9 +205,11 @@ int main(int argc, char *argv[]) {
       /* Deal out every other card, out of the first 10 */
       i++;
 
-    }while (++k < HAND);
+    }
+    while (++k < HAND);
 
-    for (i = 0; i < HAND; i++) {
+    for (i = 0; i < HAND; i++)
+    {
 
       /* if hand[i][0] is 13 (King), valuen will equal 12
        * so hand_seq[12] will be incremented. If there are 3
@@ -208,14 +227,15 @@ int main(int argc, char *argv[]) {
     }
 
     /* Evaluate the hand */
-    paired = find_matches();
+    paired = find_matches ();
 
     /* if no matches were found, check for flush and straight
      * if there were any matches, flush or straight is impossible,
      * so don't bother checking               */
-    if ( !paired ) {
-      isStraight();
-      isFlush();
+    if (!paired)
+    {
+      isStraight ();
+      isFlush ();
     }
 
     const char *ranks[] = {
@@ -230,12 +250,11 @@ int main(int argc, char *argv[]) {
       "Royal Flush"
     };
 
-    hand_eval( run_count, ranks );
+    hand_eval (run_count, ranks);
 
-  } /* End main program loop  */
+  }                             /* End main program loop  */
 
   /* print a newline before the program ends */
-  CR
-
+  CR;
   return 0;
 }

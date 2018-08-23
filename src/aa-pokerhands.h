@@ -48,11 +48,14 @@ bool SHOW_HAND;
 /* Leave set to 0, PLAY feature not finished */
 bool PLAY;
 
-enum { HEARTS, DIAMONDS, SPADES, CLUBS };
+enum
+{ HEARTS, DIAMONDS, SPADES, CLUBS };
 #define SUITS 4
 
-enum { PAIR, TWO_PAIR, THREE_OF_A_KIND, STRAIGHT, FLUSH,
-       FULL_HOUSE, FOUR_OF_A_KIND, STRAIGHT_FLUSH, ROYAL_FLUSH };
+enum
+{ PAIR, TWO_PAIR, THREE_OF_A_KIND, STRAIGHT, FLUSH,
+  FULL_HOUSE, FOUR_OF_A_KIND, STRAIGHT_FLUSH, ROYAL_FLUSH
+};
 #define RANKS 9
 
 #define ACE 1
@@ -60,11 +63,12 @@ enum { PAIR, TWO_PAIR, THREE_OF_A_KIND, STRAIGHT, FLUSH,
 
 #define HAND 5
 
-#define CR printf("\n");
+#define CR printf("\n")
 
-struct card_info {
+struct card_info
+{
   short int values[52][2];
-} deck, shuffled ;
+} deck, shuffled;
 
 short int hand_seq[ACE_HIGH];
 short int hand_suits[SUITS];
