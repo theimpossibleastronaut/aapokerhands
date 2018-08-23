@@ -1,6 +1,7 @@
 SUBDIRS = src
 packextrasdir=@docdir@
-EXTRA_DIST = COPYING INSTALL README.md NEWS ChangeLog AUTHORS
+EXTRA_DIST = 	COPYING INSTALL README.md NEWS ChangeLog AUTHORS	\
+		example_output01.txt
 packextras_DATA=$(EXTRA_DIST)
 
 PACKAGE = @PACKAGE@

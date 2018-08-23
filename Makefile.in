@@ -315,7 +315,9 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 SUBDIRS = src
 packextrasdir = @docdir@
-EXTRA_DIST = COPYING INSTALL README.md NEWS ChangeLog AUTHORS
+EXTRA_DIST = COPYING INSTALL README.md NEWS ChangeLog AUTHORS	\
+		example_output01.txt
+
 packextras_DATA = $(EXTRA_DIST)
 ACLOCAL_AMFLAGS = --install -I m4
 distdir = $(PACKAGE)-$(VERSION)
