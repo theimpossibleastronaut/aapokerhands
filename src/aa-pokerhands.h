@@ -71,8 +71,6 @@ short hand[HAND + 4][2];
 short int hand_seq[ACE_HIGH];
 short int hand_suits[SUITS];
 
-char *suits[4];
-
 char *faces[13];
 
 bool final[RANKS];

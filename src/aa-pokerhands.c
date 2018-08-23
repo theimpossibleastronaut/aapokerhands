@@ -35,7 +35,7 @@ int main(int argc, char *argv[]) {
 
   getopts(argc, argv);
 
-  char *suits[] = {
+  const char *suits[] = {
   "Hearts  ",
   "Diamonds",
   "Spades  ",
