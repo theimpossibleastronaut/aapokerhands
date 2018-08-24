@@ -23,11 +23,7 @@
  *
  */
 
-void shuffle (void);
-
 void zero (int (*hand)[2], int *hand_seq);
-
-void make_real (void);
 
 void isStraight (int *hand_seq);
 

@@ -37,32 +37,7 @@ main (int argc, char *argv[])
 
   getopts (argc, argv);
 
-  const char *suits[] = {
-    "Hearts  ",
-    "Diamonds",
-    "Spades  ",
-    "Clubs   "
-  };
-
-  const char *faces[] = {
-    "Ace",
-    "2",
-    "3",
-    "4",
-    "5",
-    "6",
-    "7",
-    "8",
-    "9",
-    "10",
-    "Jack",
-    "Queen",
-    "King"
-  };
-
   high_straight = 0;
-
-  srand (time (0));
 
   register loop i, j, k;
 
@@ -90,22 +65,17 @@ main (int argc, char *argv[])
     SHOW_HAND = 1;
   }
 
-  /* deck will have initial values 1 - 52 */
+  st_deck_dh deck;
+  deck_init_dh (&deck);
 
-  for (i = 0; i < 52; i++)
-  {
-    deck.values[i][0] = i + 1;
-    deck.values[i][1] = 0;
-  }
-
-  make_real ();
+  /* seeding the random number generator, used by deck_shuffle_dh() */
+  srand (time (NULL));
 
   /* Start main program loop */
-
   while (run_count++ < RUN_COUNT)
   {
 
-    shuffle ();
+    deck_shuffle_dh (&deck);
 
     if (MORE_OUTPUT)
     {
@@ -113,8 +83,8 @@ main (int argc, char *argv[])
       i = j = 0;
       do
       {
-        suitn = shuffled.values[i][1];
-        valuen = shuffled.values[i][0] - 1;
+        suitn = deck.card[i].suit_dh;
+        valuen = deck.card[i].face_val_dh - 1;
         printf ("%5s of %2s", faces[valuen], suits[suitn]);
 
         /* print newline every 4 cards */
@@ -147,8 +117,8 @@ main (int argc, char *argv[])
     {
       if (PLAY && k < 5)
       {
-        suitn = shuffled.values[i][1];
-        valuen = shuffled.values[i][0] - 1;
+        suitn = deck.card[i].suit_dh;
+        valuen = deck.card[i].face_val_dh - 1;
         printf ("(%d)%5s of %2s", k + 1, faces[valuen], suits[suitn]);
         if (++j != 4)
           printf (" | ");
@@ -159,8 +129,8 @@ main (int argc, char *argv[])
         }
       }
 
-      hand[k][0] = shuffled.values[i][0];
-      hand[k][1] = shuffled.values[i][1];
+      hand[k][1] = deck.card[i].suit_dh;
+      hand[k][0] = deck.card[i].face_val_dh;
 
       /* Deal out every other card */
       i += 2;

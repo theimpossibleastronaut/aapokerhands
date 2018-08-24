@@ -27,46 +27,6 @@
 #include "functions.h"
 
 void
-shuffle (void)
-{
-
-  /* If program is run twice in the same second, the output deck
-     will be the same. Sleep for 1 second to prevent that from
-     happening.             */
-  /*  sleep(1);  */
-  loop j;
-  short card = 0;
-
-  bool status[52];
-
-  for (j = 0; j < 52; j++)
-    status[j] = 1;
-
-  j = 0;
-
-  while (j < 52)
-  {
-    card = rand () % 52;
-
-    if (status[card])
-    {
-      shuffled.values[j][0] = deck.values[card][0];
-      shuffled.values[j][1] = deck.values[card][1];
-      status[card] = 0;
-      j++;
-    }
-  }
-
-  /* No need to store the values unless RUN_COUNT > 1 */
-  if (RUN_COUNT > 1)
-    for (j = 0; j < 52; j++)
-    {
-      deck.values[j][0] = shuffled.values[j][0];
-      deck.values[j][1] = shuffled.values[j][1];
-    }
-}
-
-void
 zero (int (*hand)[2], int *hand_seq)
 {
   loop i, j;
@@ -80,45 +40,12 @@ zero (int (*hand)[2], int *hand_seq)
   for (i = 0; i < ACE_HIGH; ++i)
     hand_seq[i] = 0;
 
-  for (i = 0; i < SUITS; ++i)
+  for (i = 0; i < NUM_OF_SUITS; ++i)
     hand_suits[i] = 0;
 
   /* set all array elements to 0 */
   for (i = 0; i < RANKS; ++i)
     final[i] = 0;
-}
-
-void
-make_real (void)
-{
-  loop i;
-  short suitn;
-
-  for (i = 0; i < 52; ++i)
-  {
-    if (deck.values[i][0] > 39)
-    {
-      deck.values[i][0] -= 39;
-      suitn = CLUBS;
-    }
-    else if (deck.values[i][0] > 26)
-    {
-      deck.values[i][0] -= 26;
-      suitn = SPADES;
-    }
-    else if (deck.values[i][0] > 13)
-    {
-      deck.values[i][0] -= 13;
-      suitn = DIAMONDS;
-    }
-    else
-    {
-      suitn = HEARTS;
-    }
-
-    deck.values[i][1] = suitn;
-
-  }
 }
 
 void
@@ -167,7 +94,7 @@ void
 isFlush (void)
 {
   loop i;
-  for (i = 0; i < SUITS; ++i)
+  for (i = 0; i < NUM_OF_SUITS; ++i)
   {
     if (hand_suits[i] != HAND && hand_suits[i])
       break;

@@ -99,7 +99,8 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
-am_pokerhands_OBJECTS = aa-pokerhands.$(OBJEXT) functions.$(OBJEXT)
+am_pokerhands_OBJECTS = aa-pokerhands.$(OBJEXT) functions.$(OBJEXT) \
+	deckhandler.$(OBJEXT)
 pokerhands_OBJECTS = $(am_pokerhands_OBJECTS)
 pokerhands_LDADD = $(LDADD)
 AM_V_P = $(am__v_P_@AM_V@)
@@ -245,7 +246,8 @@ top_srcdir = @top_srcdir@
 AUTOMAKE_OPTIONS = subdir-objects foreign no-dependencies
 AM_CFLAGS = -Wall -Wpedantic -g
 pokerhands_SOURCES = aa-pokerhands.c \
-			functions.c
+			functions.c	\
+			deckhandler.c
 
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am

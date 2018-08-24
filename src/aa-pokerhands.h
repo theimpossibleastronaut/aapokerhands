@@ -33,6 +33,9 @@
 
 #include "config.h"
 
+/* use deckhandler library */
+#include "deckhandler.h"
+
 /* Number of hands to deal out */
 /* can be changed from the command line with -n [hands] */
 int RUN_COUNT;
@@ -49,28 +52,18 @@ bool SHOW_HAND;
 bool PLAY;
 
 enum
-{ HEARTS, DIAMONDS, SPADES, CLUBS };
-#define SUITS 4
-
-enum
 { PAIR, TWO_PAIR, THREE_OF_A_KIND, STRAIGHT, FLUSH,
   FULL_HOUSE, FOUR_OF_A_KIND, STRAIGHT_FLUSH, ROYAL_FLUSH
 };
 #define RANKS 9
 
-#define ACE 1
 #define ACE_HIGH 14
 
 #define HAND 5
 
 #define CR printf("\n")
 
-struct card_info
-{
-  short int values[52][2];
-} deck, shuffled;
-
-short int hand_suits[SUITS];
+short int hand_suits[NUM_OF_SUITS];
 
 bool final[RANKS];
 
