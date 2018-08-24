@@ -16,6 +16,9 @@ The binary will be built in src/
 ## Usage
     ./pokerhands: -n [hands] -s -v
 
+# Downloads
+[Releases](https://github.com/theimpossibleastronaut/aa-pokerhands/releases)
+
 ## Example Output
 
 ```
