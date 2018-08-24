@@ -23,6 +23,8 @@
  *
  */
 
+#include <time.h>
+#include <stdlib.h>
 #include "aa-pokerhands.h"
 #include "functions.h"
 
@@ -52,7 +54,7 @@ main (int argc, char *argv[])
   if (RUN_COUNT > INT_MAX - 1)
   {
     printf ("Your RUN_COUNT should be lower than INT_MAX\n");
-    exit (1);
+    return 1;
   }
 
   if (PLAY && MORE_OUTPUT)

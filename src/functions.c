@@ -23,6 +23,7 @@
  *
  */
 
+#include <stdlib.h>
 #include "aa-pokerhands.h"
 #include "functions.h"
 
