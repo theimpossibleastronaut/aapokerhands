@@ -7,7 +7,16 @@ I wrote this
 (see [first uploaded version](https://github.com/andy5995/aa-pokerhands/commit/809629820fe14868cae5f2a675d8f51f55cd729c))
 6 years ago.
 
+## Dependencies
+
+[deckhandler](https://github.com/theimpossibleastronaut/deckhandler)
+
+From the *aa-pokerhands* directory, to download latest *deckhandler* code:
+
+    git submodule update --init --recursive
+
 ## Building
+
     ./configure
     make
 
