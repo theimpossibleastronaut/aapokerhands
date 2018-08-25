@@ -99,8 +99,9 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
+am__dirstamp = $(am__leading_dot)dirstamp
 am_pokerhands_OBJECTS = aa-pokerhands.$(OBJEXT) functions.$(OBJEXT) \
-	deckhandler.$(OBJEXT)
+	deckhandler/deckhandler.$(OBJEXT)
 pokerhands_OBJECTS = $(am_pokerhands_OBJECTS)
 pokerhands_LDADD = $(LDADD)
 AM_V_P = $(am__v_P_@AM_V@)
@@ -247,7 +248,7 @@ AUTOMAKE_OPTIONS = subdir-objects foreign no-dependencies
 AM_CFLAGS = -Wall -Wpedantic -g
 pokerhands_SOURCES = aa-pokerhands.c \
 			functions.c	\
-			deckhandler.c
+			deckhandler/deckhandler.c
 
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
@@ -340,6 +341,10 @@ uninstall-binPROGRAMS:
 
 clean-binPROGRAMS:
 	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
+deckhandler/$(am__dirstamp):
+	@$(MKDIR_P) deckhandler
+	@: > deckhandler/$(am__dirstamp)
+deckhandler/deckhandler.$(OBJEXT): deckhandler/$(am__dirstamp)
 
 pokerhands$(EXEEXT): $(pokerhands_OBJECTS) $(pokerhands_DEPENDENCIES) $(EXTRA_pokerhands_DEPENDENCIES) 
 	@rm -f pokerhands$(EXEEXT)
@@ -347,6 +352,7 @@ pokerhands$(EXEEXT): $(pokerhands_OBJECTS) $(pokerhands_DEPENDENCIES) $(EXTRA_po
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
+	-rm -f deckhandler/*.$(OBJEXT)
 
 distclean-compile:
 	-rm -f *.tab.c
@@ -472,6 +478,7 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
+	-rm -f deckhandler/$(am__dirstamp)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"

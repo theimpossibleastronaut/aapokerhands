@@ -4,4 +4,4 @@ bin_PROGRAMS = pokerhands
 AM_CFLAGS = -Wall -Wpedantic -g
 pokerhands_SOURCES =	aa-pokerhands.c \
 			functions.c	\
-			deckhandler.c
+			deckhandler/deckhandler.c

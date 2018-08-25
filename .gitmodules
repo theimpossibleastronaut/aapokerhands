@@ -1,0 +1,3 @@
+[submodule "src/deckhandler"]
+	path = src/deckhandler
+	url = https://github.com/theimpossibleastronaut/deckhandler.git

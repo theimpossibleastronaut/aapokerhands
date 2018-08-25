@@ -32,7 +32,7 @@
 #include "config.h"
 
 /* use deckhandler library */
-#include "deckhandler.h"
+#include "deckhandler/deckhandler.h"
 
 /* Number of hands to deal out */
 /* can be changed from the command line with -n [hands] */
