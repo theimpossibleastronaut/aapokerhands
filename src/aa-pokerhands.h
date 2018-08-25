@@ -61,6 +61,10 @@ enum
 
 #define CR printf("\n")
 
+typedef struct {
+  st_card_info_dh card[HAND + 4];
+}st_hand;
+
 short int hand_suits[NUM_OF_SUITS];
 
 bool final[RANKS];

@@ -23,7 +23,7 @@
  *
  */
 
-void zero (int (*hand)[2], int *hand_seq);
+void zero (int *hand_seq);
 
 void isStraight (int *hand_seq);
 

@@ -109,20 +109,19 @@ main (int argc, char *argv[])
           CR;
           j = 0;
         }
-
-
       }
       while (++i < 52);
       CR;
     }
 
-
     if (SHOW_HAND)
       CR;
-    int hand[HAND + 4][2];
+
+    /* +4 for the inimplemented PLAY feature */
+    st_hand hand;
 
     int hand_seq[ACE_HIGH];
-    zero (hand, hand_seq);
+    zero (hand_seq);
 
     /* Deal out a hand */
 
@@ -143,8 +142,8 @@ main (int argc, char *argv[])
         }
       }
 
-      hand[k][1] = deck.card[i].suit_dh;
-      hand[k][0] = deck.card[i].face_val_dh;
+      hand.card[k].suit_dh = deck.card[i].suit_dh;
+      hand.card[k].face_val_dh = deck.card[i].face_val_dh;
 
       /* Deal out every other card */
       i += 2;
@@ -162,9 +161,9 @@ main (int argc, char *argv[])
         scanf ("%hd", &discard);
         if (discard != 0)
         {
-          suitn = hand[next][1];
-          hand[discard - 1][0] = hand[next++][0];
-          hand[discard - 1][1] = suitn;
+          suitn = hand.card[next].suit_dh;
+          hand.card[discard - 1].face_val_dh = hand.card[next++].face_val_dh;
+          hand.card[discard - 1].suit_dh = suitn;
         }
       }
       CR;
@@ -175,8 +174,8 @@ main (int argc, char *argv[])
     {
       if (SHOW_HAND)
       {
-        suitn = hand[k][1];
-        valuen = hand[k][0] - 1;
+        suitn = hand.card[k].suit_dh;
+        valuen = hand.card[k].face_val_dh - 1;
         printf ("%5s of %2s", faces[valuen], suits[suitn]);
         if (++j != 4)
           printf (" | ");
@@ -200,14 +199,14 @@ main (int argc, char *argv[])
        * so hand_seq[12] will be incremented. If there are 3
        * Kings, hand_seq[12] will equal 3     */
 
-      valuen = hand[i][0] - 1;
+      valuen = hand.card[i].face_val_dh - 1;
       hand_seq[valuen]++;
 
       /* if hand[i][1] == 2 (Spades), then hand_suits[2] will
        * be incremented. If hand_suits[2] == 5, a flush will be
        * found when isFlush() is called.    */
 
-      suitn = hand[i][1];
+      suitn = hand.card[i].suit_dh;
       hand_suits[suitn]++;
     }
 

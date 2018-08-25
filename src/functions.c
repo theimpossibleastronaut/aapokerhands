@@ -28,15 +28,11 @@
 #include "functions.h"
 
 void
-zero (int (*hand)[2], int *hand_seq)
+zero (int *hand_seq)
 {
-  loop i, j;
+  loop i;
 
   high_straight = 0;
-  /* reset all elements to 0      */
-  for (i = 0; i < HAND; i++)
-    for (j = 0; j < 2; j++)
-      hand[i][j] = 0;
 
   for (i = 0; i < ACE_HIGH; ++i)
     hand_seq[i] = 0;
