@@ -25,7 +25,7 @@
 
 void zero (int *hand_seq);
 
-void isStraight (int *hand_seq);
+void isStraight (int *hand_seq, bool *isHighStraight);
 
 void isFlush (void);
 
@@ -33,4 +33,4 @@ void getopts (int argc, char *argv[]);
 
 short int find_matches (int *hand_seq);
 
-void hand_eval (int run_count, const char **ranks);
+void hand_eval (int run_count, const char **ranks, bool isHighStraight);

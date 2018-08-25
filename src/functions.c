@@ -32,8 +32,6 @@ zero (int *hand_seq)
 {
   loop i;
 
-  high_straight = 0;
-
   for (i = 0; i < ACE_HIGH; ++i)
     hand_seq[i] = 0;
 
@@ -46,7 +44,7 @@ zero (int *hand_seq)
 }
 
 void
-isStraight (int *hand_seq)
+isStraight (int *hand_seq, bool *isHighStraight)
 {
 
 
@@ -78,7 +76,7 @@ isStraight (int *hand_seq)
         if (k == 10)
         {
           /* printf("High Straight"); */
-          high_straight = 1;
+          *isHighStraight = 1;
         }
       }
     }
@@ -205,7 +203,7 @@ show_totals (int *totals, int run_count, const char **ranks)
 }
 
 void
-hand_eval (int run_count, const char **ranks)
+hand_eval (int run_count, const char **ranks, bool isHighStraight)
 {
 
   loop i;
@@ -255,13 +253,13 @@ hand_eval (int run_count, const char **ranks)
     eval = FOUR_OF_A_KIND;
     totals[FOUR_OF_A_KIND]++;
   }
-  else if (final[STRAIGHT] && final[FLUSH] && high_straight != 1)
+  else if (final[STRAIGHT] && final[FLUSH] && isHighStraight != 1)
   {
     /* final[7] = 1;    */
     eval = STRAIGHT_FLUSH;
     totals[STRAIGHT_FLUSH]++;
   }
-  else if (final[STRAIGHT] && final[FLUSH] && high_straight)
+  else if (final[STRAIGHT] && final[FLUSH] && isHighStraight)
   {
     eval = ROYAL_FLUSH;
     totals[ROYAL_FLUSH]++;

@@ -39,8 +39,6 @@ main (int argc, char *argv[])
 
   getopts (argc, argv);
 
-  high_straight = 0;
-
   register loop i, j, k;
 
   register short suitn, valuen;
@@ -216,13 +214,16 @@ main (int argc, char *argv[])
     /* if no matches were found, check for flush and straight
      * if there were any matches, flush or straight is impossible,
      * so don't bother checking               */
+
+    bool isHighStraight = 0;
+
     if (!paired)
     {
-      isStraight (hand_seq);
+      isStraight (hand_seq, &isHighStraight);
       isFlush ();
     }
 
-    hand_eval (run_count, ranks);
+    hand_eval (run_count, ranks, isHighStraight);
 
   }                             /* End main program loop  */
 

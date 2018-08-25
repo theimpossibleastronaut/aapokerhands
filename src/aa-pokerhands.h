@@ -69,6 +69,4 @@ short int hand_suits[NUM_OF_SUITS];
 
 bool final[RANKS];
 
-bool high_straight;
-
 typedef short int loop;
