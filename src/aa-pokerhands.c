@@ -70,6 +70,18 @@ main (int argc, char *argv[])
   st_deck_dh deck;
   deck_init_dh (&deck);
 
+  const char *ranks[] = {
+    "Pair",
+    "Two Pair",
+    "Three-of-a-Kind",
+    "Straight",
+    "Flush",
+    "Full House",
+    "Four-of-a-Kind",
+    "Straight Flush",
+    "Royal Flush"
+  };
+
   /* seeding the random number generator, used by deck_shuffle_dh() */
   srand (time (NULL));
 
@@ -210,18 +222,6 @@ main (int argc, char *argv[])
       isStraight (hand_seq);
       isFlush ();
     }
-
-    const char *ranks[] = {
-      "Pair",
-      "Two Pair",
-      "Three-of-a-Kind",
-      "Straight",
-      "Flush",
-      "Full House",
-      "Four-of-a-Kind",
-      "Straight Flush",
-      "Royal Flush"
-    };
 
     hand_eval (run_count, ranks);
 
