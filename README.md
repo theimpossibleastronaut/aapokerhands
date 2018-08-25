@@ -11,12 +11,12 @@ I wrote this
 
 [deckhandler](https://github.com/theimpossibleastronaut/deckhandler)
 
-From the *aa-pokerhands* directory, pull the latest *deckhandler* code:
+From the *aa-pokerhands* directory, to download latest *deckhandler* code:
 
     git submodule update --init --recursive
 
 ## Building
-You'll need the
+
     ./configure
     make
 
