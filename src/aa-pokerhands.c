@@ -193,14 +193,14 @@ main (int argc, char *argv[])
     for (i = 0; i < HAND; i++)
     {
 
-      /* if hand[i][0] is 13 (King), valuen will equal 12
+      /* if hand.card[i].face_value is 13 (King), valuen will equal 12
        * so hand_seq[12] will be incremented. If there are 3
        * Kings, hand_seq[12] will equal 3     */
 
       valuen = hand.card[i].face_val_dh - 1;
       hand_seq[valuen]++;
 
-      /* if hand[i][1] == 2 (Spades), then hand_suits[2] will
+      /* if hand.card[i].suit == 2 (Spades), then hand_suits[2] will
        * be incremented. If hand_suits[2] == 5, a flush will be
        * found when isFlush() is called.    */
 

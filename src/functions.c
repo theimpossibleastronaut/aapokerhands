@@ -46,8 +46,6 @@ zero (int *hand_seq)
 void
 isStraight (int *hand_seq, bool *isHighStraight)
 {
-
-
   loop k = 13;
 
   short state = 0;
@@ -55,7 +53,6 @@ isStraight (int *hand_seq, bool *isHighStraight)
   /* Copy ACES for high straight/royal flush checking */
   if (hand_seq[0] == 1)
     hand_seq[13] = 1;
-
 
   /* The hand is never sorted numerically, instead, just look for
    * 5 consecutive 1's.*/
