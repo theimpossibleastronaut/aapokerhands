@@ -4,7 +4,6 @@ config.in~
 config.log
 config.h
 config.status
-autom4te.cache
 /aa-pokerhands.geany
 *.o
 Makefile
