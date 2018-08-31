@@ -95,8 +95,8 @@ main (int argc, char *argv[])
       i = j = 0;
       do
       {
-        suitn = deck.card[i].suit_dh;
-        valuen = deck.card[i].face_val_dh - 1;
+        suitn = deck.card[i].suit;
+        valuen = deck.card[i].face_val - 1;
         printf ("%5s of %2s", faces[valuen], suits[suitn]);
 
         /* print newline every 4 cards */
@@ -128,8 +128,8 @@ main (int argc, char *argv[])
     {
       if (PLAY && k < 5)
       {
-        suitn = deck.card[i].suit_dh;
-        valuen = deck.card[i].face_val_dh - 1;
+        suitn = deck.card[i].suit;
+        valuen = deck.card[i].face_val - 1;
         printf ("(%d)%5s of %2s", k + 1, faces[valuen], suits[suitn]);
         if (++j != 4)
           printf (" | ");
@@ -140,8 +140,8 @@ main (int argc, char *argv[])
         }
       }
 
-      hand.card[k].suit_dh = deck.card[i].suit_dh;
-      hand.card[k].face_val_dh = deck.card[i].face_val_dh;
+      hand.card[k].suit = deck.card[i].suit;
+      hand.card[k].face_val = deck.card[i].face_val;
 
       /* Deal out every other card */
       i += 2;
@@ -159,9 +159,9 @@ main (int argc, char *argv[])
         scanf ("%hd", &discard);
         if (discard != 0)
         {
-          suitn = hand.card[next].suit_dh;
-          hand.card[discard - 1].face_val_dh = hand.card[next++].face_val_dh;
-          hand.card[discard - 1].suit_dh = suitn;
+          suitn = hand.card[next].suit;
+          hand.card[discard - 1].face_val = hand.card[next++].face_val;
+          hand.card[discard - 1].suit = suitn;
         }
       }
       CR;
@@ -172,8 +172,8 @@ main (int argc, char *argv[])
     {
       if (SHOW_HAND)
       {
-        suitn = hand.card[k].suit_dh;
-        valuen = hand.card[k].face_val_dh - 1;
+        suitn = hand.card[k].suit;
+        valuen = hand.card[k].face_val - 1;
         printf ("%5s of %2s", faces[valuen], suits[suitn]);
         if (++j != 4)
           printf (" | ");
@@ -197,14 +197,14 @@ main (int argc, char *argv[])
        * so hand_seq[12] will be incremented. If there are 3
        * Kings, hand_seq[12] will equal 3     */
 
-      valuen = hand.card[i].face_val_dh - 1;
+      valuen = hand.card[i].face_val - 1;
       hand_seq[valuen]++;
 
       /* if hand.card[i].suit == 2 (Spades), then hand_suits[2] will
        * be incremented. If hand_suits[2] == 5, a flush will be
        * found when isFlush() is called.    */
 
-      suitn = hand.card[i].suit_dh;
+      suitn = hand.card[i].suit;
       hand_suits[suitn]++;
     }
 
