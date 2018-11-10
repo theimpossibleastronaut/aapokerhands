@@ -22,8 +22,6 @@ From the *aa-pokerhands* directory, to download latest *deckhandler* code:
     ../configure
     make
 
-The binary will be built in src/
-
 ## Usage
     ./pokerhands: -n [hands] -s -v
 
