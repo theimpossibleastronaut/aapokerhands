@@ -75,7 +75,3 @@ Out of 1000000000 hands:
 
 [More Example Output](https://github.com/theimpossibleastronaut/aa-pokerhands/blob/master/example_output01.txt)
 
-## October 23, 2017
-I may work on this occasionally, or I may not. If you'd like to add or
-improve the code, will review PRs. I hope someone finds this program
-educational (or fun).

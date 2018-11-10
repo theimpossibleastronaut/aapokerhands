@@ -30,7 +30,7 @@
 void
 zero (int *hand_seq)
 {
-  loop i;
+  int i;
 
   for (i = 0; i < ACE_HIGH; ++i)
     hand_seq[i] = 0;
@@ -46,7 +46,7 @@ zero (int *hand_seq)
 void
 isStraight (int *hand_seq, bool *isHighStraight)
 {
-  loop k = 13;
+  int k = 13;
 
   short state = 0;
 
@@ -85,7 +85,7 @@ isStraight (int *hand_seq, bool *isHighStraight)
 void
 isFlush (void)
 {
-  loop i;
+  int i;
   for (i = 0; i < NUM_OF_SUITS; ++i)
   {
     if (hand_suits[i] != HAND && hand_suits[i])
@@ -116,7 +116,7 @@ void
 getopts (int argc, char *argv[])
 {
   /* fetch command line arguments */
-  loop i;
+  int i;
   if (argc > 1)
   {
     for (i = 1; i < argc; i++)
@@ -189,7 +189,7 @@ find_matches (int *hand_seq)
 static void
 show_totals (int *totals, int run_count, const char **ranks)
 {
-  loop n;
+  int n;
 
   printf ("Out of %d hands:\n\n", RUN_COUNT);
 
@@ -203,7 +203,7 @@ void
 hand_eval (int run_count, const char **ranks, bool isHighStraight)
 {
 
-  loop i;
+  int i;
 
   static int totals[RANKS];
 

@@ -68,5 +68,3 @@ typedef struct {
 short int hand_suits[NUM_OF_SUITS];
 
 bool final[RANKS];
-
-typedef short int loop;

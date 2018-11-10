@@ -39,9 +39,9 @@ main (int argc, char *argv[])
 
   getopts (argc, argv);
 
-  register loop i, j, k;
+  int i, j, k;
 
-  register short suitn, valuen;
+  int suitn, valuen;
 
   short discard, next;
 
@@ -65,8 +65,13 @@ main (int argc, char *argv[])
     SHOW_HAND = 1;
   }
 
-  st_deck_dh deck;
-  deck_init_dh (&deck);
+  st_deck_dh* deck = (st_deck_dh*)malloc (sizeof (st_deck_dh));
+  if (deck == NULL)
+  {
+    fprintf (stderr, "Malloc is unable to allocate memory\n");
+    exit (EXIT_FAILURE);
+  }
+  deck_init_dh (deck);
 
   const char *ranks[] = {
     "Pair",
@@ -87,7 +92,7 @@ main (int argc, char *argv[])
   while (run_count++ < RUN_COUNT)
   {
 
-    deck_shuffle_dh (&deck);
+    deck_shuffle_dh (deck);
 
     if (MORE_OUTPUT)
     {
@@ -95,8 +100,9 @@ main (int argc, char *argv[])
       i = j = 0;
       do
       {
-        suitn = deck.card[i].suit;
-        valuen = deck.card[i].face_val - 1;
+        suitn = deck->card[i].suit;
+        valuen = deck->card[i].face_val - 1;
+
         printf ("%5s of %2s", faces[valuen], suits[suitn]);
 
         /* print newline every 4 cards */
@@ -115,7 +121,7 @@ main (int argc, char *argv[])
     if (SHOW_HAND)
       CR;
 
-    /* +4 for the inimplemented PLAY feature */
+    /* +4 for the unimplemented PLAY feature */
     st_hand hand;
 
     int hand_seq[ACE_HIGH];
@@ -128,8 +134,8 @@ main (int argc, char *argv[])
     {
       if (PLAY && k < 5)
       {
-        suitn = deck.card[i].suit;
-        valuen = deck.card[i].face_val - 1;
+        suitn = deck->card[i].suit;
+        valuen = deck->card[i].face_val - 1;
         printf ("(%d)%5s of %2s", k + 1, faces[valuen], suits[suitn]);
         if (++j != 4)
           printf (" | ");
@@ -140,14 +146,12 @@ main (int argc, char *argv[])
         }
       }
 
-      hand.card[k].suit = deck.card[i].suit;
-      hand.card[k].face_val = deck.card[i].face_val;
+      hand.card[k].suit = deck->card[i].suit;
+      hand.card[k].face_val = deck->card[i].face_val;
 
       /* Deal out every other card */
       i += 2;
-
-    }
-    while (++k < HAND + (PLAY * 4));
+    } while (++k < HAND + (PLAY * 4));
 
     /* CR; */
 
@@ -229,5 +233,6 @@ main (int argc, char *argv[])
 
   /* print a newline before the program ends */
   CR;
+  free (deck);
   return 0;
 }
