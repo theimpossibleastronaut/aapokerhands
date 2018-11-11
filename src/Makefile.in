@@ -14,6 +14,8 @@
 
 @SET_MAKE@
 
+
+
 VPATH = @srcdir@
 am__is_gnu_make = { \
   if test -z '$(MAKELEVEL)'; then \
@@ -92,18 +94,28 @@ ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
-DIST_COMMON = $(srcdir)/Makefile.am $(am__DIST_COMMON)
+DIST_COMMON = $(srcdir)/Makefile.am $(noinst_HEADERS) \
+	$(am__DIST_COMMON)
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
+LIBRARIES = $(noinst_LIBRARIES)
+ARFLAGS = cru
+AM_V_AR = $(am__v_AR_@AM_V@)
+am__v_AR_ = $(am__v_AR_@AM_DEFAULT_V@)
+am__v_AR_0 = @echo "  AR      " $@;
+am__v_AR_1 = 
+libdeckhandler_a_AR = $(AR) $(ARFLAGS)
+libdeckhandler_a_LIBADD =
+am__dirstamp = $(am__leading_dot)dirstamp
+am_libdeckhandler_a_OBJECTS = deckhandler/deckhandler.$(OBJEXT)
+libdeckhandler_a_OBJECTS = $(am_libdeckhandler_a_OBJECTS)
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
-am__dirstamp = $(am__leading_dot)dirstamp
-am_pokerhands_OBJECTS = aa-pokerhands.$(OBJEXT) functions.$(OBJEXT) \
-	deckhandler/deckhandler.$(OBJEXT)
+am_pokerhands_OBJECTS = aa-pokerhands.$(OBJEXT) functions.$(OBJEXT)
 pokerhands_OBJECTS = $(am_pokerhands_OBJECTS)
-pokerhands_LDADD = $(LDADD)
+pokerhands_DEPENDENCIES = libdeckhandler.a
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -131,13 +143,14 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = $(pokerhands_SOURCES)
-DIST_SOURCES = $(pokerhands_SOURCES)
+SOURCES = $(libdeckhandler_a_SOURCES) $(pokerhands_SOURCES)
+DIST_SOURCES = $(libdeckhandler_a_SOURCES) $(pokerhands_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
     *) (install-info --version) >/dev/null 2>&1;; \
   esac
+HEADERS = $(noinst_HEADERS)
 am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) $(LISP)
 # Read a list of newline-separated strings from the standard input,
 # and print each of them once, without duplicates.  Input order is
@@ -162,6 +175,7 @@ DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
 AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
+AR = @AR@
 AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
@@ -198,6 +212,7 @@ PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
+RANLIB = @RANLIB@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
@@ -206,6 +221,7 @@ abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
+ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
 am__include = @am__include@
 am__leading_dot = @am__leading_dot@
@@ -246,10 +262,28 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AUTOMAKE_OPTIONS = subdir-objects foreign no-dependencies
-AM_CFLAGS = -std=c99 -Wall -pedantic -g
+
+# Build a static library. This really isn't needed for a program this
+# small; normally we'd just add deckhandler.c to the _SOURCES field, but
+# as this is a practice project, we're going to make a static library
+#
+# the "noinst" directive means that the libary will not be installed
+noinst_LIBRARIES = libdeckhandler.a
+libdeckhandler_a_SOURCES = deckhandler/deckhandler.c
+AM_CFLAGS = -std=c99 -Wall
 pokerhands_SOURCES = aa-pokerhands.c \
-			functions.c	\
-			deckhandler/deckhandler.c
+			functions.c
+
+
+# Add the library
+pokerhands_LDADD = libdeckhandler.a
+
+# this tells 'make dist' to add the required header files, otherwise they
+# won't be included in a distribution archive
+noinst_HEADERS = \
+	aa-pokerhands.h	\
+	functions.h	\
+	deckhandler/deckhandler.h
 
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
@@ -300,6 +334,18 @@ $(top_srcdir)/config.in: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 
 distclean-hdr:
 	-rm -f config.h stamp-h1
+
+clean-noinstLIBRARIES:
+	-test -z "$(noinst_LIBRARIES)" || rm -f $(noinst_LIBRARIES)
+deckhandler/$(am__dirstamp):
+	@$(MKDIR_P) deckhandler
+	@: > deckhandler/$(am__dirstamp)
+deckhandler/deckhandler.$(OBJEXT): deckhandler/$(am__dirstamp)
+
+libdeckhandler.a: $(libdeckhandler_a_OBJECTS) $(libdeckhandler_a_DEPENDENCIES) $(EXTRA_libdeckhandler_a_DEPENDENCIES) 
+	$(AM_V_at)-rm -f libdeckhandler.a
+	$(AM_V_AR)$(libdeckhandler_a_AR) libdeckhandler.a $(libdeckhandler_a_OBJECTS) $(libdeckhandler_a_LIBADD)
+	$(AM_V_at)$(RANLIB) libdeckhandler.a
 install-binPROGRAMS: $(bin_PROGRAMS)
 	@$(NORMAL_INSTALL)
 	@list='$(bin_PROGRAMS)'; test -n "$(bindir)" || list=; \
@@ -342,10 +388,6 @@ uninstall-binPROGRAMS:
 
 clean-binPROGRAMS:
 	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
-deckhandler/$(am__dirstamp):
-	@$(MKDIR_P) deckhandler
-	@: > deckhandler/$(am__dirstamp)
-deckhandler/deckhandler.$(OBJEXT): deckhandler/$(am__dirstamp)
 
 pokerhands$(EXEEXT): $(pokerhands_OBJECTS) $(pokerhands_DEPENDENCIES) $(EXTRA_pokerhands_DEPENDENCIES) 
 	@rm -f pokerhands$(EXEEXT)
@@ -448,7 +490,7 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 check: check-am
-all-am: Makefile $(PROGRAMS) config.h
+all-am: Makefile $(LIBRARIES) $(PROGRAMS) $(HEADERS) config.h
 installdirs:
 	for dir in "$(DESTDIR)$(bindir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
@@ -486,7 +528,8 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-am
 
-clean-am: clean-binPROGRAMS clean-generic mostlyclean-am
+clean-am: clean-binPROGRAMS clean-generic clean-noinstLIBRARIES \
+	mostlyclean-am
 
 distclean: distclean-am
 	-rm -f Makefile
@@ -554,18 +597,18 @@ uninstall-am: uninstall-binPROGRAMS
 .MAKE: all install-am install-strip
 
 .PHONY: CTAGS GTAGS TAGS all all-am check check-am clean \
-	clean-binPROGRAMS clean-generic cscopelist-am ctags ctags-am \
-	distclean distclean-compile distclean-generic distclean-hdr \
-	distclean-tags distdir dvi dvi-am html html-am info info-am \
-	install install-am install-binPROGRAMS install-data \
-	install-data-am install-dvi install-dvi-am install-exec \
-	install-exec-am install-html install-html-am install-info \
-	install-info-am install-man install-pdf install-pdf-am \
-	install-ps install-ps-am install-strip installcheck \
-	installcheck-am installdirs maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-compile \
-	mostlyclean-generic pdf pdf-am ps ps-am tags tags-am uninstall \
-	uninstall-am uninstall-binPROGRAMS
+	clean-binPROGRAMS clean-generic clean-noinstLIBRARIES \
+	cscopelist-am ctags ctags-am distclean distclean-compile \
+	distclean-generic distclean-hdr distclean-tags distdir dvi \
+	dvi-am html html-am info info-am install install-am \
+	install-binPROGRAMS install-data install-data-am install-dvi \
+	install-dvi-am install-exec install-exec-am install-html \
+	install-html-am install-info install-info-am install-man \
+	install-pdf install-pdf-am install-ps install-ps-am \
+	install-strip installcheck installcheck-am installdirs \
+	maintainer-clean maintainer-clean-generic mostlyclean \
+	mostlyclean-compile mostlyclean-generic pdf pdf-am ps ps-am \
+	tags tags-am uninstall uninstall-am uninstall-binPROGRAMS
 
 .PRECIOUS: Makefile
 
