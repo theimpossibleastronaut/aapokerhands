@@ -9,7 +9,8 @@ I wrote this
 
 ## Dependencies
 
-[deckhandler](https://github.com/theimpossibleastronaut/deckhandler)
+* [deckhandler](https://github.com/theimpossibleastronaut/deckhandler)
+* [meson](http://mesonbuild.com/Quick-guide.html) (for the build system)
 
 From the *aa-pokerhands* directory, to download latest *deckhandler* code:
 
@@ -17,13 +18,14 @@ From the *aa-pokerhands* directory, to download latest *deckhandler* code:
 
 ## Building
 
-    mkdir build
-    cd build
-    ../configure
-    make
+    meson builddir
+    cd builddir
+    ninja
+
+The resulting binary will be in *src/*
 
 ## Usage
-    ./pokerhands: -n [hands] -s -v
+    src/pokerhands: -n [hands] -s -v
 
 # Downloads
 [Releases](https://github.com/theimpossibleastronaut/aa-pokerhands/releases)
@@ -73,3 +75,14 @@ Out of 1000000000 hands:
 
 [More Example Output](https://github.com/theimpossibleastronaut/aa-pokerhands/blob/master/example_output01.txt)
 
+## Installation
+
+To specify the installation directory (defaults to /usr/local) and
+install the program:
+
+    From *builddir*: `meson configure --prefix=
+    ninja install
+
+To uninstall:
+
+    ninja uninstall

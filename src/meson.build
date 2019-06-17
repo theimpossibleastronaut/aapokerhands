@@ -1,5 +1,6 @@
 src = ['aa-pokerhands.c', 'functions.c', 'deckhandler/deckhandler.c']
-executable('pokerhands', src)
+executable('pokerhands', src,
+  install: true)
 
 conf = configuration_data()
 conf.set('VERSION', meson.project_version())
