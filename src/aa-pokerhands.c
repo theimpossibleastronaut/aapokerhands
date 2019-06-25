@@ -3,7 +3,7 @@
  * This file is part of aa-pokerhands
  * <https://github.com/theimpossibleastronaut/aa-pokerhands>
  *
- * Copyright 2011-2018 Andy <andy400-dev@yahoo.com>
+ * Copyright 2011-2019 Andy <andy400-dev@yahoo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -100,10 +100,8 @@ main (int argc, char *argv[])
       i = j = 0;
       do
       {
-        suitn = deck->card[i].suit;
-        valuen = deck->card[i].face_val - 1;
-
-        printf ("%5s of %2s", faces[valuen], suits[suitn]);
+        printf ("%5s of %2s",
+                get_card_face (deck->card[i]), get_card_suit (deck->card[i]));
 
         /* print newline every 4 cards */
         if (++j != 4)
@@ -134,9 +132,8 @@ main (int argc, char *argv[])
     {
       if (PLAY && k < 5)
       {
-        suitn = deck->card[i].suit;
-        valuen = deck->card[i].face_val - 1;
-        printf ("(%d)%5s of %2s", k + 1, faces[valuen], suits[suitn]);
+        printf ("(%d)%5s of %2s", k + 1,
+                get_card_face (deck->card[i]), get_card_suit (deck->card[i]));
         if (++j != 4)
           printf (" | ");
         else
@@ -176,9 +173,8 @@ main (int argc, char *argv[])
     {
       if (SHOW_HAND)
       {
-        suitn = hand.card[k].suit;
-        valuen = hand.card[k].face_val - 1;
-        printf ("%5s of %2s", faces[valuen], suits[suitn]);
+        printf ("%5s of %2s",
+                get_card_face (deck->card[i]), get_card_suit (deck->card[i]));
         if (++j != 4)
           printf (" | ");
         else
