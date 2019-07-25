@@ -28,4 +28,5 @@ install:
 
 script:
   - meson builddir && cd builddir
-  - ninja
+  - ninja -v
+  - src/pokerhands -n 100000
