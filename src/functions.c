@@ -202,7 +202,6 @@ show_totals (int *totals, int run_count, const char **ranks)
 void
 hand_eval (int run_count, const char **ranks, bool isHighStraight)
 {
-
   int i;
 
   static int totals[RANKS];

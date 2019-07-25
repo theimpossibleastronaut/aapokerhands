@@ -65,13 +65,8 @@ main (int argc, char *argv[])
     SHOW_HAND = 1;
   }
 
-  st_deck_dh* deck = (st_deck_dh*)malloc (sizeof (st_deck_dh));
-  if (deck == NULL)
-  {
-    fprintf (stderr, "Malloc is unable to allocate memory\n");
-    exit (EXIT_FAILURE);
-  }
-  deck_init_dh (deck);
+  st_deck_dh deck;
+  deck_init_dh (&deck);
 
   const char *ranks[] = {
     "Pair",
@@ -92,7 +87,7 @@ main (int argc, char *argv[])
   while (run_count++ < RUN_COUNT)
   {
 
-    deck_shuffle_dh (deck);
+    deck_shuffle_dh (&deck);
 
     if (MORE_OUTPUT)
     {
@@ -101,7 +96,7 @@ main (int argc, char *argv[])
       do
       {
         printf ("%5s of %2s",
-                get_card_face (deck->card[i]), get_card_suit (deck->card[i]));
+                get_card_face (deck.card[i]), get_card_suit (deck.card[i]));
 
         /* print newline every 4 cards */
         if (++j != 4)
@@ -133,7 +128,7 @@ main (int argc, char *argv[])
       if (PLAY && k < 5)
       {
         printf ("(%d)%5s of %2s", k + 1,
-                get_card_face (deck->card[i]), get_card_suit (deck->card[i]));
+                get_card_face (deck.card[i]), get_card_suit (deck.card[i]));
         if (++j != 4)
           printf (" | ");
         else
@@ -143,8 +138,8 @@ main (int argc, char *argv[])
         }
       }
 
-      hand.card[k].suit = deck->card[i].suit;
-      hand.card[k].face_val = deck->card[i].face_val;
+      hand.card[k].suit = deck.card[i].suit;
+      hand.card[k].face_val = deck.card[i].face_val;
 
       /* Deal out every other card */
       i += 2;
@@ -174,7 +169,7 @@ main (int argc, char *argv[])
       if (SHOW_HAND)
       {
         printf ("%5s of %2s",
-                get_card_face (deck->card[i]), get_card_suit (deck->card[i]));
+                get_card_face (deck.card[i]), get_card_suit (deck.card[i]));
         if (++j != 4)
           printf (" | ");
         else
@@ -229,6 +224,5 @@ main (int argc, char *argv[])
 
   /* print a newline before the program ends */
   CR;
-  free (deck);
   return 0;
 }
