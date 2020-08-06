@@ -3,7 +3,7 @@
  * This file is part of aa-pokerhands
  * <https://github.com/theimpossibleastronaut/aa-pokerhands>
  *
- * Copyright 2011-2019 Andy <andy400-dev@yahoo.com>
+ * Copyright 2011-2020 Andy <andy400-dev@yahoo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,10 +28,23 @@
 #include "aa-pokerhands.h"
 #include "functions.h"
 
+const char *ranks[] = {
+  "Pair",
+  "Two Pair",
+  "Three-of-a-Kind",
+  "Straight",
+  "Flush",
+  "Full House",
+  "Four-of-a-Kind",
+  "Straight Flush",
+  "Royal Flush"
+};
+
+const int RANKS = ARRAY_SIZE(ranks);
+
 int
 main (int argc, char *argv[])
 {
-
   RUN_COUNT = 20;
   MORE_OUTPUT = 0;
   SHOW_HAND = 0;
@@ -68,20 +81,11 @@ main (int argc, char *argv[])
   st_deck_dh deck;
   deck_init_dh (&deck);
 
-  const char *ranks[] = {
-    "Pair",
-    "Two Pair",
-    "Three-of-a-Kind",
-    "Straight",
-    "Flush",
-    "Full House",
-    "Four-of-a-Kind",
-    "Straight Flush",
-    "Royal Flush"
-  };
-
   /* seeding the random number generator, used by deck_shuffle_dh() */
   srand (time (NULL));
+
+  int totals[RANKS];
+  bool final[RANKS];
 
   /* Start main program loop */
   while (run_count++ < RUN_COUNT)
@@ -118,7 +122,7 @@ main (int argc, char *argv[])
     st_hand hand;
 
     int hand_seq[ACE_HIGH];
-    zero (hand_seq);
+    zero (hand_seq, final);
 
     /* Deal out a hand */
 
@@ -204,7 +208,7 @@ main (int argc, char *argv[])
     }
 
     /* Evaluate the hand */
-    paired = find_matches (hand_seq);
+    paired = find_matches (hand_seq, final);
 
     /* if no matches were found, check for flush and straight
      * if there were any matches, flush or straight is impossible,
@@ -214,13 +218,16 @@ main (int argc, char *argv[])
 
     if (!paired)
     {
-      isStraight (hand_seq, &isHighStraight);
-      isFlush ();
+      isStraight (hand_seq, &isHighStraight, final);
+      isFlush (final);
     }
 
-    hand_eval (run_count, ranks, isHighStraight);
+    hand_eval (totals, run_count, ranks, isHighStraight, final);
 
   }                             /* End main program loop  */
+
+  /* Show totals for all hands */
+  show_totals (totals, run_count, ranks);
 
   /* print a newline before the program ends */
   CR;

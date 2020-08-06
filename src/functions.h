@@ -1,7 +1,7 @@
 /*
  * functions.c
  *
- * Copyright 2011-2018 Andy <andy400-dev@yahoo.com>
+ * Copyright 2011-2020 Andy <andy400-dev@yahoo.com>
  * This file is part of aa-pokerhands
  * <https://github.com/theimpossibleastronaut/aa-pokerhands>
  *
@@ -23,14 +23,17 @@
  *
  */
 
-void zero (int *hand_seq);
+void zero (int *hand_seq, bool *final);
 
-void isStraight (int *hand_seq, bool *isHighStraight);
+void isStraight (int *hand_seq, bool *isHighStraight, bool *final);
 
-void isFlush (void);
+void isFlush (bool *final);
 
 void getopts (int argc, char *argv[]);
 
-short int find_matches (int *hand_seq);
+short int find_matches (int *hand_seq, bool *final);
 
-void hand_eval (int run_count, const char **ranks, bool isHighStraight);
+void hand_eval (int *totals, int run_count, const char **ranks, bool isHighStraight, bool *final);
+
+void
+show_totals (int *totals, int run_count, const char **ranks);

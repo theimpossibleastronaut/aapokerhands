@@ -1,7 +1,7 @@
 /*
  * aa-pokerhands.h
  *
- * Copyright 2011-2018 Andy <andy400-dev@yahoo.com>
+ * Copyright 2011-2020 Andy <andy400-dev@yahoo.com>
  * This file is part of aa-pokerhands
  * <https://github.com/theimpossibleastronaut/aa-pokerhands>
  *
@@ -53,7 +53,7 @@ enum
 { PAIR, TWO_PAIR, THREE_OF_A_KIND, STRAIGHT, FLUSH,
   FULL_HOUSE, FOUR_OF_A_KIND, STRAIGHT_FLUSH, ROYAL_FLUSH
 };
-#define RANKS 9
+#define ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
 
 #define ACE_HIGH 14
 
@@ -66,5 +66,5 @@ typedef struct {
 }st_hand;
 
 short int hand_suits[NUM_OF_SUITS];
-
-bool final[RANKS];
+extern const int RANKS;
+extern bool *final;

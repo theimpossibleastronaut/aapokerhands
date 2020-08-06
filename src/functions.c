@@ -1,7 +1,7 @@
 /*
  * functions.c
  *
- * Copyright 2011-2018 Andy <andy400-dev@yahoo.com>
+ * Copyright 2011-2020 Andy <andy400-dev@yahoo.com>
  * This file is part of aa-pokerhands
  * <https://github.com/theimpossibleastronaut/aa-pokerhands>
  *
@@ -28,7 +28,7 @@
 #include "functions.h"
 
 void
-zero (int *hand_seq)
+zero (int *hand_seq, bool *final)
 {
   int i;
 
@@ -44,7 +44,7 @@ zero (int *hand_seq)
 }
 
 void
-isStraight (int *hand_seq, bool *isHighStraight)
+isStraight (int *hand_seq, bool *isHighStraight, bool *final)
 {
   int k = 13;
 
@@ -83,7 +83,7 @@ isStraight (int *hand_seq, bool *isHighStraight)
 }
 
 void
-isFlush (void)
+isFlush (bool *final)
 {
   int i;
   for (i = 0; i < NUM_OF_SUITS; ++i)
@@ -153,7 +153,7 @@ getopts (int argc, char *argv[])
 }
 
 short int
-find_matches (int *hand_seq)
+find_matches (int *hand_seq, bool *final)
 {
   int face_val;
   short paired = 0;
@@ -186,7 +186,7 @@ find_matches (int *hand_seq)
   return paired;
 }
 
-static void
+void
 show_totals (int *totals, int run_count, const char **ranks)
 {
   int n;
@@ -200,11 +200,9 @@ show_totals (int *totals, int run_count, const char **ranks)
 }
 
 void
-hand_eval (int run_count, const char **ranks, bool isHighStraight)
+hand_eval (int *totals, int run_count, const char **ranks, bool isHighStraight, bool *final)
 {
   int i;
-
-  static int totals[RANKS];
 
   if (run_count == 1)
     for (i = 0; i < RANKS; i++)
@@ -273,7 +271,5 @@ hand_eval (int run_count, const char **ranks, bool isHighStraight)
     printf ("<--\n\n");
   }
 
-  /* Show totals for all hands */
-  if (run_count == RUN_COUNT)
-    show_totals (totals, run_count, ranks);
+  return;
 }
