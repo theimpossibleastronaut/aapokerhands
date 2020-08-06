@@ -3,7 +3,7 @@
  * This file is part of aa-pokerhands
  * <https://github.com/theimpossibleastronaut/aa-pokerhands>
  *
- * Copyright 2011-2020 Andy <andy400-dev@yahoo.com>
+ * Copyright 2011-2020 Andy Alt <andy400-dev@yahoo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@
 #include <stdlib.h>
 #include "aa-pokerhands.h"
 #include "functions.h"
+#include <pthread.h>
 
 const char *ranks[] = {
   "Pair",
@@ -41,66 +42,48 @@ const char *ranks[] = {
 };
 
 const int RANKS = ARRAY_SIZE(ranks);
+bool SHOW_HAND;
+bool MORE_OUTPUT;
 
-int
-main (int argc, char *argv[])
-{
-  RUN_COUNT = 20;
-  MORE_OUTPUT = 0;
-  SHOW_HAND = 0;
-  PLAY = 0;
+/* Leave set to 0, PLAY feature not finished */
+bool PLAY = 0;
 
-  getopts (argc, argv);
+struct thread_info {    /* Used as argument to thread_start() */
+pthread_t thread_id;        /* ID returned by pthread_create() */
+  int       thread_num;       /* Application-defined thread # */
+  st_deck_dh *deck;
+  int RUN_COUNT;
+};
 
-  int i, j, k;
-
-  int suitn, valuen;
-
-  short discard, next;
-
-  short paired;
+void*
+main_thread(void *arg) {
+  struct thread_info *tinfo = arg;
 
   int run_count = 0;
-
-  if (RUN_COUNT > INT_MAX - 1)
-  {
-    printf ("Your RUN_COUNT should be lower than INT_MAX\n");
-    return 1;
-  }
-
-  if (PLAY && MORE_OUTPUT)
-  {
-    MORE_OUTPUT = 0;
-  }
-
-  if (PLAY && SHOW_HAND)
-  {
-    SHOW_HAND = 1;
-  }
-
-  st_deck_dh deck;
-  deck_init_dh (&deck);
-
-  /* seeding the random number generator, used by deck_shuffle_dh() */
-  srand (time (NULL));
-
   int totals[RANKS];
+
+  int i;
+  for (i = 0; i < RANKS; i++)
+      totals[i] = 0;
+
   bool final[RANKS];
 
   /* Start main program loop */
-  while (run_count++ < RUN_COUNT)
+  while (run_count++ < tinfo->RUN_COUNT)
   {
+    int i = 0;
+    int j, k = i;
 
-    deck_shuffle_dh (&deck);
+    short int hand_suits[NUM_OF_SUITS];
+
+    deck_shuffle_dh (tinfo->deck);
 
     if (MORE_OUTPUT)
     {
-
-      i = j = 0;
       do
       {
         printf ("%5s of %2s",
-                get_card_face (deck.card[i]), get_card_suit (deck.card[i]));
+                get_card_face (tinfo->deck->card[i]), get_card_suit (tinfo->deck->card[i]));
 
         /* print newline every 4 cards */
         if (++j != 4)
@@ -122,17 +105,16 @@ main (int argc, char *argv[])
     st_hand hand;
 
     int hand_seq[ACE_HIGH];
-    zero (hand_seq, final);
+    zero (hand_seq, final, hand_suits);
 
     /* Deal out a hand */
 
-    i = j = k = 0;
     do
     {
       if (PLAY && k < 5)
       {
         printf ("(%d)%5s of %2s", k + 1,
-                get_card_face (deck.card[i]), get_card_suit (deck.card[i]));
+                get_card_face (tinfo->deck->card[i]), get_card_suit (tinfo->deck->card[i]));
         if (++j != 4)
           printf (" | ");
         else
@@ -142,18 +124,19 @@ main (int argc, char *argv[])
         }
       }
 
-      hand.card[k].suit = deck.card[i].suit;
-      hand.card[k].face_val = deck.card[i].face_val;
+      hand.card[k].suit = tinfo->deck->card[i].suit;
+      hand.card[k].face_val = tinfo->deck->card[i].face_val;
 
       /* Deal out every other card */
       i += 2;
     } while (++k < HAND + (PLAY * 4));
 
-    /* CR; */
+    int suitn, valuen;
 
     if (PLAY)
     {
-      next = 5;
+      short discard = 0;
+      int next = 5;
       for (j = 5; j < 9; j++)
       {
         scanf ("%hd", &discard);
@@ -173,7 +156,7 @@ main (int argc, char *argv[])
       if (SHOW_HAND)
       {
         printf ("%5s of %2s",
-                get_card_face (deck.card[i]), get_card_suit (deck.card[i]));
+                get_card_face (tinfo->deck->card[i]), get_card_suit (tinfo->deck->card[i]));
         if (++j != 4)
           printf (" | ");
         else
@@ -203,12 +186,12 @@ main (int argc, char *argv[])
        * be incremented. If hand_suits[2] == 5, a flush will be
        * found when isFlush() is called.    */
 
-      suitn = hand.card[i].suit;
+      int suitn = hand.card[i].suit;
       hand_suits[suitn]++;
     }
 
     /* Evaluate the hand */
-    paired = find_matches (hand_seq, final);
+    short paired = find_matches (hand_seq, final);
 
     /* if no matches were found, check for flush and straight
      * if there were any matches, flush or straight is impossible,
@@ -219,15 +202,99 @@ main (int argc, char *argv[])
     if (!paired)
     {
       isStraight (hand_seq, &isHighStraight, final);
-      isFlush (final);
+      isFlush (final, hand_suits);
     }
 
-    hand_eval (totals, run_count, ranks, isHighStraight, final);
-
-  }                             /* End main program loop  */
+    hand_eval (totals, ranks, isHighStraight, final);
+  }
 
   /* Show totals for all hands */
-  show_totals (totals, run_count, ranks);
+  show_totals (totals, ranks, tinfo->RUN_COUNT);
+  return NULL;
+}
+
+
+int
+main (int argc, char *argv[])
+{
+  /* Number of hands to deal out */
+  /* can be changed from the command line with -n [hands] */
+  int RUN_COUNT = 20;
+  MORE_OUTPUT = 0;
+  SHOW_HAND = 0;
+  PLAY = 0;
+
+  getopts (argc, argv, &RUN_COUNT);
+
+  if (RUN_COUNT > INT_MAX - 1)
+  {
+    printf ("Your RUN_COUNT should be lower than INT_MAX\n");
+    return 1;
+  }
+
+  if (PLAY && MORE_OUTPUT)
+  {
+    MORE_OUTPUT = 0;
+  }
+
+  if (PLAY && SHOW_HAND)
+  {
+    SHOW_HAND = 1;
+  }
+
+  int num_threads = 4;
+  st_deck_dh deck[num_threads];
+
+  int i;
+
+  for (i = 0; i < num_threads; i++)
+    deck_init_dh (&deck[i]);
+
+  int s;
+  struct thread_info *tinfo;
+  pthread_attr_t attr;
+
+  // How to calculate the needed stack size?
+  int stack_size = 8192;
+
+  void *res;
+
+  pthread_attr_init(&attr);
+  pthread_attr_setstacksize(&attr, stack_size);
+  tinfo = calloc(num_threads, sizeof(struct thread_info));
+  if (tinfo == NULL)
+    puts("Unable to allocate memory");
+
+  /* seeding the random number generator, used by deck_shuffle_dh() */
+  srand (time (NULL));
+
+  for (i = 0; i < num_threads; i++)
+  {
+    tinfo[i].deck = &deck[i];
+    tinfo[i].RUN_COUNT = RUN_COUNT / num_threads;
+    s = pthread_create (&tinfo[i].thread_id, &attr, &main_thread, &tinfo[i]);
+    if (s != 0)
+      puts("Error creating thread");
+  }
+
+  s = pthread_attr_destroy(&attr);
+  if (s != 0)
+    puts("Error destroying attribute");
+
+  for (i = 0; i < num_threads; i++)
+  {
+    s = pthread_join(tinfo[i].thread_id, &res);
+    if (s != 0)
+      printf("Error joining thread %d\n", i);
+    else
+      printf("Joined with thread %d; returned value was %s\n",
+                       i, (char *) res);
+    free(res);
+  }
+
+  free (tinfo);
+
+  // pthread_create (&thread_id, NULL, &print_xs, NULL);
 
   /* print a newline before the program ends */
   CR;

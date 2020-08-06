@@ -1,7 +1,7 @@
 /*
  * aa-pokerhands.h
  *
- * Copyright 2011-2020 Andy <andy400-dev@yahoo.com>
+ * Copyright 2011-2020 Andy Alt <andy400-dev@yahoo.com>
  * This file is part of aa-pokerhands
  * <https://github.com/theimpossibleastronaut/aa-pokerhands>
  *
@@ -34,20 +34,15 @@
 /* use deckhandler library */
 #include "deckhandler/deckhandler.h"
 
-/* Number of hands to deal out */
-/* can be changed from the command line with -n [hands] */
-int RUN_COUNT;
-
 /* can be set on the command line with -v */
 /* Show all 52 cards after the deck has been shuffled */
-bool MORE_OUTPUT;
+extern bool MORE_OUTPUT;
 
 /* can be set on the command line with -s */
 /* Show the hand that was dealt */
-bool SHOW_HAND;
+extern bool SHOW_HAND;
 
-/* Leave set to 0, PLAY feature not finished */
-bool PLAY;
+extern bool PLAY;
 
 enum
 { PAIR, TWO_PAIR, THREE_OF_A_KIND, STRAIGHT, FLUSH,
@@ -65,6 +60,5 @@ typedef struct {
   st_card_info_dh card[HAND + 4];
 }st_hand;
 
-short int hand_suits[NUM_OF_SUITS];
 extern const int RANKS;
 extern bool *final;
