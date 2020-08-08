@@ -53,6 +53,7 @@ pthread_t thread_id;        /* ID returned by pthread_create() */
   int       thread_num;       /* Application-defined thread # */
   st_deck_dh *deck;
   int RUN_COUNT;
+  int *totals;
 };
 
 void*
@@ -60,11 +61,6 @@ main_thread(void *arg) {
   struct thread_info *tinfo = arg;
 
   int run_count = 0;
-  int totals[RANKS];
-
-  int i;
-  for (i = 0; i < RANKS; i++)
-      totals[i] = 0;
 
   bool final[RANKS];
 
@@ -205,11 +201,9 @@ main_thread(void *arg) {
       isFlush (final, hand_suits);
     }
 
-    hand_eval (totals, ranks, isHighStraight, final);
+    hand_eval (tinfo->totals, ranks, isHighStraight, final);
   }
 
-  /* Show totals for all hands */
-  show_totals (totals, ranks, tinfo->RUN_COUNT);
   return NULL;
 }
 
@@ -242,10 +236,14 @@ main (int argc, char *argv[])
     SHOW_HAND = 1;
   }
 
-  int num_threads = 4;
-  st_deck_dh deck[num_threads];
+  int totals[9];
 
   int i;
+  for (i = 0; i < RANKS; i++)
+      totals[i] = 0;
+
+  int num_threads = 2;
+  st_deck_dh deck[num_threads];
 
   for (i = 0; i < num_threads; i++)
     deck_init_dh (&deck[i]);
@@ -272,8 +270,11 @@ main (int argc, char *argv[])
   {
     tinfo[i].deck = &deck[i];
     tinfo[i].RUN_COUNT = RUN_COUNT / num_threads;
+    tinfo[i].totals = totals;
     s = pthread_create (&tinfo[i].thread_id, &attr, &main_thread, &tinfo[i]);
-    if (s != 0)
+    if (!s)
+      printf("\n Job %d started\n", i);
+    else
       puts("Error creating thread");
   }
 
@@ -294,7 +295,8 @@ main (int argc, char *argv[])
 
   free (tinfo);
 
-  // pthread_create (&thread_id, NULL, &print_xs, NULL);
+  /* Show totals for all hands */
+  show_totals (totals, ranks, RUN_COUNT);
 
   /* print a newline before the program ends */
   CR;

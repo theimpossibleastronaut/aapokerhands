@@ -61,4 +61,3 @@ typedef struct {
 }st_hand;
 
 extern const int RANKS;
-extern bool *final;

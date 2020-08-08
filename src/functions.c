@@ -24,6 +24,7 @@
  */
 
 #include <stdlib.h>
+#include <pthread.h>
 #include "aa-pokerhands.h"
 #include "functions.h"
 
@@ -205,6 +206,9 @@ hand_eval (int *totals, const char **ranks, bool isHighStraight, bool *final)
 
   short eval = -1;
 
+  pthread_mutex_t lock;
+  pthread_mutex_lock(&lock);
+
 
   if (final[PAIR] && final[THREE_OF_A_KIND] != 1)
   {
@@ -253,6 +257,8 @@ hand_eval (int *totals, const char **ranks, bool isHighStraight, bool *final)
     eval = ROYAL_FLUSH;
     totals[ROYAL_FLUSH]++;
   }
+
+  pthread_mutex_unlock(&lock);
 
 
   if (SHOW_HAND)
