@@ -29,6 +29,9 @@
 #include "functions.h"
 #include <pthread.h>
 
+// FIXME: Increasing this to a value of > 1 results in an ~8x slowdown
+#define num_threads 1
+
 const char *ranks[] = {
   "Pair",
   "Two Pair",
@@ -70,9 +73,11 @@ main_thread(void *arg) {
     int i = 0;
     int j, k = i;
 
-    short int hand_suits[NUM_OF_SUITS];
-
     deck_shuffle_dh (tinfo->deck);
+
+    int hand_seq[ACE_HIGH];
+    short int hand_suits[NUM_OF_SUITS];
+    init (hand_seq, final_hand, hand_suits);
 
     if (MORE_OUTPUT)
     {
@@ -99,9 +104,6 @@ main_thread(void *arg) {
 
     /* +4 for the unimplemented PLAY feature */
     st_hand hand;
-
-    int hand_seq[ACE_HIGH];
-    zero (hand_seq, final_hand, hand_suits);
 
     /* Deal out a hand */
 
@@ -242,8 +244,6 @@ main (int argc, char *argv[])
   for (i = 0; i < RANKS; i++)
       totals[i] = 0;
 
-  // increasing this to a value of > 1 results in an ~8x slowdown
-  int num_threads = 1;
   st_deck_dh deck[num_threads];
 
   for (i = 0; i < num_threads; i++)

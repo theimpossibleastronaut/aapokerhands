@@ -29,18 +29,18 @@
 #include "functions.h"
 
 void
-zero (int *hand_seq, bool *final_hand, short int* hand_suits)
+init (int *hand_seq, bool *final_hand, short int* hand_suits)
 {
   int i;
 
-  for (i = 0; i < ACE_HIGH; ++i)
+  for (i = 0; i < ACE_HIGH; i++)
     hand_seq[i] = 0;
 
-  for (i = 0; i < NUM_OF_SUITS; ++i)
+  for (i = 0; i < NUM_OF_SUITS; i++)
     hand_suits[i] = 0;
 
   /* set all array elements to 0 */
-  for (i = 0; i < RANKS; ++i)
+  for (i = 0; i < RANKS; i++)
     final_hand[i] = 0;
 }
 
