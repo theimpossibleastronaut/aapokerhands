@@ -62,7 +62,7 @@ main_thread(void *arg) {
 
   int run_count = 0;
 
-  bool final[RANKS];
+  bool final_hand[RANKS];
 
   /* Start main program loop */
   while (run_count++ < tinfo->RUN_COUNT)
@@ -101,7 +101,7 @@ main_thread(void *arg) {
     st_hand hand;
 
     int hand_seq[ACE_HIGH];
-    zero (hand_seq, final, hand_suits);
+    zero (hand_seq, final_hand, hand_suits);
 
     /* Deal out a hand */
 
@@ -187,7 +187,7 @@ main_thread(void *arg) {
     }
 
     /* Evaluate the hand */
-    short paired = find_matches (hand_seq, final);
+    short paired = find_matches (hand_seq, final_hand);
 
     /* if no matches were found, check for flush and straight
      * if there were any matches, flush or straight is impossible,
@@ -197,11 +197,11 @@ main_thread(void *arg) {
 
     if (!paired)
     {
-      isStraight (hand_seq, &isHighStraight, final);
-      isFlush (final, hand_suits);
+      isStraight (hand_seq, &isHighStraight, final_hand);
+      isFlush (final_hand, hand_suits);
     }
 
-    hand_eval (tinfo->totals, ranks, isHighStraight, final);
+    hand_eval (tinfo->totals, ranks, isHighStraight, final_hand);
   }
 
   return NULL;
@@ -242,7 +242,8 @@ main (int argc, char *argv[])
   for (i = 0; i < RANKS; i++)
       totals[i] = 0;
 
-  int num_threads = 2;
+  // increasing this to a value of > 1 results in an ~8x slowdown
+  int num_threads = 1;
   st_deck_dh deck[num_threads];
 
   for (i = 0; i < num_threads; i++)

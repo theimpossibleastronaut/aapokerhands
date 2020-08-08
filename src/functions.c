@@ -29,7 +29,7 @@
 #include "functions.h"
 
 void
-zero (int *hand_seq, bool *final, short int* hand_suits)
+zero (int *hand_seq, bool *final_hand, short int* hand_suits)
 {
   int i;
 
@@ -41,11 +41,11 @@ zero (int *hand_seq, bool *final, short int* hand_suits)
 
   /* set all array elements to 0 */
   for (i = 0; i < RANKS; ++i)
-    final[i] = 0;
+    final_hand[i] = 0;
 }
 
 void
-isStraight (int *hand_seq, bool *isHighStraight, bool *final)
+isStraight (int *hand_seq, bool *isHighStraight, bool *final_hand)
 {
   int k = 13;
 
@@ -70,7 +70,7 @@ isStraight (int *hand_seq, bool *isHighStraight, bool *final)
       state++;
       if (state == 4)
       {
-        final[STRAIGHT] = 1;
+        final_hand[STRAIGHT] = 1;
         if (k == 10)
         {
           /* printf("High Straight"); */
@@ -80,11 +80,11 @@ isStraight (int *hand_seq, bool *isHighStraight, bool *final)
     }
 
   }
-  while (--k && !final[STRAIGHT]);
+  while (--k && !final_hand[STRAIGHT]);
 }
 
 void
-isFlush (bool *final, short int* hand_suits)
+isFlush (bool *final_hand, short int* hand_suits)
 {
   int i;
   for (i = 0; i < NUM_OF_SUITS; ++i)
@@ -93,7 +93,7 @@ isFlush (bool *final, short int* hand_suits)
       break;
     else if (hand_suits[i] == HAND)
     {
-      final[FLUSH] = 1;
+      final_hand[FLUSH] = 1;
       break;
     }
   }
@@ -154,7 +154,7 @@ getopts (int argc, char *argv[], int *RUN_COUNT)
 }
 
 short int
-find_matches (int *hand_seq, bool *final)
+find_matches (int *hand_seq, bool *final_hand)
 {
   int face_val;
   short paired = 0;
@@ -165,20 +165,20 @@ find_matches (int *hand_seq, bool *final)
     {
       paired++;
     }
-    if (hand_seq[face_val] == 2 && !final[PAIR])
+    if (hand_seq[face_val] == 2 && !final_hand[PAIR])
     {
-      final[PAIR] = 1;
+      final_hand[PAIR] = 1;
     }
     else if (hand_seq[face_val] == 2)
     {
-      final[TWO_PAIR] = 1;
-      final[PAIR] = 0;
+      final_hand[TWO_PAIR] = 1;
+      final_hand[PAIR] = 0;
     }
     else if (hand_seq[face_val] == 3)
-      final[THREE_OF_A_KIND] = 1;
+      final_hand[THREE_OF_A_KIND] = 1;
     else if (hand_seq[face_val] == 4)
     {
-      final[FOUR_OF_A_KIND] = 1;
+      final_hand[FOUR_OF_A_KIND] = 1;
       break;
     }
     if (paired > 1)
@@ -201,7 +201,7 @@ show_totals (int *totals, const char **ranks, int RUN_COUNT)
 }
 
 void
-hand_eval (int *totals, const char **ranks, bool isHighStraight, bool *final)
+hand_eval (int *totals, const char **ranks, bool isHighStraight, bool *final_hand)
 {
 
   short eval = -1;
@@ -210,49 +210,49 @@ hand_eval (int *totals, const char **ranks, bool isHighStraight, bool *final)
   pthread_mutex_lock(&lock);
 
 
-  if (final[PAIR] && final[THREE_OF_A_KIND] != 1)
+  if (final_hand[PAIR] && final_hand[THREE_OF_A_KIND] != 1)
   {
     eval = PAIR;
     totals[PAIR]++;
   }
-  else if (final[TWO_PAIR])
+  else if (final_hand[TWO_PAIR])
   {
     eval = TWO_PAIR;
     totals[TWO_PAIR]++;
   }
-  else if (final[THREE_OF_A_KIND] && final[PAIR] != 1)
+  else if (final_hand[THREE_OF_A_KIND] && final_hand[PAIR] != 1)
   {
     eval = THREE_OF_A_KIND;
     totals[THREE_OF_A_KIND]++;
   }
-  else if (final[STRAIGHT] && final[FLUSH] != 1)
+  else if (final_hand[STRAIGHT] && final_hand[FLUSH] != 1)
   {
     eval = STRAIGHT;
     totals[STRAIGHT]++;
   }
-  else if (final[FLUSH] == 1 && final[STRAIGHT] != 1)
+  else if (final_hand[FLUSH] == 1 && final_hand[STRAIGHT] != 1)
   {
     eval = FLUSH;
     totals[FLUSH]++;
   }
-  else if (final[PAIR] && final[THREE_OF_A_KIND])
+  else if (final_hand[PAIR] && final_hand[THREE_OF_A_KIND])
   {
-    /* final[FULL_HOUSE] = 1; */
+    /* final_hand[FULL_HOUSE] = 1; */
     eval = FULL_HOUSE;
     totals[FULL_HOUSE]++;
   }
-  else if (final[FOUR_OF_A_KIND])
+  else if (final_hand[FOUR_OF_A_KIND])
   {
     eval = FOUR_OF_A_KIND;
     totals[FOUR_OF_A_KIND]++;
   }
-  else if (final[STRAIGHT] && final[FLUSH] && isHighStraight != 1)
+  else if (final_hand[STRAIGHT] && final_hand[FLUSH] && isHighStraight != 1)
   {
-    /* final[7] = 1;    */
+    /* final_hand[7] = 1;    */
     eval = STRAIGHT_FLUSH;
     totals[STRAIGHT_FLUSH]++;
   }
-  else if (final[STRAIGHT] && final[FLUSH] && isHighStraight)
+  else if (final_hand[STRAIGHT] && final_hand[FLUSH] && isHighStraight)
   {
     eval = ROYAL_FLUSH;
     totals[ROYAL_FLUSH]++;
