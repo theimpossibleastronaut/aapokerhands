@@ -27,7 +27,7 @@ void init (int *hand_seq, bool *final, short int* hand_suits);
 
 void isStraight (int *hand_seq, bool *isHighStraight, bool *final);
 
-void isFlush (bool *final, short int* hand_suits);
+bool is_flush (short int* hand_suits);
 
 void getopts (int argc, char *argv[], int *RUN_COUNT);
 

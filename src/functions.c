@@ -41,7 +41,7 @@ init (int *hand_seq, bool *final_hand, short int* hand_suits)
 
   /* set all array elements to 0 */
   for (i = 0; i < RANKS; i++)
-    final_hand[i] = 0;
+    final_hand[i] = false;
 }
 
 void
@@ -83,8 +83,8 @@ isStraight (int *hand_seq, bool *isHighStraight, bool *final_hand)
   while (--k && !final_hand[STRAIGHT]);
 }
 
-void
-isFlush (bool *final_hand, short int* hand_suits)
+bool
+is_flush (short int* hand_suits)
 {
   int i;
   for (i = 0; i < NUM_OF_SUITS; ++i)
@@ -92,11 +92,9 @@ isFlush (bool *final_hand, short int* hand_suits)
     if (hand_suits[i] != HAND && hand_suits[i])
       break;
     else if (hand_suits[i] == HAND)
-    {
-      final_hand[FLUSH] = 1;
-      break;
-    }
+      return true;
   }
+  return false;
 }
 
 static void
@@ -206,8 +204,11 @@ hand_eval (int *totals, const char **ranks, bool isHighStraight, bool *final_han
 
   short eval = -1;
 
-  pthread_mutex_t lock;
-  pthread_mutex_lock(&lock);
+
+  // Having this lock causes the program to crash if 'final_hand' is declared
+  // outside the `while` loop in main_thread()
+  /* pthread_mutex_t lock;
+  pthread_mutex_lock(&lock); */
 
 
   if (final_hand[PAIR] && final_hand[THREE_OF_A_KIND] != 1)
@@ -258,7 +259,7 @@ hand_eval (int *totals, const char **ranks, bool isHighStraight, bool *final_han
     totals[ROYAL_FLUSH]++;
   }
 
-  pthread_mutex_unlock(&lock);
+  /* pthread_mutex_unlock(&lock); */
 
 
   if (SHOW_HAND)

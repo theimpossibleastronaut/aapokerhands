@@ -65,8 +65,6 @@ main_thread(void *arg) {
 
   int run_count = 0;
 
-  bool final_hand[RANKS];
-
   /* Start main program loop */
   while (run_count++ < tinfo->RUN_COUNT)
   {
@@ -75,6 +73,7 @@ main_thread(void *arg) {
 
     deck_shuffle_dh (tinfo->deck);
 
+    bool final_hand[RANKS];
     int hand_seq[ACE_HIGH];
     short int hand_suits[NUM_OF_SUITS];
     init (hand_seq, final_hand, hand_suits);
@@ -182,7 +181,7 @@ main_thread(void *arg) {
 
       /* if hand.card[i].suit == 2 (Spades), then hand_suits[2] will
        * be incremented. If hand_suits[2] == 5, a flush will be
-       * found when isFlush() is called.    */
+       * found when is_flush() is called.    */
 
       int suitn = hand.card[i].suit;
       hand_suits[suitn]++;
@@ -200,7 +199,7 @@ main_thread(void *arg) {
     if (!paired)
     {
       isStraight (hand_seq, &isHighStraight, final_hand);
-      isFlush (final_hand, hand_suits);
+      final_hand[FLUSH] = is_flush (hand_suits);
     }
 
     hand_eval (tinfo->totals, ranks, isHighStraight, final_hand);
@@ -250,7 +249,6 @@ main (int argc, char *argv[])
     deck_init_dh (&deck[i]);
 
   int s;
-  struct thread_info *tinfo;
   pthread_attr_t attr;
 
   // How to calculate the needed stack size?
@@ -260,7 +258,7 @@ main (int argc, char *argv[])
 
   pthread_attr_init(&attr);
   pthread_attr_setstacksize(&attr, stack_size);
-  tinfo = calloc(num_threads, sizeof(struct thread_info));
+  struct thread_info *tinfo = calloc(num_threads, sizeof(struct thread_info));
   if (tinfo == NULL)
     puts("Unable to allocate memory");
 
