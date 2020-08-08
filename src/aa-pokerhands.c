@@ -202,7 +202,10 @@ main_thread(void *arg) {
       final_hand[FLUSH] = is_flush (hand_suits);
     }
 
+    pthread_mutex_t lock;
+    pthread_mutex_lock(&lock);
     hand_eval (tinfo->totals, ranks, isHighStraight, final_hand);
+    pthread_mutex_unlock(&lock);
   }
 
   return NULL;

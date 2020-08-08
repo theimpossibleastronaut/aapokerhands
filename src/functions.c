@@ -204,13 +204,6 @@ hand_eval (int *totals, const char **ranks, bool isHighStraight, bool *final_han
 
   short eval = -1;
 
-
-  // Having this lock causes the program to crash if 'final_hand' is declared
-  // outside the `while` loop in main_thread()
-  /* pthread_mutex_t lock;
-  pthread_mutex_lock(&lock); */
-
-
   if (final_hand[PAIR] && final_hand[THREE_OF_A_KIND] != 1)
   {
     eval = PAIR;
@@ -258,9 +251,6 @@ hand_eval (int *totals, const char **ranks, bool isHighStraight, bool *final_han
     eval = ROYAL_FLUSH;
     totals[ROYAL_FLUSH]++;
   }
-
-  /* pthread_mutex_unlock(&lock); */
-
 
   if (SHOW_HAND)
   {
