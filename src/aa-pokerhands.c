@@ -59,6 +59,8 @@ pthread_t thread_id;        /* ID returned by pthread_create() */
   int *totals;
 };
 
+pthread_mutex_t lock;
+
 void*
 main_thread(void *arg) {
   struct thread_info *tinfo = arg;
@@ -202,10 +204,12 @@ main_thread(void *arg) {
       final_hand[FLUSH] = is_flush (hand_suits);
     }
 
-    pthread_mutex_t lock;
-    pthread_mutex_lock(&lock);
+    if (pthread_mutex_lock(&lock) != 0)
+      printf ("Error attempting obtain mutex lock on thread %d\n", tinfo->thread_num);
+
     hand_eval (tinfo->totals, ranks, isHighStraight, final_hand);
-    pthread_mutex_unlock(&lock);
+    if (pthread_mutex_unlock(&lock) != 0)
+      printf ("Error attempting to remove mutex lock on thread %d\n", tinfo->thread_num);
   }
 
   return NULL;
@@ -268,6 +272,12 @@ main (int argc, char *argv[])
   /* seeding the random number generator, used by deck_shuffle_dh() */
   srand (time (NULL));
 
+  if (pthread_mutex_init(&lock, NULL) != 0)
+  {
+    printf("\n mutex init failed\n");
+    return 1;
+  }
+
   for (i = 0; i < num_threads; i++)
   {
     tinfo[i].deck = &deck[i];
@@ -294,6 +304,9 @@ main (int argc, char *argv[])
                        i, (char *) res);
     free(res);
   }
+
+  if (pthread_mutex_destroy(&lock) != 0)
+    puts("Error destroying mutex");
 
   free (tinfo);
 
