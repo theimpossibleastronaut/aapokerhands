@@ -3,7 +3,7 @@
  * This file is part of aa-pokerhands
  * <https://github.com/theimpossibleastronaut/aa-pokerhands>
  *
- * Copyright 2011-2020 Andy Alt <andy400-dev@yahoo.com>
+ * Copyright 2011-2021 Andy Alt <andy400-dev@yahoo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,8 +29,6 @@
 #include "functions.h"
 #include <pthread.h>
 
-// FIXME: Increasing this to a value of > 1 results in an ~8x slowdown
-#define num_threads 1
 
 const char *ranks[] = {
   "Pair",
@@ -51,29 +49,18 @@ bool MORE_OUTPUT;
 /* Leave set to 0, PLAY feature not finished */
 bool PLAY = 0;
 
-struct thread_info {    /* Used as argument to thread_start() */
-pthread_t thread_id;        /* ID returned by pthread_create() */
-  int       thread_num;       /* Application-defined thread # */
-  st_deck_dh *deck;
-  int RUN_COUNT;
-  int *totals;
-};
-
-pthread_mutex_t lock;
-
-void*
-main_thread(void *arg) {
-  struct thread_info *tinfo = arg;
+void
+main_thread(st_deck_dh *deck, const int RUN_COUNT, int *totals) {
 
   int run_count = 0;
 
   /* Start main program loop */
-  while (run_count++ < tinfo->RUN_COUNT)
+  while (run_count++ < RUN_COUNT)
   {
     int i = 0;
     int j, k = i;
 
-    deck_shuffle_dh (tinfo->deck);
+    deck_shuffle_dh (deck);
 
     bool final_hand[RANKS];
     int hand_seq[ACE_HIGH];
@@ -85,7 +72,7 @@ main_thread(void *arg) {
       do
       {
         printf ("%5s of %2s",
-                get_card_face (tinfo->deck->card[i]), get_card_suit (tinfo->deck->card[i]));
+                get_card_face (deck->card[i]), get_card_suit (deck->card[i]));
 
         /* print newline every 4 cards */
         if (++j != 4)
@@ -113,7 +100,7 @@ main_thread(void *arg) {
       if (PLAY && k < 5)
       {
         printf ("(%d)%5s of %2s", k + 1,
-                get_card_face (tinfo->deck->card[i]), get_card_suit (tinfo->deck->card[i]));
+                get_card_face (deck->card[i]), get_card_suit (deck->card[i]));
         if (++j != 4)
           printf (" | ");
         else
@@ -123,8 +110,8 @@ main_thread(void *arg) {
         }
       }
 
-      hand.card[k].suit = tinfo->deck->card[i].suit;
-      hand.card[k].face_val = tinfo->deck->card[i].face_val;
+      hand.card[k].suit = deck->card[i].suit;
+      hand.card[k].face_val = deck->card[i].face_val;
 
       /* Deal out every other card */
       i += 2;
@@ -155,7 +142,7 @@ main_thread(void *arg) {
       if (SHOW_HAND)
       {
         printf ("%5s of %2s",
-                get_card_face (tinfo->deck->card[i]), get_card_suit (tinfo->deck->card[i]));
+                get_card_face (deck->card[i]), get_card_suit (deck->card[i]));
         if (++j != 4)
           printf (" | ");
         else
@@ -204,15 +191,10 @@ main_thread(void *arg) {
       final_hand[FLUSH] = is_flush (hand_suits);
     }
 
-    if (pthread_mutex_lock(&lock) != 0)
-      printf ("Error attempting obtain mutex lock on thread %d\n", tinfo->thread_num);
-
-    hand_eval (tinfo->totals, ranks, isHighStraight, final_hand);
-    if (pthread_mutex_unlock(&lock) != 0)
-      printf ("Error attempting to remove mutex lock on thread %d\n", tinfo->thread_num);
+    hand_eval (totals, ranks, isHighStraight, final_hand);
   }
 
-  return NULL;
+  return;
 }
 
 
@@ -250,65 +232,13 @@ main (int argc, char *argv[])
   for (i = 0; i < RANKS; i++)
       totals[i] = 0;
 
-  st_deck_dh deck[num_threads];
-
-  for (i = 0; i < num_threads; i++)
-    deck_init_dh (&deck[i]);
-
-  int s;
-  pthread_attr_t attr;
-
-  // How to calculate the needed stack size?
-  int stack_size = 8192;
-
-  void *res;
-
-  pthread_attr_init(&attr);
-  pthread_attr_setstacksize(&attr, stack_size);
-  struct thread_info *tinfo = calloc(num_threads, sizeof(struct thread_info));
-  if (tinfo == NULL)
-    puts("Unable to allocate memory");
+  st_deck_dh deck;
+  deck_init_dh (&deck);
 
   /* seeding the random number generator, used by deck_shuffle_dh() */
   srand (time (NULL));
 
-  if (pthread_mutex_init(&lock, NULL) != 0)
-  {
-    printf("\n mutex init failed\n");
-    return 1;
-  }
-
-  for (i = 0; i < num_threads; i++)
-  {
-    tinfo[i].deck = &deck[i];
-    tinfo[i].RUN_COUNT = RUN_COUNT / num_threads;
-    tinfo[i].totals = totals;
-    s = pthread_create (&tinfo[i].thread_id, &attr, &main_thread, &tinfo[i]);
-    if (!s)
-      printf("\n Job %d started\n", i);
-    else
-      puts("Error creating thread");
-  }
-
-  s = pthread_attr_destroy(&attr);
-  if (s != 0)
-    puts("Error destroying attribute");
-
-  for (i = 0; i < num_threads; i++)
-  {
-    s = pthread_join(tinfo[i].thread_id, &res);
-    if (s != 0)
-      printf("Error joining thread %d\n", i);
-    else
-      printf("Joined with thread %d; returned value was %s\n",
-                       i, (char *) res);
-    free(res);
-  }
-
-  if (pthread_mutex_destroy(&lock) != 0)
-    puts("Error destroying mutex");
-
-  free (tinfo);
+  main_thread (&deck, RUN_COUNT, totals);
 
   /* Show totals for all hands */
   show_totals (totals, ranks, RUN_COUNT);

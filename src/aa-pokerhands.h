@@ -1,7 +1,7 @@
 /*
  * aa-pokerhands.h
  *
- * Copyright 2011-2020 Andy Alt <andy400-dev@yahoo.com>
+ * Copyright 2011-2021 Andy Alt <andy400-dev@yahoo.com>
  * This file is part of aa-pokerhands
  * <https://github.com/theimpossibleastronaut/aa-pokerhands>
  *
