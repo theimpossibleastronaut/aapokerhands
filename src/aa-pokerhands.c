@@ -3,7 +3,7 @@
  * This file is part of aa-pokerhands
  * <https://github.com/theimpossibleastronaut/aa-pokerhands>
  *
- * Copyright 2011-2020 Andy <andy400-dev@yahoo.com>
+ * Copyright 2011-2021 Andy Alt <andy400-dev@yahoo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,8 @@
 #include <stdlib.h>
 #include "aa-pokerhands.h"
 #include "functions.h"
+#include <pthread.h>
+
 
 const char *ranks[] = {
   "Pair",
@@ -41,66 +43,36 @@ const char *ranks[] = {
 };
 
 const int RANKS = ARRAY_SIZE(ranks);
+bool SHOW_HAND;
+bool MORE_OUTPUT;
 
-int
-main (int argc, char *argv[])
-{
-  RUN_COUNT = 20;
-  MORE_OUTPUT = 0;
-  SHOW_HAND = 0;
-  PLAY = 0;
+/* Leave set to 0, PLAY feature not finished */
+bool PLAY = 0;
 
-  getopts (argc, argv);
-
-  int i, j, k;
-
-  int suitn, valuen;
-
-  short discard, next;
-
-  short paired;
+void
+main_thread(st_deck_dh *deck, const int RUN_COUNT, int *totals) {
 
   int run_count = 0;
-
-  if (RUN_COUNT > INT_MAX - 1)
-  {
-    printf ("Your RUN_COUNT should be lower than INT_MAX\n");
-    return 1;
-  }
-
-  if (PLAY && MORE_OUTPUT)
-  {
-    MORE_OUTPUT = 0;
-  }
-
-  if (PLAY && SHOW_HAND)
-  {
-    SHOW_HAND = 1;
-  }
-
-  st_deck_dh deck;
-  deck_init_dh (&deck);
-
-  /* seeding the random number generator, used by deck_shuffle_dh() */
-  srand (time (NULL));
-
-  int totals[RANKS];
-  bool final[RANKS];
 
   /* Start main program loop */
   while (run_count++ < RUN_COUNT)
   {
+    int i = 0;
+    int j, k = i;
 
-    deck_shuffle_dh (&deck);
+    deck_shuffle_dh (deck);
+
+    bool final_hand[RANKS];
+    int hand_seq[ACE_HIGH];
+    short int hand_suits[NUM_OF_SUITS];
+    init (hand_seq, final_hand, hand_suits);
 
     if (MORE_OUTPUT)
     {
-
-      i = j = 0;
       do
       {
         printf ("%5s of %2s",
-                get_card_face (deck.card[i]), get_card_suit (deck.card[i]));
+                get_card_face (deck->card[i]), get_card_suit (deck->card[i]));
 
         /* print newline every 4 cards */
         if (++j != 4)
@@ -121,18 +93,14 @@ main (int argc, char *argv[])
     /* +4 for the unimplemented PLAY feature */
     st_hand hand;
 
-    int hand_seq[ACE_HIGH];
-    zero (hand_seq, final);
-
     /* Deal out a hand */
 
-    i = j = k = 0;
     do
     {
       if (PLAY && k < 5)
       {
         printf ("(%d)%5s of %2s", k + 1,
-                get_card_face (deck.card[i]), get_card_suit (deck.card[i]));
+                get_card_face (deck->card[i]), get_card_suit (deck->card[i]));
         if (++j != 4)
           printf (" | ");
         else
@@ -142,18 +110,19 @@ main (int argc, char *argv[])
         }
       }
 
-      hand.card[k].suit = deck.card[i].suit;
-      hand.card[k].face_val = deck.card[i].face_val;
+      hand.card[k].suit = deck->card[i].suit;
+      hand.card[k].face_val = deck->card[i].face_val;
 
       /* Deal out every other card */
       i += 2;
     } while (++k < HAND + (PLAY * 4));
 
-    /* CR; */
+    int suitn, valuen;
 
     if (PLAY)
     {
-      next = 5;
+      short discard = 0;
+      int next = 5;
       for (j = 5; j < 9; j++)
       {
         scanf ("%hd", &discard);
@@ -173,7 +142,7 @@ main (int argc, char *argv[])
       if (SHOW_HAND)
       {
         printf ("%5s of %2s",
-                get_card_face (deck.card[i]), get_card_suit (deck.card[i]));
+                get_card_face (deck->card[i]), get_card_suit (deck->card[i]));
         if (++j != 4)
           printf (" | ");
         else
@@ -201,14 +170,14 @@ main (int argc, char *argv[])
 
       /* if hand.card[i].suit == 2 (Spades), then hand_suits[2] will
        * be incremented. If hand_suits[2] == 5, a flush will be
-       * found when isFlush() is called.    */
+       * found when is_flush() is called.    */
 
-      suitn = hand.card[i].suit;
+      int suitn = hand.card[i].suit;
       hand_suits[suitn]++;
     }
 
     /* Evaluate the hand */
-    paired = find_matches (hand_seq, final);
+    short paired = find_matches (hand_seq, final_hand);
 
     /* if no matches were found, check for flush and straight
      * if there were any matches, flush or straight is impossible,
@@ -218,16 +187,61 @@ main (int argc, char *argv[])
 
     if (!paired)
     {
-      isStraight (hand_seq, &isHighStraight, final);
-      isFlush (final);
+      isStraight (hand_seq, &isHighStraight, final_hand);
+      final_hand[FLUSH] = is_flush (hand_suits);
     }
 
-    hand_eval (totals, run_count, ranks, isHighStraight, final);
+    hand_eval (totals, ranks, isHighStraight, final_hand);
+  }
 
-  }                             /* End main program loop  */
+  return;
+}
+
+
+int
+main (int argc, char *argv[])
+{
+  /* Number of hands to deal out */
+  /* can be changed from the command line with -n [hands] */
+  int RUN_COUNT = 20;
+  MORE_OUTPUT = 0;
+  SHOW_HAND = 0;
+  PLAY = 0;
+
+  getopts (argc, argv, &RUN_COUNT);
+
+  if (RUN_COUNT > INT_MAX - 1)
+  {
+    printf ("Your RUN_COUNT should be lower than INT_MAX\n");
+    return 1;
+  }
+
+  if (PLAY && MORE_OUTPUT)
+  {
+    MORE_OUTPUT = 0;
+  }
+
+  if (PLAY && SHOW_HAND)
+  {
+    SHOW_HAND = 1;
+  }
+
+  int totals[9];
+
+  int i;
+  for (i = 0; i < RANKS; i++)
+      totals[i] = 0;
+
+  st_deck_dh deck;
+  deck_init_dh (&deck);
+
+  /* seeding the random number generator, used by deck_shuffle_dh() */
+  srand (time (NULL));
+
+  main_thread (&deck, RUN_COUNT, totals);
 
   /* Show totals for all hands */
-  show_totals (totals, run_count, ranks);
+  show_totals (totals, ranks, RUN_COUNT);
 
   /* print a newline before the program ends */
   CR;

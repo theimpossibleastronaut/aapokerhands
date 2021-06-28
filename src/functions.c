@@ -1,7 +1,7 @@
 /*
  * functions.c
  *
- * Copyright 2011-2020 Andy <andy400-dev@yahoo.com>
+ * Copyright 2011-2020 Andy Alt <andy400-dev@yahoo.com>
  * This file is part of aa-pokerhands
  * <https://github.com/theimpossibleastronaut/aa-pokerhands>
  *
@@ -24,27 +24,28 @@
  */
 
 #include <stdlib.h>
+#include <pthread.h>
 #include "aa-pokerhands.h"
 #include "functions.h"
 
 void
-zero (int *hand_seq, bool *final)
+init (int *hand_seq, bool *final_hand, short int* hand_suits)
 {
   int i;
 
-  for (i = 0; i < ACE_HIGH; ++i)
+  for (i = 0; i < ACE_HIGH; i++)
     hand_seq[i] = 0;
 
-  for (i = 0; i < NUM_OF_SUITS; ++i)
+  for (i = 0; i < NUM_OF_SUITS; i++)
     hand_suits[i] = 0;
 
   /* set all array elements to 0 */
-  for (i = 0; i < RANKS; ++i)
-    final[i] = 0;
+  for (i = 0; i < RANKS; i++)
+    final_hand[i] = false;
 }
 
 void
-isStraight (int *hand_seq, bool *isHighStraight, bool *final)
+isStraight (int *hand_seq, bool *isHighStraight, bool *final_hand)
 {
   int k = 13;
 
@@ -69,7 +70,7 @@ isStraight (int *hand_seq, bool *isHighStraight, bool *final)
       state++;
       if (state == 4)
       {
-        final[STRAIGHT] = 1;
+        final_hand[STRAIGHT] = 1;
         if (k == 10)
         {
           /* printf("High Straight"); */
@@ -79,11 +80,11 @@ isStraight (int *hand_seq, bool *isHighStraight, bool *final)
     }
 
   }
-  while (--k && !final[STRAIGHT]);
+  while (--k && !final_hand[STRAIGHT]);
 }
 
-void
-isFlush (bool *final)
+bool
+is_flush (short int* hand_suits)
 {
   int i;
   for (i = 0; i < NUM_OF_SUITS; ++i)
@@ -91,11 +92,9 @@ isFlush (bool *final)
     if (hand_suits[i] != HAND && hand_suits[i])
       break;
     else if (hand_suits[i] == HAND)
-    {
-      final[FLUSH] = 1;
-      break;
-    }
+      return true;
   }
+  return false;
 }
 
 static void
@@ -113,7 +112,7 @@ usage (const char *argv_one)
 }
 
 void
-getopts (int argc, char *argv[])
+getopts (int argc, char *argv[], int *RUN_COUNT)
 {
   /* fetch command line arguments */
   int i;
@@ -126,8 +125,8 @@ getopts (int argc, char *argv[])
         case 'n':
           if (i < argc - 1)
           {
-            RUN_COUNT = atoi (argv[i++ + 1]);
-            if (RUN_COUNT < 1)
+            *RUN_COUNT = atoi (argv[i++ + 1]);
+            if (*RUN_COUNT < 1)
               usage (argv[0]);
           }
           else
@@ -153,7 +152,7 @@ getopts (int argc, char *argv[])
 }
 
 short int
-find_matches (int *hand_seq, bool *final)
+find_matches (int *hand_seq, bool *final_hand)
 {
   int face_val;
   short paired = 0;
@@ -164,20 +163,20 @@ find_matches (int *hand_seq, bool *final)
     {
       paired++;
     }
-    if (hand_seq[face_val] == 2 && !final[PAIR])
+    if (hand_seq[face_val] == 2 && !final_hand[PAIR])
     {
-      final[PAIR] = 1;
+      final_hand[PAIR] = 1;
     }
     else if (hand_seq[face_val] == 2)
     {
-      final[TWO_PAIR] = 1;
-      final[PAIR] = 0;
+      final_hand[TWO_PAIR] = 1;
+      final_hand[PAIR] = 0;
     }
     else if (hand_seq[face_val] == 3)
-      final[THREE_OF_A_KIND] = 1;
+      final_hand[THREE_OF_A_KIND] = 1;
     else if (hand_seq[face_val] == 4)
     {
-      final[FOUR_OF_A_KIND] = 1;
+      final_hand[FOUR_OF_A_KIND] = 1;
       break;
     }
     if (paired > 1)
@@ -187,7 +186,7 @@ find_matches (int *hand_seq, bool *final)
 }
 
 void
-show_totals (int *totals, int run_count, const char **ranks)
+show_totals (int *totals, const char **ranks, int RUN_COUNT)
 {
   int n;
 
@@ -200,65 +199,58 @@ show_totals (int *totals, int run_count, const char **ranks)
 }
 
 void
-hand_eval (int *totals, int run_count, const char **ranks, bool isHighStraight, bool *final)
+hand_eval (int *totals, const char **ranks, bool isHighStraight, bool *final_hand)
 {
-  int i;
-
-  if (run_count == 1)
-    for (i = 0; i < RANKS; i++)
-      totals[i] = 0;
 
   short eval = -1;
 
-
-  if (final[PAIR] && final[THREE_OF_A_KIND] != 1)
+  if (final_hand[PAIR] && final_hand[THREE_OF_A_KIND] != 1)
   {
     eval = PAIR;
     totals[PAIR]++;
   }
-  else if (final[TWO_PAIR])
+  else if (final_hand[TWO_PAIR])
   {
     eval = TWO_PAIR;
     totals[TWO_PAIR]++;
   }
-  else if (final[THREE_OF_A_KIND] && final[PAIR] != 1)
+  else if (final_hand[THREE_OF_A_KIND] && final_hand[PAIR] != 1)
   {
     eval = THREE_OF_A_KIND;
     totals[THREE_OF_A_KIND]++;
   }
-  else if (final[STRAIGHT] && final[FLUSH] != 1)
+  else if (final_hand[STRAIGHT] && final_hand[FLUSH] != 1)
   {
     eval = STRAIGHT;
     totals[STRAIGHT]++;
   }
-  else if (final[FLUSH] == 1 && final[STRAIGHT] != 1)
+  else if (final_hand[FLUSH] == 1 && final_hand[STRAIGHT] != 1)
   {
     eval = FLUSH;
     totals[FLUSH]++;
   }
-  else if (final[PAIR] && final[THREE_OF_A_KIND])
+  else if (final_hand[PAIR] && final_hand[THREE_OF_A_KIND])
   {
-    /* final[FULL_HOUSE] = 1; */
+    /* final_hand[FULL_HOUSE] = 1; */
     eval = FULL_HOUSE;
     totals[FULL_HOUSE]++;
   }
-  else if (final[FOUR_OF_A_KIND])
+  else if (final_hand[FOUR_OF_A_KIND])
   {
     eval = FOUR_OF_A_KIND;
     totals[FOUR_OF_A_KIND]++;
   }
-  else if (final[STRAIGHT] && final[FLUSH] && isHighStraight != 1)
+  else if (final_hand[STRAIGHT] && final_hand[FLUSH] && isHighStraight != 1)
   {
-    /* final[7] = 1;    */
+    /* final_hand[7] = 1;    */
     eval = STRAIGHT_FLUSH;
     totals[STRAIGHT_FLUSH]++;
   }
-  else if (final[STRAIGHT] && final[FLUSH] && isHighStraight)
+  else if (final_hand[STRAIGHT] && final_hand[FLUSH] && isHighStraight)
   {
     eval = ROYAL_FLUSH;
     totals[ROYAL_FLUSH]++;
   }
-
 
   if (SHOW_HAND)
   {
