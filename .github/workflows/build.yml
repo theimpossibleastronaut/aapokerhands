@@ -35,7 +35,7 @@ jobs:
       uses: ncipollo/release-action@v1
       with:
         allowUpdates: True
-        tag: continuous
+        commit: master
         name: Continuous build
         prerelease: True
         artifacts: "_build/pokerhands*.AppImage"
