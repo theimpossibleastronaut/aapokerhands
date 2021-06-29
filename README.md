@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/theimpossibleastronaut/aa-pokerhands.svg?branch=master)](https://travis-ci.org/theimpossibleastronaut/aa-pokerhands)
+[![C Build](https://github.com/theimpossibleastronaut/aa-pokerhands/actions/workflows/c-cpp.yml/badge.svg)](https://github.com/theimpossibleastronaut/aa-pokerhands/actions/workflows/c-cpp.yml)
 
 # aa-pokerhands
 Will analyze for poker hands
