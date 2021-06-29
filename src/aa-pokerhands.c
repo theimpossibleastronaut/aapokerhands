@@ -57,8 +57,8 @@ main_thread(st_deck_dh *deck, const int RUN_COUNT, int *totals) {
   /* Start main program loop */
   while (run_count++ < RUN_COUNT)
   {
-    int i = 0;
-    int j, k = i;
+    int i, j, k;
+    i = j = k = 0;
 
     deck_shuffle_dh (deck);
 
