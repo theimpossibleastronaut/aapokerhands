@@ -7,7 +7,8 @@ jobs:
   # This workflow contains a single job called "build"
   build:
     runs-on: ubuntu-latest
-
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
     - uses: actions/checkout@v2
       with:
@@ -21,7 +22,8 @@ jobs:
       run: |
         wget -nv -c https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
         chmod +x linuxdeploy-x86_64.AppImage
-
+        wget -q https://github.com/TheAssassin/pyuploadtool/releases/download/continuous/pyuploadtool-x86_64.AppImage
+        chmod +x pyuploadtool-x86_64.AppImage
     - run: |
         meson setup _build -Dprefix=/usr -Dstrip=true --buildtype=release
         cd _build
@@ -30,12 +32,4 @@ jobs:
         ../linuxdeploy-x86_64.AppImage --executable AppDir/usr/bin/pokerhands \
           --icon-file=../aa-pokerhands.png --icon-filename=pokerhands \
           --create-desktop-file --appdir $PWD/AppDir --output appimage
-
-    - name: Create Release
-      uses: ncipollo/release-action@v1
-      with:
-        allowUpdates: True
-        name: Continuous build
-        prerelease: True
-        artifacts: "_build/pokerhands*.AppImage"
-        token: ${{ secrets.GITHUB_TOKEN }}
+        ../pyuploadtool-x86_64.AppImage pokerhands*AppImage
