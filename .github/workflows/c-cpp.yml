@@ -2,18 +2,37 @@ name: C/C++ CI
 
 on:
   push:
-    branches: [ master ]
+    paths-ignore:
+    - '**/*.md'
   pull_request:
-    branches: [ master ]
+    paths-ignore:
+    - '**/*.md'
 
 jobs:
-  build:
-
+  Ubuntu:
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v2
-    - run: sudo apt-get install -y meson
+      with:
+        submodules: true
+    - name: Install Dependencies
+      run: sudo apt-get install -y meson
+    - run: |
+        meson _build
+        cd _build
+        ninja -v
+        ninja dist
+
+  MacOS:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: true
+    - name: Install Dependencies
+      run: |
+        brew update
+        brew install meson
     - run: |
         meson _build
         cd _build
