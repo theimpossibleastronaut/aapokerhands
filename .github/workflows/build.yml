@@ -36,6 +36,7 @@ jobs:
       with:
         allowUpdates: True
         commit: master
+        tag: continuous
         name: Continuous build
         prerelease: True
         artifacts: "_build/pokerhands*.AppImage"
