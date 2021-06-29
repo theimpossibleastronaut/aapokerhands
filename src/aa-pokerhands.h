@@ -56,8 +56,9 @@ enum
 
 #define CR printf("\n")
 
-typedef struct {
+typedef struct
+{
   st_card_info_dh card[HAND + 4];
-}st_hand;
+} st_hand;
 
 extern const int RANKS;

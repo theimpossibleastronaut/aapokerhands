@@ -29,7 +29,7 @@
 #include "functions.h"
 
 void
-init (int *hand_seq, bool *final_hand, short int* hand_suits)
+init (int *hand_seq, bool *final_hand, short int *hand_suits)
 {
   int i;
 
@@ -84,7 +84,7 @@ isStraight (int *hand_seq, bool *isHighStraight, bool *final_hand)
 }
 
 bool
-is_flush (short int* hand_suits)
+is_flush (short int *hand_suits)
 {
   int i;
   for (i = 0; i < NUM_OF_SUITS; ++i)
@@ -199,7 +199,8 @@ show_totals (int *totals, const char **ranks, int RUN_COUNT)
 }
 
 void
-hand_eval (int *totals, const char **ranks, bool isHighStraight, bool *final_hand)
+hand_eval (int *totals, const char **ranks, bool isHighStraight,
+           bool *final_hand)
 {
 
   short eval = -1;

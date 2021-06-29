@@ -42,7 +42,7 @@ const char *ranks[] = {
   "Royal Flush"
 };
 
-const int RANKS = ARRAY_SIZE(ranks);
+const int RANKS = ARRAY_SIZE (ranks);
 bool SHOW_HAND;
 bool MORE_OUTPUT;
 
@@ -50,7 +50,8 @@ bool MORE_OUTPUT;
 bool PLAY = 0;
 
 void
-main_thread(st_deck_dh *deck, const int RUN_COUNT, int *totals) {
+main_thread (st_deck_dh * deck, const int RUN_COUNT, int *totals)
+{
 
   int run_count = 0;
 
@@ -115,7 +116,8 @@ main_thread(st_deck_dh *deck, const int RUN_COUNT, int *totals) {
 
       /* Deal out every other card */
       i += 2;
-    } while (++k < HAND + (PLAY * 4));
+    }
+    while (++k < HAND + (PLAY * 4));
 
     int suitn, valuen;
 
@@ -230,7 +232,7 @@ main (int argc, char *argv[])
 
   int i;
   for (i = 0; i < RANKS; i++)
-      totals[i] = 0;
+    totals[i] = 0;
 
   st_deck_dh deck;
   deck_init_dh (&deck);

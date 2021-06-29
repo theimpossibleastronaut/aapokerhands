@@ -23,17 +23,17 @@
  *
  */
 
-void init (int *hand_seq, bool *final, short int* hand_suits);
+void init (int *hand_seq, bool *final, short int *hand_suits);
 
 void isStraight (int *hand_seq, bool *isHighStraight, bool *final);
 
-bool is_flush (short int* hand_suits);
+bool is_flush (short int *hand_suits);
 
 void getopts (int argc, char *argv[], int *RUN_COUNT);
 
 short int find_matches (int *hand_seq, bool *final);
 
-void hand_eval (int *totals, const char **ranks, bool isHighStraight, bool *final);
+void hand_eval (int *totals, const char **ranks, bool isHighStraight,
+                bool *final);
 
-void
-show_totals (int *totals, const char **ranks, int RUN_COUNT);
+void show_totals (int *totals, const char **ranks, int RUN_COUNT);
