@@ -29,7 +29,7 @@ jobs:
         cd _build
         ninja
         DESTDIR=AppDir ninja -v install
-        ../linuxdeploy-x86_64.AppImage --executable AppDir/usr/bin/pokerhands \
-          --icon-file=../aa-pokerhands.png --icon-filename=pokerhands \
+        ../linuxdeploy-x86_64.AppImage --executable AppDir/usr/bin/aapokerhands \
+          --icon-file=../aapokerhands.png --icon-filename=aapokerhands \
           --create-desktop-file --appdir $PWD/AppDir --output appimage
         ../pyuploadtool-x86_64.AppImage pokerhands*AppImage

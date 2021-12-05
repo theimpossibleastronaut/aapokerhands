@@ -1,9 +1,9 @@
-src = ['aa-pokerhands.c', 'functions.c']
+src = ['aapokerhands.c']
 dep = 'deckhandler'
 dep_target = static_library(dep, join_paths(dep, dep + '.c'))
 
 extra_args = ['-fno-common']
-executable('pokerhands', src, c_args : extra_args, link_with : dep_target, install:true)
+executable('aapokerhands', src, c_args : extra_args, link_with : dep_target, install:true)
 
 conf = configuration_data()
 conf.set('VERSION', meson.project_version())

@@ -1,18 +1,18 @@
-[![C Build](https://github.com/theimpossibleastronaut/aa-pokerhands/actions/workflows/c-cpp.yml/badge.svg)](https://github.com/theimpossibleastronaut/aa-pokerhands/actions/workflows/c-cpp.yml)
+[![C Build](https://github.com/theimpossibleastronaut/aapokerhands/actions/workflows/c-cpp.yml/badge.svg)](https://github.com/theimpossibleastronaut/aapokerhands/actions/workflows/c-cpp.yml)
 
-# aa-pokerhands
+# aapokerhands
 Will analyze for poker hands
 
 I wrote this
-(see [first uploaded version](https://github.com/andy5995/aa-pokerhands/commit/809629820fe14868cae5f2a675d8f51f55cd729c))
-6 years ago.
+(see [first uploaded version](https://github.com/andy5995/aapokerhands/commit/809629820fe14868cae5f2a675d8f51f55cd729c))
+several years ago for practice. I've refactored some code since then.
 
 ## Dependencies
 
 * [deckhandler](https://github.com/theimpossibleastronaut/deckhandler)
 * [meson](http://mesonbuild.com/Quick-guide.html) (for the build system)
 
-From the *aa-pokerhands* directory, to download latest *deckhandler* code:
+From the *aapokerhands* directory, to download latest *deckhandler* code:
 
     git submodule update --init --recursive
 
@@ -25,15 +25,15 @@ From the *aa-pokerhands* directory, to download latest *deckhandler* code:
 The resulting binary will be in *src/*
 
 ## Usage
-    src/pokerhands: -n [hands] -s -v
+    src/aapokerhands: -n [hands] -s -v
 
 # Downloads
-[Releases](https://github.com/theimpossibleastronaut/aa-pokerhands/releases)
+[Releases](https://github.com/theimpossibleastronaut/aapokerhands/releases)
 
 ## Example Output
 
 ```
-andy@oceanus:~/src/aa-pokerhands$ ./pokerhands -n 100000
+andy@oceanus:~/src/aapokerhands$ ./aapokerhands -n 100000
 Out of 100000 hands:
 
                 Pair:     42250
@@ -46,7 +46,7 @@ Out of 100000 hands:
       Straight Flush:         3
          Royal Flush:         0
 
-andy@oceanus:~/src/aa-pokerhands/src$ ./pokerhands -n 1000000
+andy@oceanus:~/src/aapokerhands/src$ ./aapokerhands -n 1000000
 Out of 1000000 hands:
 
                 Pair:    422821
@@ -59,7 +59,7 @@ Out of 1000000 hands:
       Straight Flush:        15
          Royal Flush:         1
 
-andy@oceanus:~/src/aa-pokerhands/src$ nice -n 19 ./pokerhands -n 1000000000
+andy@oceanus:~/src/aapokerhands/src$ nice -n 19 ./aapokerhands -n 1000000000
 Out of 1000000000 hands:
 
                 Pair: 422573272
@@ -73,7 +73,7 @@ Out of 1000000000 hands:
          Royal Flush:      1552
 ```
 
-[More Example Output](https://github.com/theimpossibleastronaut/aa-pokerhands/blob/master/example_output01.txt)
+[More Example Output](https://github.com/theimpossibleastronaut/aapokerhands/blob/master/example_output01.txt)
 
 ## Installation
 

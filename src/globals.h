@@ -1,9 +1,9 @@
 /*
- * aa-pokerhands.h
+ * globals.h
  *
  * Copyright 2011-2021 Andy Alt <andy400-dev@yahoo.com>
- * This file is part of aa-pokerhands
- * <https://github.com/theimpossibleastronaut/aa-pokerhands>
+ * This file is part of aapokerhands
+ * <https://github.com/theimpossibleastronaut/aapokerhands>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,16 +23,24 @@
  *
  */
 
-#include <stdio.h>
-#include <string.h>
-#include <unistd.h>
-#include <stdbool.h>
-#include <limits.h>
-
 #include "config.h"
 
 /* use deckhandler library */
 #include "deckhandler/deckhandler.h"
+
+const char *ranks[] = {
+  "Pair",
+  "Two Pair",
+  "Three-of-a-Kind",
+  "Straight",
+  "Flush",
+  "Full House",
+  "Four-of-a-Kind",
+  "Straight Flush",
+  "Royal Flush"
+};
+
+const int n_ranks = sizeof(ranks) / sizeof(ranks[0]);
 
 /* can be set on the command line with -v */
 /* Show all 52 cards after the deck has been shuffled */
@@ -48,7 +56,6 @@ enum
 { PAIR, TWO_PAIR, THREE_OF_A_KIND, STRAIGHT, FLUSH,
   FULL_HOUSE, FOUR_OF_A_KIND, STRAIGHT_FLUSH, ROYAL_FLUSH
 };
-#define ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
 
 #define ACE_HIGH 14
 
@@ -60,5 +67,3 @@ typedef struct
 {
   st_card_info_dh card[HAND + 4];
 } st_hand;
-
-extern const int RANKS;
