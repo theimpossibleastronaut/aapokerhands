@@ -6,11 +6,11 @@ jobs:
 
   # This workflow contains a single job called "build"
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
         submodules: true
     # Runs a single command using the runners shell
@@ -29,7 +29,10 @@ jobs:
         cd _build
         ninja
         DESTDIR=AppDir ninja -v install
-        ../linuxdeploy-x86_64.AppImage --executable AppDir/usr/bin/aapokerhands \
-          --icon-file=../aapokerhands.png --icon-filename=aapokerhands \
-          --create-desktop-file --appdir $PWD/AppDir --output appimage
+        ../linuxdeploy-x86_64.AppImage \
+          --executable AppDir/usr/bin/aapokerhands \
+          --icon-file=../aapokerhands.png \
+          --icon-filename=aapokerhands \
+          --create-desktop-file \
+          --appdir $PWD/AppDir --output appimage
         ../pyuploadtool-x86_64.AppImage aapokerhands*AppImage
