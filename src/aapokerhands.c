@@ -34,7 +34,7 @@
 #include "globals.h"
 
 bool SHOW_HAND;
-bool MORE_OUTPUT;
+bool verbose;
 
 /* Leave set to 0, PLAY feature not finished */
 bool PLAY = 0;
@@ -149,7 +149,7 @@ getopts (int argc, char *argv[], int *RUN_COUNT)
             usage (argv[0]);
           break;
         case 'v':
-          MORE_OUTPUT = 1;
+          verbose = 1;
           break;
         case 's':
           SHOW_HAND = 1;
@@ -306,7 +306,7 @@ main_thread (st_deck_dh * deck, const int RUN_COUNT, int *totals)
     short int hand_suits[NUM_OF_SUITS];
     init (hand_seq, final_hand, hand_suits);
 
-    if (MORE_OUTPUT)
+    if (verbose)
     {
       int copy_i = i;
       int copy_j = j;
@@ -445,7 +445,7 @@ main (int argc, char *argv[])
   /* Number of hands to deal out */
   /* can be changed from the command line with -n [hands] */
   int RUN_COUNT = 20;
-  MORE_OUTPUT = 0;
+  verbose = 0;
   SHOW_HAND = 0;
   PLAY = 0;
 
@@ -457,9 +457,9 @@ main (int argc, char *argv[])
     return 1;
   }
 
-  if (PLAY && MORE_OUTPUT)
+  if (PLAY && verbose)
   {
-    MORE_OUTPUT = 0;
+    verbose = 0;
   }
 
   if (PLAY && SHOW_HAND)

@@ -44,7 +44,7 @@ const int n_ranks = sizeof(ranks) / sizeof(ranks[0]);
 
 /* can be set on the command line with -v */
 /* Show all 52 cards after the deck has been shuffled */
-extern bool MORE_OUTPUT;
+extern bool verbose;
 
 /* can be set on the command line with -s */
 /* Show the hand that was dealt */
