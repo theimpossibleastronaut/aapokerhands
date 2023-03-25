@@ -18,7 +18,7 @@ From the *aapokerhands* directory, to download latest *deckhandler* code:
 
 ## Building
 
-    meson builddir
+    meson setup builddir
     cd builddir
     ninja
 
