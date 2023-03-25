@@ -204,7 +204,7 @@ find_matches (int *hand_seq, bool *final_hand)
 
 
 void
-show_totals (int *totals, const char **ranks, int RUN_COUNT)
+show_totals (int *totals, int RUN_COUNT)
 {
   int n;
 
@@ -218,7 +218,7 @@ show_totals (int *totals, const char **ranks, int RUN_COUNT)
 
 
 void
-hand_eval (int *totals, const char **ranks, bool isHighStraight,
+hand_eval (int *totals, bool isHighStraight,
            bool *final_hand)
 {
 
@@ -414,8 +414,7 @@ main_thread (st_deck_dh * deck, const int RUN_COUNT, int *totals)
        * be incremented. If hand_suits[2] == 5, a flush will be
        * found when is_flush() is called.    */
 
-      int suitn = hand.card[i].suit;
-      hand_suits[suitn]++;
+      hand_suits[hand.card[i].suit]++;
     }
 
     /* Evaluate the hand */
@@ -433,7 +432,7 @@ main_thread (st_deck_dh * deck, const int RUN_COUNT, int *totals)
       final_hand[FLUSH] = is_flush (hand_suits);
     }
 
-    hand_eval (totals, ranks, isHighStraight, final_hand);
+    hand_eval (totals, isHighStraight, final_hand);
   }
 
   return;
@@ -483,7 +482,7 @@ main (int argc, char *argv[])
   main_thread (&deck, RUN_COUNT, totals);
 
   /* Show totals for all hands */
-  show_totals (totals, ranks, RUN_COUNT);
+  show_totals (totals, RUN_COUNT);
 
   /* print a newline before the program ends */
   CR;
