@@ -3,7 +3,7 @@
  * This file is part of aapokerhands
  * <https://github.com/theimpossibleastronaut/aapokerhands>
  *
- * Copyright 2011-2021 Andy Alt <andy400-dev@yahoo.com>
+ * Copyright 2011-2023 Andy Alt <arch_stanton5995@proton.me>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,14 +23,15 @@
  *
  */
 
-#include <stdio.h>
-#include <string.h>
-#include <unistd.h>
-#include <stdbool.h>
 #include <limits.h>
-#include <time.h>
+#include <stdbool.h>
+#include <stdio.h>
 #include <stdlib.h>
-#include <globals.h>
+#include <string.h>
+#include <time.h>
+#include <unistd.h>
+
+#include "globals.h"
 
 bool SHOW_HAND;
 bool MORE_OUTPUT;

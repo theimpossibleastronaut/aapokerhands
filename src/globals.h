@@ -1,7 +1,7 @@
 /*
  * globals.h
  *
- * Copyright 2011-2021 Andy Alt <andy400-dev@yahoo.com>
+ * Copyright 2011-2023 Andy Alt <arch_stanton5995@proton.me>
  * This file is part of aapokerhands
  * <https://github.com/theimpossibleastronaut/aapokerhands>
  *
