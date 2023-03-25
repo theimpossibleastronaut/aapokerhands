@@ -18,9 +18,10 @@ jobs:
     - name: Install Dependencies
       run: sudo apt-get install -y meson
     - run: |
-        meson _build
+        meson setup _build -Db_sanitize=address,undefined
         cd _build
         ninja -v
+        src/aapokerhands -n 100 -v -s
         ninja dist
 
   MacOS:
@@ -34,7 +35,8 @@ jobs:
         brew update
         brew install meson
     - run: |
-        meson _build
+        meson setup _build -Db_sanitize=address,undefined
         cd _build
         ninja -v
+        src/aapokerhands -n 100 -v -s
         ninja dist
