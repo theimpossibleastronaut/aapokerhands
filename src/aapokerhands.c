@@ -307,21 +307,23 @@ main_thread (st_deck_dh * deck, const int RUN_COUNT, int *totals)
 
     if (MORE_OUTPUT)
     {
+      int copy_i = i;
+      int copy_j = j;
       do
       {
         printf ("%5s of %2s",
-                get_card_face (deck->card[i]), get_card_suit (deck->card[i]));
+                get_card_face (deck->card[copy_i]), get_card_suit (deck->card[copy_i]));
 
         /* print newline every 4 cards */
-        if (++j != 4)
+        if (++copy_j != 4)
           printf (" | ");
         else
         {
           CR;
-          j = 0;
+          copy_j = 0;
         }
       }
-      while (++i < 52);
+      while (++copy_i < 52);
       CR;
     }
 
