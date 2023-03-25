@@ -1,4 +1,10 @@
-project('aapokerhands', 'c', version: '0.1.0.555', default_options: 'warning_level=2')
+project(
+  'aapokerhands',
+  'c',
+  version: '0.1.0.555',
+  meson_version : '>= 0.48.0',
+  default_options: 'warning_level=2'
+)
 subdir('src')
 
 install_data(
