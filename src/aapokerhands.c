@@ -155,7 +155,9 @@ getopts (int argc, char *argv[], int *RUN_COUNT)
           SHOW_HAND = 1;
           break;
         case 'V':
-          printf ("%s\n", PACKAGE_STRING);
+          printf ("%s %s\n", PACKAGE_STRING, VERSION);
+          puts(PACKAGE_URL);
+          putchar('\n');
           break;
         default:
           usage (argv[0]);

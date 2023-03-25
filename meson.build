@@ -1,7 +1,7 @@
 project(
   'aapokerhands',
   'c',
-  version: '0.1.0.555',
+  version: '0.1.1.555',
   meson_version : '>= 0.48.0',
   default_options: 'warning_level=3'
 )
