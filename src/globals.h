@@ -26,7 +26,7 @@
 #include "config.h"
 
 /* use deckhandler library */
-#include "deckhandler/deckhandler.h"
+#include <deckhandler.h>
 
 const char *ranks[] = {
   "Pair",

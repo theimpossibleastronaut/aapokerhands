@@ -6,10 +6,18 @@ extra_args = [
 ]
 add_project_arguments(cc.get_supported_arguments(extra_args), language: 'c')
 
-dep = 'deckhandler'
-dep_target = static_library(dep, join_paths(dep, dep + '.c'))
+deckhandler_dep = dependency(
+  'deckhandler',
+  version : '>=0.1.0',
+  fallback : ['deckhandler', 'deckhandler_dep'], default_options: 'default_library=shared',
+  )
 
-executable('aapokerhands', src, link_with : dep_target, install:true)
+executable(
+  'aapokerhands',
+  src,
+  dependencies: deckhandler_dep,
+  install:true
+  )
 
 conf = configuration_data()
 conf.set_quoted('VERSION', meson.project_version())
