@@ -1,5 +1,5 @@
 cc = meson.get_compiler('c')
-src = ['aapokerhands.c']
+src_aapokerhands = ['aapokerhands.c']
 extra_args = [
   '-fno-common',
   '-Wshadow'
@@ -14,7 +14,14 @@ deckhandler_dep = dependency(
 
 executable(
   'aapokerhands',
-  src,
+  src_aapokerhands,
+  dependencies: deckhandler_dep,
+  install:true
+  )
+
+executable(
+  'netpoker',
+  ['netpoker.c', 'net.c'],
   dependencies: deckhandler_dep,
   install:true
   )
