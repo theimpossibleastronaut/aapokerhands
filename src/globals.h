@@ -26,12 +26,7 @@
 #include "config.h"
 
 /* use deckhandler library */
-#include <deckhandler.h>
-
-const char *ranks[] = {"Pair",       "Two Pair",       "Three-of-a-Kind", "Straight",   "Flush",
-                       "Full House", "Four-of-a-Kind", "Straight Flush",  "Royal Flush"};
-
-const int n_ranks = sizeof(ranks) / sizeof(ranks[0]);
+#include "deckhandler.h"
 
 /* can be set on the command line with -v */
 /* Show all 52 cards after the deck has been shuffled */
@@ -42,18 +37,6 @@ extern bool verbose;
 extern bool SHOW_HAND;
 
 extern bool PLAY;
-
-enum {
-  PAIR,
-  TWO_PAIR,
-  THREE_OF_A_KIND,
-  STRAIGHT,
-  FLUSH,
-  FULL_HOUSE,
-  FOUR_OF_A_KIND,
-  STRAIGHT_FLUSH,
-  ROYAL_FLUSH
-};
 
 #define ACE_HIGH 14
 

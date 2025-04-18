@@ -32,6 +32,7 @@
 #include <unistd.h>
 
 #include "globals.h"
+#include "lib.h"
 
 bool SHOW_HAND;
 bool verbose;
@@ -49,7 +50,7 @@ void init(int *hand_seq, bool *final_hand, short int *hand_suits) {
     hand_suits[i] = 0;
 
   /* set all array elements to 0 */
-  for (i = 0; i < n_ranks; i++)
+  for (i = 0; i < NUM_HAND_RANKS; i++)
     final_hand[i] = false;
 }
 
@@ -172,7 +173,7 @@ void show_totals(int *totals, int RUN_COUNT) {
 
   printf("Out of %d hands:\n\n", RUN_COUNT);
 
-  for (n = 0; n < n_ranks; n++) {
+  for (n = 0; n < NUM_HAND_RANKS; n++) {
     printf("%20s: %9d\n", ranks[n], totals[n]);
   }
 }
@@ -236,7 +237,7 @@ void main_thread(st_deck_dh *deck, const int RUN_COUNT, int *totals) {
 
     deck_shuffle_dh(deck);
 
-    bool final_hand[n_ranks];
+    bool final_hand[NUM_HAND_RANKS];
     int hand_seq[ACE_HIGH];
     short int hand_suits[NUM_OF_SUITS];
     init(hand_seq, final_hand, hand_suits);
@@ -379,7 +380,7 @@ int main(int argc, char *argv[]) {
   int totals[9];
 
   int i;
-  for (i = 0; i < n_ranks; i++)
+  for (i = 0; i < NUM_HAND_RANKS; i++)
     totals[i] = 0;
 
   st_deck_dh deck;

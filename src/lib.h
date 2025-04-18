@@ -1,5 +1,5 @@
 /*
- net.h
+ lib.h
  https://github.com/theimpossibleastronaut/aapokerhands
 
  MIT License
@@ -26,50 +26,22 @@
 
 */
 
-#ifndef __NET_H
-#define __NET_H
+#ifndef __LIB_H
+#define __LIB_H
 
-#include <stdlib.h>
+typedef enum {
+  PAIR,
+  TWO_PAIR,
+  THREE_OF_A_KIND,
+  STRAIGHT,
+  FLUSH,
+  FULL_HOUSE,
+  FOUR_OF_A_KIND,
+  STRAIGHT_FLUSH,
+  ROYAL_FLUSH,
+  NUM_HAND_RANKS // helpful for bounds checking
+} hand_rank_t;
 
-#ifdef _WIN32
-#include <winsock2.h>
-#else
-#include <arpa/inet.h>
-#include <netdb.h>
-#include <poll.h>
-#endif
-
-#include "game.h"
-
-#define BACKLOG 10
-
-#ifdef _WIN32
-typedef SOCKET socket_t;
-typedef int socklen_t;
-#else
-typedef int socket_t;
-#define INVALID_SOCKET -1
-#endif
-
-struct socket_info_t {
-  char *host;
-  const char *port;
-  socket_t sockfd;
-};
-
-extern const char *default_port;
-
-void assign_tcp_dual_stack_server_fd(struct socket_info_t *socket_info);
-void assign_tcp_dual_stack_client_fd(struct socket_info_t *socket_info);
-
-void close_socket_checked(socket_t sockfd);
-
-uint8_t *serialize_player(const struct player_t *src, size_t *size_out);
-
-struct player_t deserialize_player(const uint8_t *data, size_t size);
-
-ssize_t send_all(int sockfd, const void *buf, size_t len);
-
-int recv_all(int sock, void *buffer, size_t length);
+extern const char *ranks[NUM_HAND_RANKS];
 
 #endif

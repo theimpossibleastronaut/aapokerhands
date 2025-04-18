@@ -13,10 +13,17 @@ if get_option('gen_protobuf')
   run_command([protoc, '--c_out=.', 'netpoker.proto'], check: true)
 endif
 
+_lib = static_library(
+  'lib',
+  ['lib.c'],
+  install: false,
+  )
+
 executable(
   'aapokerhands',
   src_aapokerhands,
   dependencies: deckhandler_dep,
+  link_with: _lib,
   install:true
   )
 
