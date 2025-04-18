@@ -1,5 +1,5 @@
 /*
- netpoker.c
+ netpoker_server.c
  https://github.com/theimpossibleastronaut/aapokerhands
 
  MIT License
@@ -35,6 +35,9 @@
 #include "netpoker.pb-c.h"
 
 int main(int argc, char *argv[]) {
+  (void)argc;
+  (void)argv;
+
   srand(time(NULL));
 
   struct socket_info_t socket_info = {
@@ -48,21 +51,35 @@ int main(int argc, char *argv[]) {
   socket_t connfd = accept(socket_info.sockfd, (struct sockaddr *)&client_addr, &addr_size);
   if (socket_info.sockfd == INVALID_SOCKET) {
     perror("Client connection failed");
-  }
+  } else
+    puts("Connection established");
 
   st_deck_dh deck;
   deck_init_dh(&deck);
   deck_shuffle_dh(&deck);
+  struct player_t player = {.name = "Testy"};
+
   int i;
   for (i = 0; i < 5; i++) {
-    char buf[256] = {0};
-    snprintf(buf, sizeof buf, "%5s of %2s", get_card_face(deck.card[i]),
-             get_card_suit(deck.card[i]));
-
-    ssize_t bytes_sent = send(connfd, buf, strlen(buf) + 1, 0);
-    if (bytes_sent == -1)
-      perror("send");
+    player.hand[i].face_val = deck.card[i].face_val;
+    player.hand[i].suit = deck.card[i].suit;
   }
+
+  size_t size = 0;
+  uint8_t *data = serialize_player(&player, &size);
+  printf("size: %zd\n", size);
+
+  uint32_t size_net = htonl(size); // Ensure network byte order
+  printf("size_net: %d\n", size_net);
+  if (send_all(connfd, &size_net, sizeof(size_net)) != sizeof(size_net)) {
+    perror("send size");
+  }
+
+  // Send the serialized data
+  if (send_all(connfd, data, size) == -1)
+    perror("send");
+
+  free(data);
 
   if (connfd != INVALID_SOCKET)
     close_socket_checked(connfd);

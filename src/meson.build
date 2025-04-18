@@ -20,12 +20,19 @@ executable(
   install:true
   )
 
-executable(
-  'netpoker',
-  ['netpoker.c', 'game.c', 'net.c', 'netpoker.pb-c.c'],
-  dependencies: [deckhandler_dep, protobuf_dep],
-  install:true
+net_binaries = ['netpoker_server', 'netpoker_client']
+
+foreach bin : net_binaries
+  executable(
+    bin,
+    [bin + '.c', 'game.c', 'net.c', 'netpoker.pb-c.c'],
+    dependencies: [deckhandler_dep, protobuf_dep],
+    install:false
   )
+endforeach
+
+
+
 
 conf = configuration_data()
 conf.set_quoted('VERSION', meson.project_version())

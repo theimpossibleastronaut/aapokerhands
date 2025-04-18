@@ -116,6 +116,41 @@ void assign_tcp_dual_stack_server_fd(struct socket_info_t *socket_info) {
   return;
 }
 
+void assign_tcp_dual_stack_client_fd(struct socket_info_t *socket_info) {
+  struct addrinfo hints, *res, *p;
+
+  // Set up hints for getaddrinfo()
+  memset(&hints, 0, sizeof(hints));
+  hints.ai_family = AF_UNSPEC; // Allow both IPv4 and IPv6
+  hints.ai_socktype = SOCK_STREAM;
+
+  // Get address info
+  if (getaddrinfo(socket_info->host, socket_info->port, &hints, &res) != 0) {
+    perror("getaddrinfo");
+    exit(EXIT_FAILURE);
+  }
+
+  // Try to connect to one of the results
+  for (p = res; p != NULL; p = p->ai_next) {
+    socket_info->sockfd = socket(p->ai_family, p->ai_socktype, p->ai_protocol);
+    if (socket_info->sockfd == INVALID_SOCKET)
+      continue;
+
+    if (connect(socket_info->sockfd, p->ai_addr, p->ai_addrlen) == 0)
+      break; // Connected successfully
+
+    close_socket_checked(socket_info->sockfd);
+  }
+
+  freeaddrinfo(res);
+
+  if (!p) {
+    perror("Failed to connect");
+    exit(EXIT_FAILURE);
+  }
+  return;
+}
+
 void close_socket_checked(socket_t sockfd) {
 #ifdef _WIN32
   if (closesocket(sockfd) != 0)
@@ -157,22 +192,49 @@ uint8_t *serialize_player(const struct player_t *src, size_t *size_out) {
 }
 
 struct player_t deserialize_player(const uint8_t *data, size_t size) {
-  struct player_t out;
-  memset(&out, 0, sizeof(struct player_t));
+  struct player_t out = {0};
 
   Game__Player *msg = game__player__unpack(NULL, size, data);
   if (!msg) {
     fprintf(stderr, "Failed to unpack player\n");
-    exit(1);
+    exit(1); // or return an error struct, or set a global error
   }
 
-  strncpy(out.name, msg->name, sizeof(out.name) - 1);
+  if (msg->name) {
+    strncpy(out.name, msg->name, sizeof(out.name) - 1);
+  }
 
   for (size_t i = 0; i < msg->n_hand && i < HAND_SIZE; ++i) {
-    out.hand[i].face_val = msg->hand[i]->face_val;
-    out.hand[i].suit = msg->hand[i]->suit;
+    if (msg->hand[i]) {
+      out.hand[i].face_val = msg->hand[i]->face_val;
+      out.hand[i].suit = msg->hand[i]->suit;
+    }
   }
 
   game__player__free_unpacked(msg, NULL);
   return out;
+}
+
+ssize_t send_all(int sockfd, const void *buf, size_t len) {
+  size_t total_sent = 0;
+  const uint8_t *p = buf;
+
+  while (total_sent < len) {
+    ssize_t n = send(sockfd, p + total_sent, len - total_sent, 0);
+    if (n <= 0)
+      return -1; // Error or disconnect
+    total_sent += n;
+  }
+  return total_sent;
+}
+
+int recv_all(int sock, void *buffer, size_t length) {
+  size_t received = 0;
+  while (received < length) {
+    ssize_t ret = recv(sock, (char *)buffer + received, length - received, 0);
+    if (ret <= 0)
+      return -1;
+    received += ret;
+  }
+  return 0;
 }

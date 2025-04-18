@@ -59,9 +59,14 @@ struct socket_info_t {
 extern const char *default_port;
 
 void assign_tcp_dual_stack_server_fd(struct socket_info_t *socket_info);
+void assign_tcp_dual_stack_client_fd(struct socket_info_t *socket_info);
 
 void close_socket_checked(socket_t sockfd);
 
 uint8_t *serialize_player(const struct player_t *src, size_t *size_out);
 
 struct player_t deserialize_player(const uint8_t *data, size_t size);
+
+ssize_t send_all(int sockfd, const void *buf, size_t len);
+
+int recv_all(int sock, void *buffer, size_t length);
