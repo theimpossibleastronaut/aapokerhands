@@ -6,6 +6,13 @@ deckhandler_dep = dependency(
   fallback : ['deckhandler', 'deckhandler_dep'], default_options: 'default_library=shared',
   )
 
+protobuf_dep = dependency('libprotobuf-c')
+
+if get_option('gen_protobuf')
+  protoc = find_program('protoc', required: true)
+  run_command([protoc, '--c_out=.', 'netpoker.proto'], check: true)
+endif
+
 executable(
   'aapokerhands',
   src_aapokerhands,
@@ -15,8 +22,8 @@ executable(
 
 executable(
   'netpoker',
-  ['netpoker.c', 'net.c'],
-  dependencies: deckhandler_dep,
+  ['netpoker.c', 'net.c', 'netpoker.pb-c.c'],
+  dependencies: [deckhandler_dep, protobuf_dep],
   install:true
   )
 

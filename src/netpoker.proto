@@ -1,0 +1,7 @@
+syntax = "proto3";
+
+message SocketInfo {
+  string host = 1;
+  string port = 2;
+  int32 sockfd = 3;
+}

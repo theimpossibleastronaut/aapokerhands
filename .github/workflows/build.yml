@@ -6,7 +6,7 @@ jobs:
 
   # This workflow contains a single job called "build"
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
@@ -15,7 +15,7 @@ jobs:
         submodules: true
     # Runs a single command using the runners shell
     - name: Install required dependencies
-      run: sudo apt-get install -y meson
+      run: sudo apt-get install -y meson libprotobuf-c-dev
 
     # Runs a set of commands using the runners shell
     - name: Download building tools & executing AppImage build
