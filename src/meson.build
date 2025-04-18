@@ -1,10 +1,4 @@
-cc = meson.get_compiler('c')
 src_aapokerhands = ['aapokerhands.c']
-extra_args = [
-  '-fno-common',
-  '-Wshadow'
-]
-add_project_arguments(cc.get_supported_arguments(extra_args), language: 'c')
 
 deckhandler_dep = dependency(
   'deckhandler',

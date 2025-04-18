@@ -10,6 +10,21 @@ project(
     ]
   )
 
+cc = meson.get_compiler('c')
+
+extra_flags = [
+  '-fno-common',
+  '-fstack-protector-strong',
+  '-Wformat-security',
+  '-Wshadow',
+  '-Wstrict-overflow=5',
+  '-Werror=odr',
+  '-Werror=lto-type-mismatch',
+  '-Werror=strict-aliasing',
+  ]
+
+add_project_arguments(cc.get_supported_arguments(extra_flags), language: 'c')
+
 subdir('src')
 
 install_data(
