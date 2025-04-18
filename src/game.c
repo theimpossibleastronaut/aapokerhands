@@ -1,5 +1,5 @@
 /*
- netpoker.c
+ net.c
  https://github.com/theimpossibleastronaut/aapokerhands
 
  MIT License
@@ -28,43 +28,7 @@
 
 #include <stdio.h>
 #include <string.h>
-#include <time.h>
+#include <unistd.h>
 
-#include "deckhandler.h"
-#include "net.h"
+#include "game.h"
 #include "netpoker.pb-c.h"
-
-int main(int argc, char *argv[]) {
-  srand(time(NULL));
-
-  struct socket_info_t socket_info = {
-      .port = default_port,
-      .host = NULL,
-  };
-  assign_tcp_dual_stack_server_fd(&socket_info);
-
-  struct sockaddr_storage client_addr;
-  socklen_t addr_size = sizeof(client_addr);
-  socket_t connfd = accept(socket_info.sockfd, (struct sockaddr *)&client_addr, &addr_size);
-  if (socket_info.sockfd == INVALID_SOCKET) {
-    perror("Client connection failed");
-  }
-
-  st_deck_dh deck;
-  deck_init_dh(&deck);
-  deck_shuffle_dh(&deck);
-  int i;
-  for (i = 0; i < 5; i++) {
-    char buf[256] = {0};
-    snprintf(buf, sizeof buf, "%5s of %2s", get_card_face(deck.card[i]),
-             get_card_suit(deck.card[i]));
-
-    ssize_t bytes_sent = send(connfd, buf, strlen(buf) + 1, 0);
-    if (bytes_sent == -1)
-      perror("send");
-  }
-
-  if (connfd != INVALID_SOCKET)
-    close_socket_checked(connfd);
-  return 0;
-}

@@ -15,7 +15,8 @@ PROTOBUF_C__BEGIN_DECLS
 #endif
 
 
-typedef struct SocketInfo SocketInfo;
+typedef struct Game__Card Game__Card;
+typedef struct Game__Player Game__Player;
 
 
 /* --- enums --- */
@@ -23,41 +24,74 @@ typedef struct SocketInfo SocketInfo;
 
 /* --- messages --- */
 
-struct  SocketInfo
+struct  Game__Card
 {
   ProtobufCMessage base;
-  char *host;
-  char *port;
-  int32_t sockfd;
+  int32_t face_val;
+  int32_t suit;
 };
-#define SOCKET_INFO__INIT \
- { PROTOBUF_C_MESSAGE_INIT (&socket_info__descriptor) \
-, (char *)protobuf_c_empty_string, (char *)protobuf_c_empty_string, 0 }
+#define GAME__CARD__INIT \
+ { PROTOBUF_C_MESSAGE_INIT (&game__card__descriptor) \
+, 0, 0 }
 
 
-/* SocketInfo methods */
-void   socket_info__init
-                     (SocketInfo         *message);
-size_t socket_info__get_packed_size
-                     (const SocketInfo   *message);
-size_t socket_info__pack
-                     (const SocketInfo   *message,
+struct  Game__Player
+{
+  ProtobufCMessage base;
+  char *name;
+  size_t n_hand;
+  Game__Card **hand;
+};
+#define GAME__PLAYER__INIT \
+ { PROTOBUF_C_MESSAGE_INIT (&game__player__descriptor) \
+, (char *)protobuf_c_empty_string, 0,NULL }
+
+
+/* Game__Card methods */
+void   game__card__init
+                     (Game__Card         *message);
+size_t game__card__get_packed_size
+                     (const Game__Card   *message);
+size_t game__card__pack
+                     (const Game__Card   *message,
                       uint8_t             *out);
-size_t socket_info__pack_to_buffer
-                     (const SocketInfo   *message,
+size_t game__card__pack_to_buffer
+                     (const Game__Card   *message,
                       ProtobufCBuffer     *buffer);
-SocketInfo *
-       socket_info__unpack
+Game__Card *
+       game__card__unpack
                      (ProtobufCAllocator  *allocator,
                       size_t               len,
                       const uint8_t       *data);
-void   socket_info__free_unpacked
-                     (SocketInfo *message,
+void   game__card__free_unpacked
+                     (Game__Card *message,
+                      ProtobufCAllocator *allocator);
+/* Game__Player methods */
+void   game__player__init
+                     (Game__Player         *message);
+size_t game__player__get_packed_size
+                     (const Game__Player   *message);
+size_t game__player__pack
+                     (const Game__Player   *message,
+                      uint8_t             *out);
+size_t game__player__pack_to_buffer
+                     (const Game__Player   *message,
+                      ProtobufCBuffer     *buffer);
+Game__Player *
+       game__player__unpack
+                     (ProtobufCAllocator  *allocator,
+                      size_t               len,
+                      const uint8_t       *data);
+void   game__player__free_unpacked
+                     (Game__Player *message,
                       ProtobufCAllocator *allocator);
 /* --- per-message closures --- */
 
-typedef void (*SocketInfo_Closure)
-                 (const SocketInfo *message,
+typedef void (*Game__Card_Closure)
+                 (const Game__Card *message,
+                  void *closure_data);
+typedef void (*Game__Player_Closure)
+                 (const Game__Player *message,
                   void *closure_data);
 
 /* --- services --- */
@@ -65,7 +99,8 @@ typedef void (*SocketInfo_Closure)
 
 /* --- descriptors --- */
 
-extern const ProtobufCMessageDescriptor socket_info__descriptor;
+extern const ProtobufCMessageDescriptor game__card__descriptor;
+extern const ProtobufCMessageDescriptor game__player__descriptor;
 
 PROTOBUF_C__END_DECLS
 

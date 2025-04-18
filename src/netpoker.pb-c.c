@@ -7,112 +7,195 @@
 #endif
 
 #include "netpoker.pb-c.h"
-void   socket_info__init
-                     (SocketInfo         *message)
+void   game__card__init
+                     (Game__Card         *message)
 {
-  static const SocketInfo init_value = SOCKET_INFO__INIT;
+  static const Game__Card init_value = GAME__CARD__INIT;
   *message = init_value;
 }
-size_t socket_info__get_packed_size
-                     (const SocketInfo *message)
+size_t game__card__get_packed_size
+                     (const Game__Card *message)
 {
-  assert(message->base.descriptor == &socket_info__descriptor);
+  assert(message->base.descriptor == &game__card__descriptor);
   return protobuf_c_message_get_packed_size ((const ProtobufCMessage*)(message));
 }
-size_t socket_info__pack
-                     (const SocketInfo *message,
+size_t game__card__pack
+                     (const Game__Card *message,
                       uint8_t       *out)
 {
-  assert(message->base.descriptor == &socket_info__descriptor);
+  assert(message->base.descriptor == &game__card__descriptor);
   return protobuf_c_message_pack ((const ProtobufCMessage*)message, out);
 }
-size_t socket_info__pack_to_buffer
-                     (const SocketInfo *message,
+size_t game__card__pack_to_buffer
+                     (const Game__Card *message,
                       ProtobufCBuffer *buffer)
 {
-  assert(message->base.descriptor == &socket_info__descriptor);
+  assert(message->base.descriptor == &game__card__descriptor);
   return protobuf_c_message_pack_to_buffer ((const ProtobufCMessage*)message, buffer);
 }
-SocketInfo *
-       socket_info__unpack
+Game__Card *
+       game__card__unpack
                      (ProtobufCAllocator  *allocator,
                       size_t               len,
                       const uint8_t       *data)
 {
-  return (SocketInfo *)
-     protobuf_c_message_unpack (&socket_info__descriptor,
+  return (Game__Card *)
+     protobuf_c_message_unpack (&game__card__descriptor,
                                 allocator, len, data);
 }
-void   socket_info__free_unpacked
-                     (SocketInfo *message,
+void   game__card__free_unpacked
+                     (Game__Card *message,
                       ProtobufCAllocator *allocator)
 {
   if(!message)
     return;
-  assert(message->base.descriptor == &socket_info__descriptor);
+  assert(message->base.descriptor == &game__card__descriptor);
   protobuf_c_message_free_unpacked ((ProtobufCMessage*)message, allocator);
 }
-static const ProtobufCFieldDescriptor socket_info__field_descriptors[3] =
+void   game__player__init
+                     (Game__Player         *message)
+{
+  static const Game__Player init_value = GAME__PLAYER__INIT;
+  *message = init_value;
+}
+size_t game__player__get_packed_size
+                     (const Game__Player *message)
+{
+  assert(message->base.descriptor == &game__player__descriptor);
+  return protobuf_c_message_get_packed_size ((const ProtobufCMessage*)(message));
+}
+size_t game__player__pack
+                     (const Game__Player *message,
+                      uint8_t       *out)
+{
+  assert(message->base.descriptor == &game__player__descriptor);
+  return protobuf_c_message_pack ((const ProtobufCMessage*)message, out);
+}
+size_t game__player__pack_to_buffer
+                     (const Game__Player *message,
+                      ProtobufCBuffer *buffer)
+{
+  assert(message->base.descriptor == &game__player__descriptor);
+  return protobuf_c_message_pack_to_buffer ((const ProtobufCMessage*)message, buffer);
+}
+Game__Player *
+       game__player__unpack
+                     (ProtobufCAllocator  *allocator,
+                      size_t               len,
+                      const uint8_t       *data)
+{
+  return (Game__Player *)
+     protobuf_c_message_unpack (&game__player__descriptor,
+                                allocator, len, data);
+}
+void   game__player__free_unpacked
+                     (Game__Player *message,
+                      ProtobufCAllocator *allocator)
+{
+  if(!message)
+    return;
+  assert(message->base.descriptor == &game__player__descriptor);
+  protobuf_c_message_free_unpacked ((ProtobufCMessage*)message, allocator);
+}
+static const ProtobufCFieldDescriptor game__card__field_descriptors[2] =
 {
   {
-    "host",
+    "face_val",
+    1,
+    PROTOBUF_C_LABEL_NONE,
+    PROTOBUF_C_TYPE_INT32,
+    0,   /* quantifier_offset */
+    offsetof(Game__Card, face_val),
+    NULL,
+    NULL,
+    0,             /* flags */
+    0,NULL,NULL    /* reserved1,reserved2, etc */
+  },
+  {
+    "suit",
+    2,
+    PROTOBUF_C_LABEL_NONE,
+    PROTOBUF_C_TYPE_INT32,
+    0,   /* quantifier_offset */
+    offsetof(Game__Card, suit),
+    NULL,
+    NULL,
+    0,             /* flags */
+    0,NULL,NULL    /* reserved1,reserved2, etc */
+  },
+};
+static const unsigned game__card__field_indices_by_name[] = {
+  0,   /* field[0] = face_val */
+  1,   /* field[1] = suit */
+};
+static const ProtobufCIntRange game__card__number_ranges[1 + 1] =
+{
+  { 1, 0 },
+  { 0, 2 }
+};
+const ProtobufCMessageDescriptor game__card__descriptor =
+{
+  PROTOBUF_C__MESSAGE_DESCRIPTOR_MAGIC,
+  "game.Card",
+  "Card",
+  "Game__Card",
+  "game",
+  sizeof(Game__Card),
+  2,
+  game__card__field_descriptors,
+  game__card__field_indices_by_name,
+  1,  game__card__number_ranges,
+  (ProtobufCMessageInit) game__card__init,
+  NULL,NULL,NULL    /* reserved[123] */
+};
+static const ProtobufCFieldDescriptor game__player__field_descriptors[2] =
+{
+  {
+    "name",
     1,
     PROTOBUF_C_LABEL_NONE,
     PROTOBUF_C_TYPE_STRING,
     0,   /* quantifier_offset */
-    offsetof(SocketInfo, host),
+    offsetof(Game__Player, name),
     NULL,
     &protobuf_c_empty_string,
     0,             /* flags */
     0,NULL,NULL    /* reserved1,reserved2, etc */
   },
   {
-    "port",
+    "hand",
     2,
-    PROTOBUF_C_LABEL_NONE,
-    PROTOBUF_C_TYPE_STRING,
-    0,   /* quantifier_offset */
-    offsetof(SocketInfo, port),
-    NULL,
-    &protobuf_c_empty_string,
-    0,             /* flags */
-    0,NULL,NULL    /* reserved1,reserved2, etc */
-  },
-  {
-    "sockfd",
-    3,
-    PROTOBUF_C_LABEL_NONE,
-    PROTOBUF_C_TYPE_INT32,
-    0,   /* quantifier_offset */
-    offsetof(SocketInfo, sockfd),
-    NULL,
+    PROTOBUF_C_LABEL_REPEATED,
+    PROTOBUF_C_TYPE_MESSAGE,
+    offsetof(Game__Player, n_hand),
+    offsetof(Game__Player, hand),
+    &game__card__descriptor,
     NULL,
     0,             /* flags */
     0,NULL,NULL    /* reserved1,reserved2, etc */
   },
 };
-static const unsigned socket_info__field_indices_by_name[] = {
-  0,   /* field[0] = host */
-  1,   /* field[1] = port */
-  2,   /* field[2] = sockfd */
+static const unsigned game__player__field_indices_by_name[] = {
+  1,   /* field[1] = hand */
+  0,   /* field[0] = name */
 };
-static const ProtobufCIntRange socket_info__number_ranges[1 + 1] =
+static const ProtobufCIntRange game__player__number_ranges[1 + 1] =
 {
   { 1, 0 },
-  { 0, 3 }
+  { 0, 2 }
 };
-const ProtobufCMessageDescriptor socket_info__descriptor =
+const ProtobufCMessageDescriptor game__player__descriptor =
 {
   PROTOBUF_C__MESSAGE_DESCRIPTOR_MAGIC,
-  "SocketInfo",
-  "SocketInfo",
-  "SocketInfo",
-  "",
-  sizeof(SocketInfo),
-  3,
-  socket_info__field_descriptors,
-  socket_info__field_indices_by_name,
-  1,  socket_info__number_ranges,
-  (ProtobufCMessageInit) socket_info__init,
+  "game.Player",
+  "Player",
+  "Game__Player",
+  "game",
+  sizeof(Game__Player),
+  2,
+  game__player__field_descriptors,
+  game__player__field_indices_by_name,
+  1,  game__player__number_ranges,
+  (ProtobufCMessageInit) game__player__init,
   NULL,NULL,NULL    /* reserved[123] */
 };

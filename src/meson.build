@@ -22,7 +22,7 @@ executable(
 
 executable(
   'netpoker',
-  ['netpoker.c', 'net.c', 'netpoker.pb-c.c'],
+  ['netpoker.c', 'game.c', 'net.c', 'netpoker.pb-c.c'],
   dependencies: [deckhandler_dep, protobuf_dep],
   install:true
   )

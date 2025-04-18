@@ -6,11 +6,17 @@ project(
   default_options: [
     'warning_level=3',
     'b_sanitize=address,undefined',
-    'b_lundef=false'
+    'b_lundef=false',
+    'c_std=c99',
     ]
   )
 
 cc = meson.get_compiler('c')
+
+definitions = [
+  '-D_DEFAULT_SOURCE',
+  ]
+add_project_arguments(definitions, language: 'c')
 
 extra_flags = [
   '-fno-common',

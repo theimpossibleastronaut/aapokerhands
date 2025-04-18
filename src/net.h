@@ -4,7 +4,7 @@
 
  MIT License
 
- Copyright (c) 2022 Andy Alt and James Sherratt
+ Copyright (c) 2025 Andy Alt
 
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
@@ -38,6 +38,8 @@
 #include <poll.h>
 #endif
 
+#include "game.h"
+
 #define BACKLOG 10
 
 #ifdef _WIN32
@@ -59,3 +61,7 @@ extern const char *default_port;
 void assign_tcp_dual_stack_server_fd(struct socket_info_t *socket_info);
 
 void close_socket_checked(socket_t sockfd);
+
+uint8_t *serialize_player(const struct player_t *src, size_t *size_out);
+
+struct player_t deserialize_player(const uint8_t *data, size_t size);

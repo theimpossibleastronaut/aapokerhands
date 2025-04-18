@@ -28,17 +28,8 @@
 /* use deckhandler library */
 #include <deckhandler.h>
 
-const char *ranks[] = {
-  "Pair",
-  "Two Pair",
-  "Three-of-a-Kind",
-  "Straight",
-  "Flush",
-  "Full House",
-  "Four-of-a-Kind",
-  "Straight Flush",
-  "Royal Flush"
-};
+const char *ranks[] = {"Pair",       "Two Pair",       "Three-of-a-Kind", "Straight",   "Flush",
+                       "Full House", "Four-of-a-Kind", "Straight Flush",  "Royal Flush"};
 
 const int n_ranks = sizeof(ranks) / sizeof(ranks[0]);
 
@@ -52,9 +43,16 @@ extern bool SHOW_HAND;
 
 extern bool PLAY;
 
-enum
-{ PAIR, TWO_PAIR, THREE_OF_A_KIND, STRAIGHT, FLUSH,
-  FULL_HOUSE, FOUR_OF_A_KIND, STRAIGHT_FLUSH, ROYAL_FLUSH
+enum {
+  PAIR,
+  TWO_PAIR,
+  THREE_OF_A_KIND,
+  STRAIGHT,
+  FLUSH,
+  FULL_HOUSE,
+  FOUR_OF_A_KIND,
+  STRAIGHT_FLUSH,
+  ROYAL_FLUSH
 };
 
 #define ACE_HIGH 14
@@ -63,7 +61,6 @@ enum
 
 #define CR printf("\n")
 
-typedef struct
-{
+typedef struct {
   st_card_info_dh card[HAND + 4];
 } st_hand;

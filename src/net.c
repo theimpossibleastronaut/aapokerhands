@@ -4,7 +4,7 @@
 
  MIT License
 
- Copyright (c) 2022 Andy Alt and James Sherratt
+ Copyright (c) 2025 Andy Alt
 
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
@@ -31,6 +31,7 @@
 #include <unistd.h>
 
 #include "net.h"
+#include "netpoker.pb-c.h"
 
 const char *default_port = "61357";
 
@@ -123,4 +124,55 @@ void close_socket_checked(socket_t sockfd) {
   if (close(sockfd) != 0)
     perror("close");
 #endif
+}
+
+uint8_t *serialize_player(const struct player_t *src, size_t *size_out) {
+  Game__Player msg = GAME__PLAYER__INIT;
+  msg.name = (char *)src->name;
+
+  // Allocate memory for repeated CardInfo
+  Game__Card **cards = malloc(sizeof(Game__Card *) * HAND_SIZE);
+  for (int i = 0; i < HAND_SIZE; ++i) {
+    cards[i] = malloc(sizeof(Game__Card));
+    game__card__init(cards[i]);
+    cards[i]->face_val = src->hand[i].face_val;
+    cards[i]->suit = src->hand[i].suit;
+  }
+
+  msg.n_hand = HAND_SIZE;
+  msg.hand = cards;
+
+  // Serialize
+  *size_out = game__player__get_packed_size(&msg);
+  uint8_t *buffer = malloc(*size_out);
+  game__player__pack(&msg, buffer);
+
+  // Cleanup protobuf dynamic stuff
+  for (int i = 0; i < HAND_SIZE; ++i) {
+    free(cards[i]);
+  }
+  free(cards);
+
+  return buffer;
+}
+
+struct player_t deserialize_player(const uint8_t *data, size_t size) {
+  struct player_t out;
+  memset(&out, 0, sizeof(struct player_t));
+
+  Game__Player *msg = game__player__unpack(NULL, size, data);
+  if (!msg) {
+    fprintf(stderr, "Failed to unpack player\n");
+    exit(1);
+  }
+
+  strncpy(out.name, msg->name, sizeof(out.name) - 1);
+
+  for (size_t i = 0; i < msg->n_hand && i < HAND_SIZE; ++i) {
+    out.hand[i].face_val = msg->hand[i]->face_val;
+    out.hand[i].suit = msg->hand[i]->suit;
+  }
+
+  game__player__free_unpacked(msg, NULL);
+  return out;
 }

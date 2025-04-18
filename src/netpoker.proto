@@ -1,7 +1,13 @@
 syntax = "proto3";
 
-message SocketInfo {
-  string host = 1;
-  string port = 2;
-  int32 sockfd = 3;
+package game;
+
+message Card {
+  int32 face_val = 1;
+  int32 suit = 2;
+}
+
+message Player {
+  string name = 1;
+  repeated Card hand = 2;
 }
