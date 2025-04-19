@@ -42,9 +42,6 @@ foreach bin : net_binaries
   )
 endforeach
 
-
-
-
 conf = configuration_data()
 conf.set_quoted('VERSION', meson.project_version())
 conf.set_quoted('PACKAGE_STRING', meson.project_name())
