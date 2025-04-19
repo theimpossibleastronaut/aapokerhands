@@ -37,9 +37,6 @@
 bool SHOW_HAND;
 bool verbose;
 
-/* Leave set to 0, PLAY feature not finished */
-bool PLAY = 0;
-
 void init(int *hand_seq, bool *final_hand, short int *hand_suits) {
   int i;
 
@@ -262,45 +259,19 @@ void main_thread(st_deck_dh *deck, const int RUN_COUNT, int *totals) {
     if (SHOW_HAND)
       CR;
 
-    /* +4 for the unimplemented PLAY feature */
     st_hand hand;
 
     /* Deal out a hand */
 
     do {
-      if (PLAY && k < 5) {
-        printf("(%d)%5s of %2s", k + 1, get_card_face(deck->card[i]), get_card_suit(deck->card[i]));
-        if (++j != 4)
-          printf(" | ");
-        else {
-          CR;
-          j = 0;
-        }
-      }
-
       hand.card[k].suit = deck->card[i].suit;
       hand.card[k].face_val = deck->card[i].face_val;
 
       /* Deal out every other card */
       i += 2;
-    } while (++k < HAND + (PLAY * 4));
+    } while (++k < HAND);
 
-    int suitn, valuen;
-
-    if (PLAY) {
-      short discard = 0;
-      int next = 5;
-      for (j = 5; j < 9; j++) {
-        scanf("%hd", &discard);
-        if (discard != 0) {
-          suitn = hand.card[next].suit;
-          hand.card[discard - 1].face_val = hand.card[next++].face_val;
-          hand.card[discard - 1].suit = suitn;
-        }
-      }
-      CR;
-    }
-
+    int valuen;
     i = j = k = 0;
     do {
       if (SHOW_HAND) {
@@ -360,21 +331,12 @@ int main(int argc, char *argv[]) {
   int RUN_COUNT = 20;
   verbose = 0;
   SHOW_HAND = 0;
-  PLAY = 0;
 
   getopts(argc, argv, &RUN_COUNT);
 
   if (RUN_COUNT > INT_MAX - 1) {
     printf("Your RUN_COUNT should be lower than INT_MAX\n");
     return 1;
-  }
-
-  if (PLAY && verbose) {
-    verbose = 0;
-  }
-
-  if (PLAY && SHOW_HAND) {
-    SHOW_HAND = 1;
   }
 
   int totals[9];
