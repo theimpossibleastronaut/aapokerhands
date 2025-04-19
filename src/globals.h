@@ -36,12 +36,4 @@ extern bool verbose;
 /* Show the hand that was dealt */
 extern bool SHOW_HAND;
 
-#define ACE_HIGH 14
-
-#define HAND 5
-
 #define CR printf("\n")
-
-typedef struct {
-  st_card_info_dh card[HAND];
-} st_hand;

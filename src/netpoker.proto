@@ -7,7 +7,11 @@ message Card {
   int32 suit = 2;
 }
 
+message Hand {
+  repeated Card card = 1;
+}
+
 message Player {
   string name = 1;
-  repeated Card hand = 2;
+  Hand hand = 2;
 }

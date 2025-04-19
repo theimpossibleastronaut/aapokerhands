@@ -10,12 +10,13 @@ protobuf_dep = dependency('libprotobuf-c')
 
 if get_option('gen_protobuf')
   protoc = find_program('protoc', required: true)
-  run_command([protoc, '--c_out=.', 'netpoker.proto'], check: true)
+  run_command([protoc, '--c_out=./protobuf', 'netpoker.proto'], check: true)
 endif
 
 _lib = static_library(
   'lib',
   ['lib.c'],
+  dependencies: deckhandler_dep,
   install: false,
   )
 
@@ -32,8 +33,10 @@ net_binaries = ['netpoker_server', 'netpoker_client']
 foreach bin : net_binaries
   executable(
     bin,
-    [bin + '.c', 'game.c', 'net.c', 'netpoker.pb-c.c'],
+    [bin + '.c', 'game.c', 'net.c', 'protobuf/netpoker.pb-c.c'],
     dependencies: [deckhandler_dep, protobuf_dep],
+    link_with: _lib,
+    include_directories: include_directories('protobuf'),
     install:false
   )
 endforeach

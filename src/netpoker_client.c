@@ -74,7 +74,8 @@ int main(int argc, char *argv[]) {
   printf("Deserialized name: %s\n", player.name);
   int i;
   for (i = 0; i < HAND_SIZE; ++i) {
-    printf("Card %d: face=%d, suit=%d\n", i + 1, player.hand[i].face_val, player.hand[i].suit);
+    printf("Card %d: face=%d, suit=%d\n", i + 1, player.hand.card[i].face_val,
+           player.hand.card[i].suit);
   }
 
   free(data);

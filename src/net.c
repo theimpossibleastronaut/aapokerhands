@@ -163,26 +163,30 @@ void close_socket_checked(socket_t sockfd) {
 
 uint8_t *serialize_player(const struct player_t *src, size_t *size_out) {
   Game__Player msg = GAME__PLAYER__INIT;
-  msg.name = (char *)src->name;
+  Game__Hand hand_msg = GAME__HAND__INIT;
 
-  // Allocate memory for repeated CardInfo
+  msg.name = (char *)src->name;
+  msg.hand = &hand_msg;
+
+  // Allocate and populate cards inside the hand
   Game__Card **cards = malloc(sizeof(Game__Card *) * HAND_SIZE);
   for (int i = 0; i < HAND_SIZE; ++i) {
     cards[i] = malloc(sizeof(Game__Card));
     game__card__init(cards[i]);
-    cards[i]->face_val = src->hand[i].face_val;
-    cards[i]->suit = src->hand[i].suit;
+    cards[i]->face_val = src->hand.card[i].face_val;
+    cards[i]->suit = src->hand.card[i].suit;
   }
 
-  msg.n_hand = HAND_SIZE;
-  msg.hand = cards;
+  hand_msg.n_card = HAND_SIZE;
+  hand_msg.card = cards;
 
   // Serialize
   *size_out = game__player__get_packed_size(&msg);
   uint8_t *buffer = malloc(*size_out);
-  game__player__pack(&msg, buffer);
+  if (buffer)
+    game__player__pack(&msg, buffer);
 
-  // Cleanup protobuf dynamic stuff
+  // Cleanup
   for (int i = 0; i < HAND_SIZE; ++i) {
     free(cards[i]);
   }
@@ -192,23 +196,56 @@ uint8_t *serialize_player(const struct player_t *src, size_t *size_out) {
 }
 
 struct player_t deserialize_player(const uint8_t *data, size_t size) {
-  struct player_t out = {0};
+  struct player_t out;
+  memset(&out, 0, sizeof(out));
+
+  if (!data || size == 0) {
+    fprintf(stderr, "Invalid input data for deserialization.\n");
+    exit(EXIT_FAILURE);
+  }
 
   Game__Player *msg = game__player__unpack(NULL, size, data);
   if (!msg) {
-    fprintf(stderr, "Failed to unpack player\n");
-    exit(1); // or return an error struct, or set a global error
+    fprintf(stderr, "Failed to unpack Game__Player message.\n");
+    exit(EXIT_FAILURE);
   }
 
-  if (msg->name) {
-    strncpy(out.name, msg->name, sizeof(out.name) - 1);
+  // Validate name field
+  if (!msg->name) {
+    fprintf(stderr, "Missing player name in message.\n");
+    game__player__free_unpacked(msg, NULL);
+    exit(EXIT_FAILURE);
   }
 
-  for (size_t i = 0; i < msg->n_hand && i < HAND_SIZE; ++i) {
-    if (msg->hand[i]) {
-      out.hand[i].face_val = msg->hand[i]->face_val;
-      out.hand[i].suit = msg->hand[i]->suit;
+  strncpy(out.name, msg->name, sizeof(out.name) - 1);
+  out.name[sizeof(out.name) - 1] = '\0'; // ensure null-termination
+
+  // Validate hand
+  if (!msg->hand) {
+    fprintf(stderr, "Missing hand data in message.\n");
+    game__player__free_unpacked(msg, NULL);
+    exit(EXIT_FAILURE);
+  }
+
+  if (!msg->hand->card) {
+    fprintf(stderr, "Hand exists but card array is NULL.\n");
+    game__player__free_unpacked(msg, NULL);
+    exit(EXIT_FAILURE);
+  }
+
+  if (msg->hand->n_card > HAND_SIZE) {
+    fprintf(stderr, "Received more cards than HAND_SIZE allows (%zu > %d). Truncating.\n",
+            msg->hand->n_card, HAND_SIZE);
+  }
+
+  for (size_t i = 0; i < msg->hand->n_card && i < HAND_SIZE; ++i) {
+    if (!msg->hand->card[i]) {
+      fprintf(stderr, "Card entry %zu is NULL.\n", i);
+      continue;
     }
+
+    out.hand.card[i].face_val = msg->hand->card[i]->face_val;
+    out.hand.card[i].suit = msg->hand->card[i]->suit;
   }
 
   game__player__free_unpacked(msg, NULL);

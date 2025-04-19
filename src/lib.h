@@ -29,6 +29,13 @@
 #ifndef __LIB_H
 #define __LIB_H
 
+#include <stdbool.h>
+
+#include "deckhandler.h"
+
+#define ACE_HIGH 14
+#define HAND_SIZE 5
+
 typedef enum {
   PAIR,
   TWO_PAIR,
@@ -43,5 +50,13 @@ typedef enum {
 } hand_rank_t;
 
 extern const char *ranks[NUM_HAND_RANKS];
+
+struct hand_t {
+  st_card_info_dh card[HAND_SIZE];
+};
+
+void init(int *hand_seq, bool *final_hand, short int *hand_suits);
+
+short hand_eval(int *hand_seq, const short int *hand_suits, bool *final_hand);
 
 #endif

@@ -37,61 +37,6 @@
 bool SHOW_HAND;
 bool verbose;
 
-void init(int *hand_seq, bool *final_hand, short int *hand_suits) {
-  int i;
-
-  for (i = 0; i < ACE_HIGH; i++)
-    hand_seq[i] = 0;
-
-  for (i = 0; i < NUM_OF_SUITS; i++)
-    hand_suits[i] = 0;
-
-  /* set all array elements to 0 */
-  for (i = 0; i < NUM_HAND_RANKS; i++)
-    final_hand[i] = false;
-}
-
-void isStraight(int *hand_seq, bool *isHighStraight, bool *final_hand) {
-  int k = 13;
-
-  short state = 0;
-
-  /* Copy ACES for high straight/royal flush checking */
-  if (hand_seq[0] == 1)
-    hand_seq[13] = 1;
-
-  /* The hand is never sorted numerically, instead, just look for
-   * 5 consecutive 1's.*/
-  do {
-
-    /* May be a baby straight, not breaking if k == 13 */
-    if (hand_seq[k] == 1 && hand_seq[k - 1] == 0 && k != 13) {
-      break;
-    } else if (hand_seq[k] == 1 && hand_seq[k - 1] == 1) {
-      state++;
-      if (state == 4) {
-        final_hand[STRAIGHT] = 1;
-        if (k == 10) {
-          /* printf("High Straight"); */
-          *isHighStraight = 1;
-        }
-      }
-    }
-
-  } while (--k && !final_hand[STRAIGHT]);
-}
-
-bool is_flush(short int *hand_suits) {
-  int i;
-  for (i = 0; i < NUM_OF_SUITS; ++i) {
-    if (hand_suits[i] != HAND && hand_suits[i])
-      break;
-    else if (hand_suits[i] == HAND)
-      return true;
-  }
-  return false;
-}
-
 static void usage(const char *argv_one) {
   printf("Usage: %s: -n [hands] -s -v -V\n", argv_one);
   printf("\n\
@@ -140,31 +85,6 @@ void getopts(int argc, char *argv[], int *RUN_COUNT) {
     usage(argv[0]);
 }
 
-short int find_matches(int *hand_seq, bool *final_hand) {
-  int face_val;
-  short paired = 0;
-
-  for (face_val = 0; face_val < ACE_HIGH; ++face_val) {
-    if (hand_seq[face_val] > 1) {
-      paired++;
-    }
-    if (hand_seq[face_val] == 2 && !final_hand[PAIR]) {
-      final_hand[PAIR] = 1;
-    } else if (hand_seq[face_val] == 2) {
-      final_hand[TWO_PAIR] = 1;
-      final_hand[PAIR] = 0;
-    } else if (hand_seq[face_val] == 3)
-      final_hand[THREE_OF_A_KIND] = 1;
-    else if (hand_seq[face_val] == 4) {
-      final_hand[FOUR_OF_A_KIND] = 1;
-      break;
-    }
-    if (paired > 1)
-      break;
-  }
-  return paired;
-}
-
 void show_totals(int *totals, int RUN_COUNT) {
   int n;
 
@@ -173,54 +93,6 @@ void show_totals(int *totals, int RUN_COUNT) {
   for (n = 0; n < NUM_HAND_RANKS; n++) {
     printf("%20s: %9d\n", ranks[n], totals[n]);
   }
-}
-
-void hand_eval(int *totals, bool isHighStraight, bool *final_hand) {
-
-  short eval = -1;
-
-  if (final_hand[PAIR] && final_hand[THREE_OF_A_KIND] != 1) {
-    eval = PAIR;
-    totals[PAIR]++;
-  } else if (final_hand[TWO_PAIR]) {
-    eval = TWO_PAIR;
-    totals[TWO_PAIR]++;
-  } else if (final_hand[THREE_OF_A_KIND] && final_hand[PAIR] != 1) {
-    eval = THREE_OF_A_KIND;
-    totals[THREE_OF_A_KIND]++;
-  } else if (final_hand[STRAIGHT] && final_hand[FLUSH] != 1) {
-    eval = STRAIGHT;
-    totals[STRAIGHT]++;
-  } else if (final_hand[FLUSH] == 1 && final_hand[STRAIGHT] != 1) {
-    eval = FLUSH;
-    totals[FLUSH]++;
-  } else if (final_hand[PAIR] && final_hand[THREE_OF_A_KIND]) {
-    /* final_hand[FULL_HOUSE] = 1; */
-    eval = FULL_HOUSE;
-    totals[FULL_HOUSE]++;
-  } else if (final_hand[FOUR_OF_A_KIND]) {
-    eval = FOUR_OF_A_KIND;
-    totals[FOUR_OF_A_KIND]++;
-  } else if (final_hand[STRAIGHT] && final_hand[FLUSH] && isHighStraight != 1) {
-    /* final_hand[7] = 1;    */
-    eval = STRAIGHT_FLUSH;
-    totals[STRAIGHT_FLUSH]++;
-  } else if (final_hand[STRAIGHT] && final_hand[FLUSH] && isHighStraight) {
-    eval = ROYAL_FLUSH;
-    totals[ROYAL_FLUSH]++;
-  }
-
-  if (SHOW_HAND) {
-    printf("\n\t\t-->");
-    if (eval > -1)
-      printf("%s", ranks[eval]);
-    else
-      printf("Nothing");
-
-    printf("<--\n\n");
-  }
-
-  return;
 }
 
 void main_thread(st_deck_dh *deck, const int RUN_COUNT, int *totals) {
@@ -259,7 +131,7 @@ void main_thread(st_deck_dh *deck, const int RUN_COUNT, int *totals) {
     if (SHOW_HAND)
       CR;
 
-    st_hand hand;
+    struct hand_t hand;
 
     /* Deal out a hand */
 
@@ -269,7 +141,7 @@ void main_thread(st_deck_dh *deck, const int RUN_COUNT, int *totals) {
 
       /* Deal out every other card */
       i += 2;
-    } while (++k < HAND);
+    } while (++k < HAND_SIZE);
 
     int valuen;
     i = j = k = 0;
@@ -287,9 +159,9 @@ void main_thread(st_deck_dh *deck, const int RUN_COUNT, int *totals) {
       /* Deal out every other card, out of the first 10 */
       i++;
 
-    } while (++k < HAND);
+    } while (++k < HAND_SIZE);
 
-    for (i = 0; i < HAND; i++) {
+    for (i = 0; i < HAND_SIZE; i++) {
 
       /* if hand.card[i].face_value is 13 (King), valuen will equal 12
        * so hand_seq[12] will be incremented. If there are 3
@@ -305,21 +177,18 @@ void main_thread(st_deck_dh *deck, const int RUN_COUNT, int *totals) {
       hand_suits[hand.card[i].suit]++;
     }
 
-    /* Evaluate the hand */
-    short paired = find_matches(hand_seq, final_hand);
+    short rank = hand_eval(hand_seq, hand_suits, final_hand);
+    if (rank != -1)
+      totals[rank]++;
+    if (SHOW_HAND) {
+      printf("\n\t\t-->");
+      if (rank > -1)
+        printf("%s", ranks[rank]);
+      else
+        printf("Nothing");
 
-    /* if no matches were found, check for flush and straight
-     * if there were any matches, flush or straight is impossible,
-     * so don't bother checking               */
-
-    bool isHighStraight = 0;
-
-    if (!paired) {
-      isStraight(hand_seq, &isHighStraight, final_hand);
-      final_hand[FLUSH] = is_flush(hand_suits);
+      printf("<--\n\n");
     }
-
-    hand_eval(totals, isHighStraight, final_hand);
   }
 
   return;

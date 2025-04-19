@@ -16,6 +16,7 @@ PROTOBUF_C__BEGIN_DECLS
 
 
 typedef struct Game__Card Game__Card;
+typedef struct Game__Hand Game__Hand;
 typedef struct Game__Player Game__Player;
 
 
@@ -35,16 +36,26 @@ struct  Game__Card
 , 0, 0 }
 
 
+struct  Game__Hand
+{
+  ProtobufCMessage base;
+  size_t n_card;
+  Game__Card **card;
+};
+#define GAME__HAND__INIT \
+ { PROTOBUF_C_MESSAGE_INIT (&game__hand__descriptor) \
+, 0,NULL }
+
+
 struct  Game__Player
 {
   ProtobufCMessage base;
   char *name;
-  size_t n_hand;
-  Game__Card **hand;
+  Game__Hand *hand;
 };
 #define GAME__PLAYER__INIT \
  { PROTOBUF_C_MESSAGE_INIT (&game__player__descriptor) \
-, (char *)protobuf_c_empty_string, 0,NULL }
+, (char *)protobuf_c_empty_string, NULL }
 
 
 /* Game__Card methods */
@@ -65,6 +76,25 @@ Game__Card *
                       const uint8_t       *data);
 void   game__card__free_unpacked
                      (Game__Card *message,
+                      ProtobufCAllocator *allocator);
+/* Game__Hand methods */
+void   game__hand__init
+                     (Game__Hand         *message);
+size_t game__hand__get_packed_size
+                     (const Game__Hand   *message);
+size_t game__hand__pack
+                     (const Game__Hand   *message,
+                      uint8_t             *out);
+size_t game__hand__pack_to_buffer
+                     (const Game__Hand   *message,
+                      ProtobufCBuffer     *buffer);
+Game__Hand *
+       game__hand__unpack
+                     (ProtobufCAllocator  *allocator,
+                      size_t               len,
+                      const uint8_t       *data);
+void   game__hand__free_unpacked
+                     (Game__Hand *message,
                       ProtobufCAllocator *allocator);
 /* Game__Player methods */
 void   game__player__init
@@ -90,6 +120,9 @@ void   game__player__free_unpacked
 typedef void (*Game__Card_Closure)
                  (const Game__Card *message,
                   void *closure_data);
+typedef void (*Game__Hand_Closure)
+                 (const Game__Hand *message,
+                  void *closure_data);
 typedef void (*Game__Player_Closure)
                  (const Game__Player *message,
                   void *closure_data);
@@ -100,6 +133,7 @@ typedef void (*Game__Player_Closure)
 /* --- descriptors --- */
 
 extern const ProtobufCMessageDescriptor game__card__descriptor;
+extern const ProtobufCMessageDescriptor game__hand__descriptor;
 extern const ProtobufCMessageDescriptor game__player__descriptor;
 
 PROTOBUF_C__END_DECLS

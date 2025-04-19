@@ -31,6 +31,7 @@
 #include <time.h>
 
 #include "deckhandler.h"
+#include "lib.h"
 #include "net.h"
 #include "netpoker.pb-c.h"
 
@@ -61,9 +62,14 @@ int main(int argc, char *argv[]) {
 
   int i;
   for (i = 0; i < 5; i++) {
-    player.hand[i].face_val = deck.card[i].face_val;
-    player.hand[i].suit = deck.card[i].suit;
+    player.hand.card[i].face_val = deck.card[i].face_val;
+    player.hand.card[i].suit = deck.card[i].suit;
   }
+
+  bool final_hand[NUM_HAND_RANKS];
+  int hand_seq[ACE_HIGH];
+  short int hand_suits[NUM_OF_SUITS];
+  init(hand_seq, final_hand, hand_suits);
 
   size_t size = 0;
   uint8_t *data = serialize_player(&player, &size);

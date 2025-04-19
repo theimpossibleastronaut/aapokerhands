@@ -31,10 +31,9 @@
 #include <unistd.h>
 
 #include "deckhandler.h"
-
-#define HAND_SIZE 5
+#include "lib.h"
 
 struct player_t {
   char name[256];
-  st_card_info_dh hand[5];
+  struct hand_t hand;
 };
