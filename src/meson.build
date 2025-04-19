@@ -2,9 +2,10 @@ src_aapokerhands = ['aapokerhands.c']
 
 deckhandler_dep = dependency(
   'deckhandler',
-  version : '>=0.1.0',
-  fallback : ['deckhandler', 'deckhandler_dep'], default_options: 'default_library=shared',
-  )
+  version: '>=0.1.0',
+  fallback: ['deckhandler', 'deckhandler_dep'],
+  default_options: 'default_library=shared',
+)
 
 protobuf_dep = dependency('libprotobuf-c')
 
@@ -18,15 +19,15 @@ _lib = static_library(
   ['lib.c'],
   dependencies: deckhandler_dep,
   install: false,
-  )
+)
 
 executable(
   'aapokerhands',
   src_aapokerhands,
   dependencies: deckhandler_dep,
   link_with: _lib,
-  install:true
-  )
+  install: true,
+)
 
 net_binaries = ['netpoker_server', 'netpoker_client']
 
@@ -37,7 +38,7 @@ foreach bin : net_binaries
     dependencies: [deckhandler_dep, protobuf_dep],
     link_with: _lib,
     include_directories: include_directories('protobuf'),
-    install:false
+    install: false,
   )
 endforeach
 
@@ -47,5 +48,8 @@ endforeach
 conf = configuration_data()
 conf.set_quoted('VERSION', meson.project_version())
 conf.set_quoted('PACKAGE_STRING', meson.project_name())
-conf.set_quoted('PACKAGE_URL', 'https://github.com/theimpossibleastronaut/aapokerhands')
-config_h = configure_file(output : 'config.h', configuration : conf)
+conf.set_quoted(
+  'PACKAGE_URL',
+  'https://github.com/theimpossibleastronaut/aapokerhands',
+)
+config_h = configure_file(output: 'config.h', configuration: conf)
