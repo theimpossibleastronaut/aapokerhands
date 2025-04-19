@@ -21,7 +21,7 @@ jobs:
       with:
         submodules: true
     - name: Install Dependencies
-      run: sudo apt-get install -y meson libprotobuf-c-dev
+      run: sudo apt-get install -y meson libprotobuf-c-dev libsdl2-dev
     - run: |
         meson setup _build -Db_sanitize=address,undefined
         cd _build
@@ -38,7 +38,7 @@ jobs:
     - name: Install Dependencies
       run: |
         brew update
-        brew install meson protobuf-c
+        brew install meson protobuf-c sdl2
     - run: |
         meson setup _build -Db_sanitize=address,undefined
         cd _build

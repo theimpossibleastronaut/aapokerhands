@@ -31,6 +31,7 @@
 #include <time.h>
 
 #include "deckhandler.h"
+#include "graphics.h"
 #include "net.h"
 #include "netpoker.pb-c.h"
 
@@ -82,5 +83,11 @@ int main(int argc, char *argv[]) {
 
   if (socket_info.sockfd != INVALID_SOCKET)
     close_socket_checked(socket_info.sockfd);
+
+  struct sdl_context_t sdl_context;
+  init_sdl_window(&sdl_context, "Net Poker");
+  run_sdl_loop(sdl_context.renderer);
+  do_sdl_cleanup(&sdl_context);
+
   return 0;
 }

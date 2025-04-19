@@ -7,6 +7,7 @@ deckhandler_dep = dependency(
   default_options: 'default_library=shared',
 )
 
+sdl_dep = dependency('SDL2')
 protobuf_dep = dependency('libprotobuf-c')
 
 if get_option('gen_protobuf')
@@ -30,17 +31,28 @@ executable(
 )
 
 net_binaries = ['netpoker_server', 'netpoker_client']
+net_shared_src = ['game.c', 'net.c', 'protobuf/netpoker.pb-c.c']
+net_shared_dep = [deckhandler_dep, protobuf_dep]
+net_shared_inc = include_directories('protobuf')
 
-foreach bin : net_binaries
-  executable(
-    bin,
-    [bin + '.c', 'game.c', 'net.c', 'protobuf/netpoker.pb-c.c'],
-    dependencies: [deckhandler_dep, protobuf_dep],
-    link_with: _lib,
-    include_directories: include_directories('protobuf'),
-    install: false,
-  )
-endforeach
+executable(
+  'netpoker_server',
+  ['netpoker_server.c', net_shared_src],
+  dependencies: net_shared_dep,
+  link_with: _lib,
+  include_directories: net_shared_inc,
+  install: false,
+)
+
+executable(
+  'netpoker_client',
+  ['netpoker_client.c', net_shared_src, 'graphics.c'],
+  dependencies: [net_shared_dep, sdl_dep],
+  link_with: _lib,
+  include_directories: net_shared_inc,
+  install: false,
+)
+
 
 conf = configuration_data()
 conf.set_quoted('VERSION', meson.project_version())
