@@ -217,8 +217,7 @@ struct player_t deserialize_player(const uint8_t *data, size_t size) {
     exit(EXIT_FAILURE);
   }
 
-  strncpy(out.name, msg->name, sizeof(out.name) - 1);
-  out.name[sizeof(out.name) - 1] = '\0'; // ensure null-termination
+  snprintf(out.name, sizeof(out.name), "%s", msg->name ? msg->name : "");
 
   // Validate hand
   if (!msg->hand) {
