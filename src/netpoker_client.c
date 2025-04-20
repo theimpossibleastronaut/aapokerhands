@@ -75,8 +75,8 @@ int main(int argc, char *argv[]) {
   printf("Deserialized name: %s\n", player.name);
   int i;
   for (i = 0; i < HAND_SIZE; ++i) {
-    printf("Card %d: face=%d, suit=%d\n", i + 1, player.hand.card[i].face_val,
-           player.hand.card[i].suit);
+    printf("Card %d: face=%d, suit=%s\n", i + 1, player.hand.card[i].face_val,
+           get_card_unicode_suit(player.hand.card[i]));
   }
 
   free(data);
@@ -86,7 +86,7 @@ int main(int argc, char *argv[]) {
 
   struct sdl_context_t sdl_context;
   init_sdl_window(&sdl_context, "Net Poker");
-  run_sdl_loop(sdl_context.renderer);
+  run_sdl_loop(sdl_context.renderer, &player);
   do_sdl_cleanup(&sdl_context);
 
   return 0;

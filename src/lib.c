@@ -46,7 +46,7 @@ void init(int *hand_seq, bool *final_hand, short int *hand_suits) {
   for (i = 0; i < ACE_HIGH; i++)
     hand_seq[i] = 0;
 
-  for (i = 0; i < NUM_OF_SUITS; i++)
+  for (i = 0; i < MAX_SUITS; i++)
     hand_suits[i] = 0;
 
   /* set all array elements to 0 */
@@ -88,7 +88,7 @@ static bool isStraight(int *hand_seq, bool *final_hand) {
 
 static bool is_flush(const short int *hand_suits) {
   int i;
-  for (i = 0; i < NUM_OF_SUITS; ++i) {
+  for (i = 0; i < MAX_SUITS; ++i) {
     if (hand_suits[i] != HAND_SIZE && hand_suits[i])
       break;
     else if (hand_suits[i] == HAND_SIZE)

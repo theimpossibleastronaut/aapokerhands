@@ -68,7 +68,7 @@ int main(int argc, char *argv[]) {
 
   bool final_hand[NUM_HAND_RANKS];
   int hand_seq[ACE_HIGH];
-  short int hand_suits[NUM_OF_SUITS];
+  short int hand_suits[MAX_SUITS];
   init(hand_seq, final_hand, hand_suits);
 
   size_t size = 0;

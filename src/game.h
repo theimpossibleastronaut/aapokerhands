@@ -26,6 +26,9 @@
 
 */
 
+#ifndef __GAME_H
+#define __GAME_H
+
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
@@ -37,3 +40,5 @@ struct player_t {
   char name[256];
   struct hand_t hand;
 };
+
+#endif

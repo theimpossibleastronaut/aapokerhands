@@ -8,6 +8,7 @@ deckhandler_dep = dependency(
 )
 
 sdl_dep = dependency('SDL2')
+sdl_ttf_dep = dependency('SDL2_ttf')
 protobuf_dep = dependency('libprotobuf-c')
 
 if get_option('gen_protobuf')
@@ -47,7 +48,7 @@ executable(
 executable(
   'netpoker_client',
   ['netpoker_client.c', net_shared_src, 'graphics.c'],
-  dependencies: [net_shared_dep, sdl_dep],
+  dependencies: [net_shared_dep, sdl_dep, sdl_ttf_dep],
   link_with: _lib,
   include_directories: net_shared_inc,
   install: false,

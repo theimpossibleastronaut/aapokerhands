@@ -26,6 +26,8 @@
 
 */
 
+#include <SDL2/SDL_ttf.h>
+
 #include "graphics.h"
 
 void init_sdl_window(struct sdl_context_t *sdl_context, const char *title) {
@@ -44,7 +46,18 @@ void init_sdl_window(struct sdl_context_t *sdl_context, const char *title) {
   return;
 }
 
-void run_sdl_loop(SDL_Renderer *renderer) {
+void run_sdl_loop(SDL_Renderer *renderer, struct player_t *player) {
+  if (TTF_Init() == -1) {
+    fprintf(stderr, "TTF_Init: %s\n", TTF_GetError());
+    return;
+  }
+
+  TTF_Font *font = TTF_OpenFont("../../src/LiberationMono-Regular.ttf", 38); // make sure this font file exists
+  if (!font) {
+    fprintf(stderr, "Failed to load font: %s\n", TTF_GetError());
+    return;
+  }
+
   int running = 1;
   while (running) {
     SDL_Event event;
@@ -52,23 +65,59 @@ void run_sdl_loop(SDL_Renderer *renderer) {
       if (event.type == SDL_QUIT) {
         running = 0;
       }
-      //if (event.type == SDL_MOUSEBUTTONDOWN) {
-        //x = event.button.x;
-        //y = event.button.y;
-        //len = snprintf(message, sizeof(message), formatted_msg, x, y, shape);
-        //if (send(sockfd, message, len, 0) == -1) {
-          //perror("send");
-        //}
-      //}
     }
 
-    // Draw background
+    // Background: dark green (poker table color)
     SDL_SetRenderDrawColor(renderer, 0, 125, 0, 255);
     SDL_RenderClear(renderer);
+
+    // Draw each card
+    for (int i = 0; i < HAND_SIZE; ++i) {
+      int card_x = 10 + i * (80 + 10);
+      int card_y = 50;
+
+      // Draw white card box
+      SDL_Rect card_rect = { card_x, card_y, 80, 50 };
+      SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+      SDL_RenderFillRect(renderer, &card_rect);
+      SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+      SDL_RenderDrawRect(renderer, &card_rect);
+
+      // Render face + suit
+      const char *face = get_card_face_str(player->hand.card[i].face_val);
+      const char *suit = get_card_unicode_suit(player->hand.card[i]);
+
+      char text[8];
+      snprintf(text, sizeof(text), "%s%s", face, suit);
+
+      SDL_Color textColor;
+      if (player->hand.card[i].suit == HEARTS || player->hand.card[i].suit == DIAMONDS) {
+          textColor = (SDL_Color){255, 0, 0, 255};  // Red
+      } else {
+          textColor = (SDL_Color){0, 0, 0, 255};    // Black
+      }
+
+      SDL_Surface *textSurface = TTF_RenderUTF8_Blended(font, text, textColor);
+      SDL_Texture *textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
+
+      SDL_Rect textRect = {
+        card_x + (80 - textSurface->w) / 2,
+        card_y + (50 - textSurface->h) / 2,
+        textSurface->w,
+        textSurface->h
+      };
+
+      SDL_RenderCopy(renderer, textTexture, NULL, &textRect);
+      SDL_FreeSurface(textSurface);
+      SDL_DestroyTexture(textTexture);
+    }
 
     SDL_RenderPresent(renderer);
     SDL_Delay(16);
   }
+
+  TTF_CloseFont(font);
+  TTF_Quit();
 }
 
 void do_sdl_cleanup(struct sdl_context_t *sdl_context) {

@@ -108,7 +108,7 @@ void main_thread(st_deck_dh *deck, const int RUN_COUNT, int *totals) {
 
     bool final_hand[NUM_HAND_RANKS];
     int hand_seq[ACE_HIGH];
-    short int hand_suits[NUM_OF_SUITS];
+    short int hand_suits[MAX_SUITS];
     init(hand_seq, final_hand, hand_suits);
 
     if (verbose) {
