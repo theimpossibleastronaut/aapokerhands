@@ -139,8 +139,7 @@ void main_thread(st_deck_dh *deck, const int RUN_COUNT, int *totals) {
       hand.card[k].suit = deck->card[i].suit;
       hand.card[k].face_val = deck->card[i].face_val;
 
-      /* Deal out every other card */
-      i += 2;
+      i++;
     } while (++k < HAND_SIZE);
 
     int valuen;

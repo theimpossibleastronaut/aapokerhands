@@ -35,9 +35,16 @@ jobs:
           libsdl2-dev \
           libsdl2-ttf-dev
 
-    - run: |
-        meson setup _build -Db_sanitize=address,undefined
-        cd _build
-        ninja -v
-        src/aapokerhands -n 100 -v -s
-        ninja dist
+    - name: Meson setup
+      run: meson setup _build -Db_sanitize=address,undefined
+
+    - name: Build
+      run: |
+        meson compile -v -C _build
+        _build/src/aapokerhands -n 100 -v -s
+
+    - name: Test
+      run: meson test -v -C _build
+
+    - name: Dist test
+      run: meson dist --no-tests -C _build

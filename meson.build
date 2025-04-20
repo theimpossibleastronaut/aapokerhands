@@ -40,6 +40,10 @@ add_project_arguments(cc.get_supported_arguments(extra_flags), language: 'c')
 
 subdir('src')
 
+if host_sys == 'linux'
+  subdir('tests')
+endif
+
 install_data(
   files('COPYING', 'ChangeLog', 'README.md', 'example_output01.txt'),
   install_dir: get_option('docdir'),
