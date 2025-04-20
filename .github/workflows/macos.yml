@@ -1,0 +1,39 @@
+name: MacOS
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: true
+
+on:
+  push:
+    branches: [ master ]
+    paths:
+    - '**'
+    - '!**.yml'
+    - '!**.md'
+    - '**/macos.yml'
+
+  pull_request:
+    branches: [ master ]
+    paths:
+    - '**'
+    - '!**.yml'
+    - '!**.md'
+    - '**/macos.yml'
+
+jobs:
+  MacOS:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: true
+    - name: Install Dependencies
+      run: |
+        brew update
+        brew install meson protobuf-c sdl2 sdl2_ttf
+    - run: |
+        meson setup _build -Db_sanitize=address,undefined
+        cd _build
+        ninja -v
+        src/aapokerhands -n 100 -v -s
+        ninja dist

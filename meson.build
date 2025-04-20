@@ -2,7 +2,7 @@ project(
   'aapokerhands',
   'c',
   version: '0.1.1.555',
-  meson_version: '>= 0.48.0',
+  meson_version: '>= 0.51.0',
   default_options: [
     'warning_level=3',
     'b_sanitize=address,undefined',
@@ -12,6 +12,15 @@ project(
 )
 
 cc = meson.get_compiler('c')
+
+host_sys = host_machine.system()
+platform_is_windows = (host_sys == 'windows')
+
+win_deps = []
+if platform_is_windows == true
+    win_deps += cc.find_library('ws2_32')
+    win_deps += cc.find_library('winpthread', static: true)
+endif
 
 definitions = ['-D_DEFAULT_SOURCE']
 add_project_arguments(definitions, language: 'c')

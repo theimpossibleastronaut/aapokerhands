@@ -1,10 +1,6 @@
 src_aapokerhands = ['aapokerhands.c']
 
-deckhandler_dep = dependency(
-  'deckhandler',
-  version: '>=0.1.0',
-  fallback: ['deckhandler', 'deckhandler_dep'],
-  default_options: 'default_library=shared',
+deckhandler_dep = dependency('deckhandler', default_options: 'default_library=shared',
 )
 
 sdl_dep = dependency('SDL2')
@@ -16,9 +12,11 @@ if get_option('gen_protobuf')
   run_command([protoc, '--c_out=./protobuf', 'netpoker.proto'], check: true)
 endif
 
+lib_src = files('lib.c')
+
 _lib = static_library(
   'lib',
-  ['lib.c'],
+  lib_src,
   dependencies: deckhandler_dep,
   install: false,
 )
@@ -33,7 +31,7 @@ executable(
 
 net_binaries = ['netpoker_server', 'netpoker_client']
 net_shared_src = ['game.c', 'net.c', 'protobuf/netpoker.pb-c.c']
-net_shared_dep = [deckhandler_dep, protobuf_dep]
+net_shared_dep = [deckhandler_dep, protobuf_dep, win_deps]
 net_shared_inc = include_directories('protobuf')
 
 executable(

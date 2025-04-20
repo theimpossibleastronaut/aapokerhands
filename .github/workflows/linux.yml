@@ -1,4 +1,4 @@
-name: C/C++ CI
+name: Linux
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
   cancel-in-progress: true
@@ -6,12 +6,19 @@ concurrency:
 on:
   push:
     branches: [ master ]
-    paths-ignore:
-    - '**/*.md'
+    paths:
+    - '**'
+    - '!**.yml'
+    - '!**.md'
+    - '**/linux.yml'
+
   pull_request:
     branches: [ master ]
-    paths-ignore:
-    - '**/*.md'
+    paths:
+    - '**'
+    - '!**.yml'
+    - '!**.md'
+    - '**/linux.yml'
 
 jobs:
   Ubuntu:
@@ -21,24 +28,13 @@ jobs:
       with:
         submodules: true
     - name: Install Dependencies
-      run: sudo apt-get install -y meson libprotobuf-c-dev libsdl2-dev
-    - run: |
-        meson setup _build -Db_sanitize=address,undefined
-        cd _build
-        ninja -v
-        src/aapokerhands -n 100 -v -s
-        ninja dist
-
-  MacOS:
-    runs-on: macos-latest
-    steps:
-    - uses: actions/checkout@v4
-      with:
-        submodules: true
-    - name: Install Dependencies
       run: |
-        brew update
-        brew install meson protobuf-c sdl2
+        sudo apt-get install -y \
+          meson \
+          libprotobuf-c-dev \
+          libsdl2-dev \
+          libsdl2-ttf-dev
+
     - run: |
         meson setup _build -Db_sanitize=address,undefined
         cd _build
