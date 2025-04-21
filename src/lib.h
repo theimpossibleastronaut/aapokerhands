@@ -52,7 +52,7 @@ typedef enum {
 extern const char *ranks[NUM_HAND_RANKS];
 
 struct hand_t {
-  st_card_info_dh card[HAND_SIZE];
+  struct dh_card card[HAND_SIZE];
 };
 
 void init(int *hand_seq, bool *final_hand, short int *hand_suits);

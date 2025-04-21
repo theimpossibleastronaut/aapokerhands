@@ -184,9 +184,9 @@ int main(int argc, char *argv[]) {
 
   for (t = 0; t < num_loops; t++) {
     i = 0;
-    st_deck_dh deck;
-    deck_init_dh(&deck);
-    deck_shuffle_dh(&deck);
+    struct dh_deck deck;
+    dh_init_deck(&deck);
+    dh_shuffle_deck(&deck);
     init(hand_seq, final_hand, hand_suits);
 
     struct hand_t hand;

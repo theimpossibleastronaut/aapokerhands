@@ -95,7 +95,7 @@ void show_totals(int *totals, int RUN_COUNT) {
   }
 }
 
-void main_thread(st_deck_dh *deck, const int RUN_COUNT, int *totals) {
+void main_thread(struct dh_deck *deck, const int RUN_COUNT, int *totals) {
 
   int run_count = 0;
 
@@ -104,7 +104,7 @@ void main_thread(st_deck_dh *deck, const int RUN_COUNT, int *totals) {
     int i, j, k;
     i = j = k = 0;
 
-    deck_shuffle_dh(deck);
+    dh_shuffle_deck(deck);
 
     bool final_hand[NUM_HAND_RANKS];
     int hand_seq[ACE_HIGH];
@@ -213,10 +213,10 @@ int main(int argc, char *argv[]) {
   for (i = 0; i < NUM_HAND_RANKS; i++)
     totals[i] = 0;
 
-  st_deck_dh deck;
-  deck_init_dh(&deck);
+  struct dh_deck deck;
+  dh_init_deck(&deck);
 
-  /* seeding the random number generator, used by deck_shuffle_dh() */
+  /* seeding the random number generator, used by dh_shuffle_deck() */
   srand(time(NULL));
 
   main_thread(&deck, RUN_COUNT, totals);

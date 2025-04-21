@@ -1,7 +1,5 @@
 syntax = "proto3";
 
-package game;
-
 message Card {
   int32 face_val = 1;
   int32 suit = 2;

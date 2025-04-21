@@ -7,142 +7,142 @@
 #endif
 
 #include "netpoker.pb-c.h"
-void   game__card__init
-                     (Game__Card         *message)
+void   card__init
+                     (Card         *message)
 {
-  static const Game__Card init_value = GAME__CARD__INIT;
+  static const Card init_value = CARD__INIT;
   *message = init_value;
 }
-size_t game__card__get_packed_size
-                     (const Game__Card *message)
+size_t card__get_packed_size
+                     (const Card *message)
 {
-  assert(message->base.descriptor == &game__card__descriptor);
+  assert(message->base.descriptor == &card__descriptor);
   return protobuf_c_message_get_packed_size ((const ProtobufCMessage*)(message));
 }
-size_t game__card__pack
-                     (const Game__Card *message,
+size_t card__pack
+                     (const Card *message,
                       uint8_t       *out)
 {
-  assert(message->base.descriptor == &game__card__descriptor);
+  assert(message->base.descriptor == &card__descriptor);
   return protobuf_c_message_pack ((const ProtobufCMessage*)message, out);
 }
-size_t game__card__pack_to_buffer
-                     (const Game__Card *message,
+size_t card__pack_to_buffer
+                     (const Card *message,
                       ProtobufCBuffer *buffer)
 {
-  assert(message->base.descriptor == &game__card__descriptor);
+  assert(message->base.descriptor == &card__descriptor);
   return protobuf_c_message_pack_to_buffer ((const ProtobufCMessage*)message, buffer);
 }
-Game__Card *
-       game__card__unpack
+Card *
+       card__unpack
                      (ProtobufCAllocator  *allocator,
                       size_t               len,
                       const uint8_t       *data)
 {
-  return (Game__Card *)
-     protobuf_c_message_unpack (&game__card__descriptor,
+  return (Card *)
+     protobuf_c_message_unpack (&card__descriptor,
                                 allocator, len, data);
 }
-void   game__card__free_unpacked
-                     (Game__Card *message,
+void   card__free_unpacked
+                     (Card *message,
                       ProtobufCAllocator *allocator)
 {
   if(!message)
     return;
-  assert(message->base.descriptor == &game__card__descriptor);
+  assert(message->base.descriptor == &card__descriptor);
   protobuf_c_message_free_unpacked ((ProtobufCMessage*)message, allocator);
 }
-void   game__hand__init
-                     (Game__Hand         *message)
+void   hand__init
+                     (Hand         *message)
 {
-  static const Game__Hand init_value = GAME__HAND__INIT;
+  static const Hand init_value = HAND__INIT;
   *message = init_value;
 }
-size_t game__hand__get_packed_size
-                     (const Game__Hand *message)
+size_t hand__get_packed_size
+                     (const Hand *message)
 {
-  assert(message->base.descriptor == &game__hand__descriptor);
+  assert(message->base.descriptor == &hand__descriptor);
   return protobuf_c_message_get_packed_size ((const ProtobufCMessage*)(message));
 }
-size_t game__hand__pack
-                     (const Game__Hand *message,
+size_t hand__pack
+                     (const Hand *message,
                       uint8_t       *out)
 {
-  assert(message->base.descriptor == &game__hand__descriptor);
+  assert(message->base.descriptor == &hand__descriptor);
   return protobuf_c_message_pack ((const ProtobufCMessage*)message, out);
 }
-size_t game__hand__pack_to_buffer
-                     (const Game__Hand *message,
+size_t hand__pack_to_buffer
+                     (const Hand *message,
                       ProtobufCBuffer *buffer)
 {
-  assert(message->base.descriptor == &game__hand__descriptor);
+  assert(message->base.descriptor == &hand__descriptor);
   return protobuf_c_message_pack_to_buffer ((const ProtobufCMessage*)message, buffer);
 }
-Game__Hand *
-       game__hand__unpack
+Hand *
+       hand__unpack
                      (ProtobufCAllocator  *allocator,
                       size_t               len,
                       const uint8_t       *data)
 {
-  return (Game__Hand *)
-     protobuf_c_message_unpack (&game__hand__descriptor,
+  return (Hand *)
+     protobuf_c_message_unpack (&hand__descriptor,
                                 allocator, len, data);
 }
-void   game__hand__free_unpacked
-                     (Game__Hand *message,
+void   hand__free_unpacked
+                     (Hand *message,
                       ProtobufCAllocator *allocator)
 {
   if(!message)
     return;
-  assert(message->base.descriptor == &game__hand__descriptor);
+  assert(message->base.descriptor == &hand__descriptor);
   protobuf_c_message_free_unpacked ((ProtobufCMessage*)message, allocator);
 }
-void   game__player__init
-                     (Game__Player         *message)
+void   player__init
+                     (Player         *message)
 {
-  static const Game__Player init_value = GAME__PLAYER__INIT;
+  static const Player init_value = PLAYER__INIT;
   *message = init_value;
 }
-size_t game__player__get_packed_size
-                     (const Game__Player *message)
+size_t player__get_packed_size
+                     (const Player *message)
 {
-  assert(message->base.descriptor == &game__player__descriptor);
+  assert(message->base.descriptor == &player__descriptor);
   return protobuf_c_message_get_packed_size ((const ProtobufCMessage*)(message));
 }
-size_t game__player__pack
-                     (const Game__Player *message,
+size_t player__pack
+                     (const Player *message,
                       uint8_t       *out)
 {
-  assert(message->base.descriptor == &game__player__descriptor);
+  assert(message->base.descriptor == &player__descriptor);
   return protobuf_c_message_pack ((const ProtobufCMessage*)message, out);
 }
-size_t game__player__pack_to_buffer
-                     (const Game__Player *message,
+size_t player__pack_to_buffer
+                     (const Player *message,
                       ProtobufCBuffer *buffer)
 {
-  assert(message->base.descriptor == &game__player__descriptor);
+  assert(message->base.descriptor == &player__descriptor);
   return protobuf_c_message_pack_to_buffer ((const ProtobufCMessage*)message, buffer);
 }
-Game__Player *
-       game__player__unpack
+Player *
+       player__unpack
                      (ProtobufCAllocator  *allocator,
                       size_t               len,
                       const uint8_t       *data)
 {
-  return (Game__Player *)
-     protobuf_c_message_unpack (&game__player__descriptor,
+  return (Player *)
+     protobuf_c_message_unpack (&player__descriptor,
                                 allocator, len, data);
 }
-void   game__player__free_unpacked
-                     (Game__Player *message,
+void   player__free_unpacked
+                     (Player *message,
                       ProtobufCAllocator *allocator)
 {
   if(!message)
     return;
-  assert(message->base.descriptor == &game__player__descriptor);
+  assert(message->base.descriptor == &player__descriptor);
   protobuf_c_message_free_unpacked ((ProtobufCMessage*)message, allocator);
 }
-static const ProtobufCFieldDescriptor game__card__field_descriptors[2] =
+static const ProtobufCFieldDescriptor card__field_descriptors[2] =
 {
   {
     "face_val",
@@ -150,7 +150,7 @@ static const ProtobufCFieldDescriptor game__card__field_descriptors[2] =
     PROTOBUF_C_LABEL_NONE,
     PROTOBUF_C_TYPE_INT32,
     0,   /* quantifier_offset */
-    offsetof(Game__Card, face_val),
+    offsetof(Card, face_val),
     NULL,
     NULL,
     0,             /* flags */
@@ -162,76 +162,76 @@ static const ProtobufCFieldDescriptor game__card__field_descriptors[2] =
     PROTOBUF_C_LABEL_NONE,
     PROTOBUF_C_TYPE_INT32,
     0,   /* quantifier_offset */
-    offsetof(Game__Card, suit),
+    offsetof(Card, suit),
     NULL,
     NULL,
     0,             /* flags */
     0,NULL,NULL    /* reserved1,reserved2, etc */
   },
 };
-static const unsigned game__card__field_indices_by_name[] = {
+static const unsigned card__field_indices_by_name[] = {
   0,   /* field[0] = face_val */
   1,   /* field[1] = suit */
 };
-static const ProtobufCIntRange game__card__number_ranges[1 + 1] =
+static const ProtobufCIntRange card__number_ranges[1 + 1] =
 {
   { 1, 0 },
   { 0, 2 }
 };
-const ProtobufCMessageDescriptor game__card__descriptor =
+const ProtobufCMessageDescriptor card__descriptor =
 {
   PROTOBUF_C__MESSAGE_DESCRIPTOR_MAGIC,
-  "game.Card",
   "Card",
-  "Game__Card",
-  "game",
-  sizeof(Game__Card),
+  "Card",
+  "Card",
+  "",
+  sizeof(Card),
   2,
-  game__card__field_descriptors,
-  game__card__field_indices_by_name,
-  1,  game__card__number_ranges,
-  (ProtobufCMessageInit) game__card__init,
+  card__field_descriptors,
+  card__field_indices_by_name,
+  1,  card__number_ranges,
+  (ProtobufCMessageInit) card__init,
   NULL,NULL,NULL    /* reserved[123] */
 };
-static const ProtobufCFieldDescriptor game__hand__field_descriptors[1] =
+static const ProtobufCFieldDescriptor hand__field_descriptors[1] =
 {
   {
     "card",
     1,
     PROTOBUF_C_LABEL_REPEATED,
     PROTOBUF_C_TYPE_MESSAGE,
-    offsetof(Game__Hand, n_card),
-    offsetof(Game__Hand, card),
-    &game__card__descriptor,
+    offsetof(Hand, n_card),
+    offsetof(Hand, card),
+    &card__descriptor,
     NULL,
     0,             /* flags */
     0,NULL,NULL    /* reserved1,reserved2, etc */
   },
 };
-static const unsigned game__hand__field_indices_by_name[] = {
+static const unsigned hand__field_indices_by_name[] = {
   0,   /* field[0] = card */
 };
-static const ProtobufCIntRange game__hand__number_ranges[1 + 1] =
+static const ProtobufCIntRange hand__number_ranges[1 + 1] =
 {
   { 1, 0 },
   { 0, 1 }
 };
-const ProtobufCMessageDescriptor game__hand__descriptor =
+const ProtobufCMessageDescriptor hand__descriptor =
 {
   PROTOBUF_C__MESSAGE_DESCRIPTOR_MAGIC,
-  "game.Hand",
   "Hand",
-  "Game__Hand",
-  "game",
-  sizeof(Game__Hand),
+  "Hand",
+  "Hand",
+  "",
+  sizeof(Hand),
   1,
-  game__hand__field_descriptors,
-  game__hand__field_indices_by_name,
-  1,  game__hand__number_ranges,
-  (ProtobufCMessageInit) game__hand__init,
+  hand__field_descriptors,
+  hand__field_indices_by_name,
+  1,  hand__number_ranges,
+  (ProtobufCMessageInit) hand__init,
   NULL,NULL,NULL    /* reserved[123] */
 };
-static const ProtobufCFieldDescriptor game__player__field_descriptors[2] =
+static const ProtobufCFieldDescriptor player__field_descriptors[2] =
 {
   {
     "name",
@@ -239,7 +239,7 @@ static const ProtobufCFieldDescriptor game__player__field_descriptors[2] =
     PROTOBUF_C_LABEL_NONE,
     PROTOBUF_C_TYPE_STRING,
     0,   /* quantifier_offset */
-    offsetof(Game__Player, name),
+    offsetof(Player, name),
     NULL,
     &protobuf_c_empty_string,
     0,             /* flags */
@@ -251,34 +251,34 @@ static const ProtobufCFieldDescriptor game__player__field_descriptors[2] =
     PROTOBUF_C_LABEL_NONE,
     PROTOBUF_C_TYPE_MESSAGE,
     0,   /* quantifier_offset */
-    offsetof(Game__Player, hand),
-    &game__hand__descriptor,
+    offsetof(Player, hand),
+    &hand__descriptor,
     NULL,
     0,             /* flags */
     0,NULL,NULL    /* reserved1,reserved2, etc */
   },
 };
-static const unsigned game__player__field_indices_by_name[] = {
+static const unsigned player__field_indices_by_name[] = {
   1,   /* field[1] = hand */
   0,   /* field[0] = name */
 };
-static const ProtobufCIntRange game__player__number_ranges[1 + 1] =
+static const ProtobufCIntRange player__number_ranges[1 + 1] =
 {
   { 1, 0 },
   { 0, 2 }
 };
-const ProtobufCMessageDescriptor game__player__descriptor =
+const ProtobufCMessageDescriptor player__descriptor =
 {
   PROTOBUF_C__MESSAGE_DESCRIPTOR_MAGIC,
-  "game.Player",
   "Player",
-  "Game__Player",
-  "game",
-  sizeof(Game__Player),
+  "Player",
+  "Player",
+  "",
+  sizeof(Player),
   2,
-  game__player__field_descriptors,
-  game__player__field_indices_by_name,
-  1,  game__player__number_ranges,
-  (ProtobufCMessageInit) game__player__init,
+  player__field_descriptors,
+  player__field_indices_by_name,
+  1,  player__number_ranges,
+  (ProtobufCMessageInit) player__init,
   NULL,NULL,NULL    /* reserved[123] */
 };

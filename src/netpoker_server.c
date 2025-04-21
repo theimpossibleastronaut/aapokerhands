@@ -55,9 +55,9 @@ int main(int argc, char *argv[]) {
   } else
     puts("Connection established");
 
-  st_deck_dh deck;
-  deck_init_dh(&deck);
-  deck_shuffle_dh(&deck);
+  struct dh_deck deck;
+  dh_init_deck(&deck);
+  dh_shuffle_deck(&deck);
   struct player_t player = {.name = "Testy"};
 
   int i;

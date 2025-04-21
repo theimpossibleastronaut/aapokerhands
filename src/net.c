@@ -162,17 +162,17 @@ void close_socket_checked(socket_t sockfd) {
 }
 
 uint8_t *serialize_player(const struct player_t *src, size_t *size_out) {
-  Game__Player msg = GAME__PLAYER__INIT;
-  Game__Hand hand_msg = GAME__HAND__INIT;
+  Player msg = PLAYER__INIT;
+  Hand hand_msg = HAND__INIT;
 
   msg.name = (char *)src->name;
   msg.hand = &hand_msg;
 
   // Allocate and populate cards inside the hand
-  Game__Card **cards = malloc(sizeof(Game__Card *) * HAND_SIZE);
+  Card **cards = malloc(sizeof(Card *) * HAND_SIZE);
   for (int i = 0; i < HAND_SIZE; ++i) {
-    cards[i] = malloc(sizeof(Game__Card));
-    game__card__init(cards[i]);
+    cards[i] = malloc(sizeof(Card));
+    card__init(cards[i]);
     cards[i]->face_val = src->hand.card[i].face_val;
     cards[i]->suit = src->hand.card[i].suit;
   }
@@ -181,10 +181,10 @@ uint8_t *serialize_player(const struct player_t *src, size_t *size_out) {
   hand_msg.card = cards;
 
   // Serialize
-  *size_out = game__player__get_packed_size(&msg);
+  *size_out = player__get_packed_size(&msg);
   uint8_t *buffer = malloc(*size_out);
   if (buffer)
-    game__player__pack(&msg, buffer);
+    player__pack(&msg, buffer);
 
   // Cleanup
   for (int i = 0; i < HAND_SIZE; ++i) {
@@ -204,16 +204,16 @@ struct player_t deserialize_player(const uint8_t *data, size_t size) {
     exit(EXIT_FAILURE);
   }
 
-  Game__Player *msg = game__player__unpack(NULL, size, data);
+  Player *msg = player__unpack(NULL, size, data);
   if (!msg) {
-    fprintf(stderr, "Failed to unpack Game__Player message.\n");
+    fprintf(stderr, "Failed to unpack Player message.\n");
     exit(EXIT_FAILURE);
   }
 
   // Validate name field
   if (!msg->name) {
     fprintf(stderr, "Missing player name in message.\n");
-    game__player__free_unpacked(msg, NULL);
+    player__free_unpacked(msg, NULL);
     exit(EXIT_FAILURE);
   }
 
@@ -222,13 +222,13 @@ struct player_t deserialize_player(const uint8_t *data, size_t size) {
   // Validate hand
   if (!msg->hand) {
     fprintf(stderr, "Missing hand data in message.\n");
-    game__player__free_unpacked(msg, NULL);
+    player__free_unpacked(msg, NULL);
     exit(EXIT_FAILURE);
   }
 
   if (!msg->hand->card) {
     fprintf(stderr, "Hand exists but card array is NULL.\n");
-    game__player__free_unpacked(msg, NULL);
+    player__free_unpacked(msg, NULL);
     exit(EXIT_FAILURE);
   }
 
@@ -247,7 +247,7 @@ struct player_t deserialize_player(const uint8_t *data, size_t size) {
     out.hand.card[i].suit = msg->hand->card[i]->suit;
   }
 
-  game__player__free_unpacked(msg, NULL);
+  player__free_unpacked(msg, NULL);
   return out;
 }
 
