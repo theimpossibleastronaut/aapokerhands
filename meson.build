@@ -34,11 +34,67 @@ extra_flags = [
   '-Werror=odr',
   '-Werror=lto-type-mismatch',
   '-Werror=strict-aliasing',
+  #'-Wconversion',
 ]
 
 add_project_arguments(cc.get_supported_arguments(extra_flags), language: 'c')
 
+deckhandler_dep = dependency('deckhandler', default_options: 'default_library=shared',
+)
+
+sdl_dep = dependency('SDL2')
+sdl_ttf_dep = dependency('SDL2_ttf')
+protobuf_dep = dependency('libprotobuf-c')
+
+net_shared_dep = [deckhandler_dep, protobuf_dep, win_deps]
+net_shared_inc = include_directories('src/protobuf')
+
 subdir('src')
+
+_lib = static_library(
+  'lib',
+  lib_src,
+  dependencies: deckhandler_dep,
+  install: false,
+)
+
+executable(
+  'aapokerhands',
+  'src/aapokerhands.c',
+  dependencies: deckhandler_dep,
+  link_with: _lib,
+  install: true,
+)
+
+#net_binaries = ['netpoker_server', 'netpoker_client']
+
+executable(
+  'netpoker_server',
+  ['src/netpoker_server.c', net_shared_src],
+  dependencies: net_shared_dep,
+  link_with: _lib,
+  include_directories: net_shared_inc,
+  install: false,
+)
+
+executable(
+  'netpoker_client',
+  ['src/netpoker_client.c', net_shared_src, 'src/graphics.c'],
+  dependencies: [net_shared_dep, sdl_dep, sdl_ttf_dep],
+  link_with: _lib,
+  include_directories: net_shared_inc,
+  install: false,
+)
+
+conf = configuration_data()
+conf.set_quoted('VERSION', meson.project_version())
+conf.set_quoted('PACKAGE_STRING', meson.project_name())
+conf.set_quoted(
+  'PACKAGE_URL',
+  'https://github.com/theimpossibleastronaut/aapokerhands',
+)
+config_h = configure_file(output: 'config.h', configuration: conf)
+
 
 if host_sys == 'linux'
   subdir('tests')

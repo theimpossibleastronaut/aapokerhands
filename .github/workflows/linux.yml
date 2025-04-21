@@ -41,7 +41,7 @@ jobs:
     - name: Build
       run: |
         meson compile -v -C _build
-        _build/src/aapokerhands -n 100 -v -s
+        _build/aapokerhands -n 100 -v -s
 
     - name: Test
       run: meson test -v -C _build

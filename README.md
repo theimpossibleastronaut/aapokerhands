@@ -22,10 +22,8 @@ From the *aapokerhands* directory, to download latest *deckhandler* code:
     cd builddir
     ninja
 
-The resulting binary will be in *src/*
-
 ## Usage
-    src/aapokerhands: -n [hands] -s -v
+    ./aapokerhands: -n [hands] -s -v
 
 # Downloads
 [Releases](https://github.com/theimpossibleastronaut/aapokerhands/releases)
@@ -33,7 +31,7 @@ The resulting binary will be in *src/*
 ## Example Output
 
 ```
-andy@oceanus:~/src/aapokerhands$ ./aapokerhands -n 100000
+$ ./aapokerhands -n 100000
 Out of 100000 hands:
 
                 Pair:     42250
@@ -46,7 +44,7 @@ Out of 100000 hands:
       Straight Flush:         3
          Royal Flush:         0
 
-andy@oceanus:~/src/aapokerhands/src$ ./aapokerhands -n 1000000
+$ ./aapokerhands -n 1000000
 Out of 1000000 hands:
 
                 Pair:    422821
@@ -59,7 +57,7 @@ Out of 1000000 hands:
       Straight Flush:        15
          Royal Flush:         1
 
-andy@oceanus:~/src/aapokerhands/src$ nice -n 19 ./aapokerhands -n 1000000000
+$ nice -n 19 ./aapokerhands -n 1000000000
 Out of 1000000000 hands:
 
                 Pair: 422573272

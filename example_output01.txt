@@ -1,4 +1,4 @@
-andy@oceanus:~/src/aa-pokerhands$ ./pokerhands -n 10 -s -v
+$ ./pokerhands -n 10 -s -v
  King of Diamonds |     7 of Diamonds |     8 of Diamonds |  Jack of Diamonds
     9 of Spades   |     9 of Clubs    |     2 of Hearts   |     3 of Clubs
  Jack of Clubs    | Queen of Diamonds |   Ace of Hearts   |     7 of Spades
