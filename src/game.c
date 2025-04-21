@@ -31,4 +31,3 @@
 #include <unistd.h>
 
 #include "game.h"
-#include "netpoker.pb-c.h"

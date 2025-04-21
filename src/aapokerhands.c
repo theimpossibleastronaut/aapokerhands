@@ -31,6 +31,7 @@
 #include <time.h>
 #include <unistd.h>
 
+#include "deckhandler.h"
 #include "globals.h"
 #include "lib.h"
 

@@ -40,9 +40,9 @@ void init_sdl_window(struct sdl_context_t *sdl_context, const char *title) {
   sdl_context->renderer = SDL_CreateRenderer(sdl_context->window, -1, SDL_RENDERER_ACCELERATED);
 
   //// Draw white background
-  //SDL_SetRenderDrawColor(sdl_context->renderer, 0, 125, 0, 255);
-  //SDL_RenderClear(sdl_context->renderer);
-  //SDL_RenderPresent(sdl_context->renderer);
+  // SDL_SetRenderDrawColor(sdl_context->renderer, 0, 125, 0, 255);
+  // SDL_RenderClear(sdl_context->renderer);
+  // SDL_RenderPresent(sdl_context->renderer);
   return;
 }
 
@@ -52,7 +52,8 @@ void run_sdl_loop(SDL_Renderer *renderer, struct player_t *player) {
     return;
   }
 
-  TTF_Font *font = TTF_OpenFont("../../src/LiberationMono-Regular.ttf", 38); // make sure this font file exists
+  TTF_Font *font =
+      TTF_OpenFont("../../src/LiberationMono-Regular.ttf", 38); // make sure this font file exists
   if (!font) {
     fprintf(stderr, "Failed to load font: %s\n", TTF_GetError());
     return;
@@ -77,7 +78,7 @@ void run_sdl_loop(SDL_Renderer *renderer, struct player_t *player) {
       int card_y = 50;
 
       // Draw white card box
-      SDL_Rect card_rect = { card_x, card_y, 80, 50 };
+      SDL_Rect card_rect = {card_x, card_y, 80, 50};
       SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
       SDL_RenderFillRect(renderer, &card_rect);
       SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
@@ -92,20 +93,16 @@ void run_sdl_loop(SDL_Renderer *renderer, struct player_t *player) {
 
       SDL_Color textColor;
       if (player->hand.card[i].suit == HEARTS || player->hand.card[i].suit == DIAMONDS) {
-          textColor = (SDL_Color){255, 0, 0, 255};  // Red
+        textColor = (SDL_Color){255, 0, 0, 255}; // Red
       } else {
-          textColor = (SDL_Color){0, 0, 0, 255};    // Black
+        textColor = (SDL_Color){0, 0, 0, 255}; // Black
       }
 
       SDL_Surface *textSurface = TTF_RenderUTF8_Blended(font, text, textColor);
       SDL_Texture *textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
 
-      SDL_Rect textRect = {
-        card_x + (80 - textSurface->w) / 2,
-        card_y + (50 - textSurface->h) / 2,
-        textSurface->w,
-        textSurface->h
-      };
+      SDL_Rect textRect = {card_x + (80 - textSurface->w) / 2, card_y + (50 - textSurface->h) / 2,
+                           textSurface->w, textSurface->h};
 
       SDL_RenderCopy(renderer, textTexture, NULL, &textRect);
       SDL_FreeSurface(textSurface);

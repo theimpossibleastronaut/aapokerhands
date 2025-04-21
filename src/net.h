@@ -29,8 +29,8 @@
 #ifndef __NET_H
 #define __NET_H
 
-#include <stdlib.h>
 #include <stdint.h>
+#include <stdlib.h>
 
 #ifdef _WIN32
 #include <winsock2.h>
@@ -41,7 +41,7 @@
 #include <poll.h>
 #endif
 
-#include "game.h"
+#include "netpoker.h"
 
 #define BACKLOG 10
 

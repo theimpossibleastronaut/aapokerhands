@@ -31,7 +31,6 @@
 #include <unistd.h>
 
 #include "net.h"
-#include "netpoker.pb-c.h"
 
 const char *default_port = "61357";
 

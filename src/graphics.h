@@ -26,12 +26,12 @@
 
 */
 
+#ifndef __GRAPHICS_H
+#define __GRAPHICS_H
+
 #include <SDL2/SDL.h>
 
-#include "game.h"
-
-#define WINDOW_WIDTH 720
-#define WINDOW_HEIGHT 480
+#include "netpoker.h"
 
 struct sdl_context_t {
   SDL_Renderer *renderer;
@@ -43,3 +43,5 @@ void init_sdl_window(struct sdl_context_t *sdl_context, const char *title);
 void run_sdl_loop(SDL_Renderer *renderer, struct player_t *player);
 
 void do_sdl_cleanup(struct sdl_context_t *sdl_context);
+
+#endif

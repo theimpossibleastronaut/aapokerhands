@@ -1,5 +1,5 @@
 /*
- game.h
+ netpoker.c
  https://github.com/theimpossibleastronaut/aapokerhands
 
  MIT License
@@ -26,13 +26,5 @@
 
 */
 
-#ifndef __GAME_H
-#define __GAME_H
+#include "netpoker.h"
 
-#include <stdio.h>
-#include <string.h>
-#include <unistd.h>
-
-#include "lib.h"
-
-#endif

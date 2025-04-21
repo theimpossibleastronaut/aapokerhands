@@ -33,11 +33,43 @@
 #include "deckhandler.h"
 #include "lib.h"
 #include "net.h"
+#include "netpoker.h"
 #include "netpoker.pb-c.h"
+
+static void init_players(struct player_t *player) {
+  const struct preset_player_pos_t preset_player_pos = {
+      .pos = {
+          // P0: bottom center
+          {.x = WINDOW_WIDTH / 2 - 25, .y = WINDOW_HEIGHT - 80},
+
+          // P1: top-left
+          {.x = 20, .y = 20},
+
+          // P2: left, 1/3 down
+          {.x = 20, .y = WINDOW_HEIGHT / 3},
+
+          // P3: top-right
+          {.x = WINDOW_WIDTH - 70, .y = 20},
+
+          // P4: right, 1/3 down
+          {.x = WINDOW_WIDTH - 70, .y = WINDOW_HEIGHT / 3},
+      }};
+
+// This offers only a little extra protection if changes are made.
+  _Static_assert(sizeof(preset_player_pos.pos) / sizeof(preset_player_pos.pos[0]) == 5,
+               "preset_player_pos.pos has wrong number of elements");
+
+  for (int i = 0; i < MAX_PLAYERS; i++) {
+    player[i] = (struct player_t){.name = "Testy", .pos = preset_player_pos.pos[i]};
+  }
+}
 
 int main(int argc, char *argv[]) {
   (void)argc;
   (void)argv;
+
+  struct player_t player[MAX_PLAYERS];
+  init_players(player);
 
   srand(time(NULL));
 
@@ -58,12 +90,11 @@ int main(int argc, char *argv[]) {
   struct dh_deck deck;
   dh_init_deck(&deck);
   dh_shuffle_deck(&deck);
-  struct player_t player = {.name = "Testy"};
 
   int i;
   for (i = 0; i < 5; i++) {
-    player.hand.card[i].face_val = deck.card[i].face_val;
-    player.hand.card[i].suit = deck.card[i].suit;
+    player[0].hand.card[i].face_val = deck.card[i].face_val;
+    player[0].hand.card[i].suit = deck.card[i].suit;
   }
 
   bool final_hand[NUM_HAND_RANKS];
@@ -72,7 +103,7 @@ int main(int argc, char *argv[]) {
   init(hand_seq, final_hand, hand_suits);
 
   size_t size = 0;
-  uint8_t *data = serialize_player(&player, &size);
+  uint8_t *data = serialize_player(&player[0], &size);
   printf("size: %zd\n", size);
 
   uint32_t size_net = htonl(size); // Ensure network byte order

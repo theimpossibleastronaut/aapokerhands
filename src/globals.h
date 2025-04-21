@@ -25,9 +25,6 @@
 
 #include "config.h"
 
-/* use deckhandler library */
-#include "deckhandler.h"
-
 /* can be set on the command line with -v */
 /* Show all 52 cards after the deck has been shuffled */
 extern bool verbose;

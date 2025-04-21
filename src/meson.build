@@ -30,7 +30,7 @@ executable(
 )
 
 net_binaries = ['netpoker_server', 'netpoker_client']
-net_shared_src = ['game.c', 'net.c', 'protobuf/netpoker.pb-c.c']
+net_shared_src = ['game.c', 'net.c', 'netpoker.c', 'protobuf/netpoker.pb-c.c']
 net_shared_dep = [deckhandler_dep, protobuf_dep, win_deps]
 net_shared_inc = include_directories('protobuf')
 
