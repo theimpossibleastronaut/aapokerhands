@@ -48,8 +48,10 @@ struct preset_player_pos_t {
 
 struct player_t {
   char name[256];
+  int id;
   struct pos_t pos;
   struct hand_t hand;
+  int chips;
 };
 
 #endif

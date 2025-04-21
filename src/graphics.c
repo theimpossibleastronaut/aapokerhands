@@ -53,7 +53,7 @@ void run_sdl_loop(SDL_Renderer *renderer, struct player_t *player) {
   }
 
   TTF_Font *font =
-      TTF_OpenFont("../../src/LiberationMono-Regular.ttf", 38); // make sure this font file exists
+      TTF_OpenFont("../src/LiberationMono-Regular.ttf", 38); // make sure this font file exists
   if (!font) {
     fprintf(stderr, "Failed to load font: %s\n", TTF_GetError());
     return;

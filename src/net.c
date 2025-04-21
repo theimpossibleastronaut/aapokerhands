@@ -162,92 +162,76 @@ void close_socket_checked(socket_t sockfd) {
 
 uint8_t *serialize_player(const struct player_t *src, size_t *size_out) {
   Player msg = PLAYER__INIT;
-  Hand hand_msg = HAND__INIT;
+  Pos pos = POS__INIT;
+  Hand hand = HAND__INIT;
+  Card cards[HAND_SIZE];
+  Card *card_ptrs[HAND_SIZE];
 
+  // Fill in name
   msg.name = (char *)src->name;
-  msg.hand = &hand_msg;
 
-  // Allocate and populate cards inside the hand
-  Card **cards = malloc(sizeof(Card *) * HAND_SIZE);
+  // Fill in id
+  msg.id = src->id;
+
+  // Fill in position
+  pos.x = src->pos.x;
+  pos.y = src->pos.y;
+  msg.pos = &pos;
+
+  // Fill in cards
   for (int i = 0; i < HAND_SIZE; ++i) {
-    cards[i] = malloc(sizeof(Card));
-    card__init(cards[i]);
-    cards[i]->face_val = src->hand.card[i].face_val;
-    cards[i]->suit = src->hand.card[i].suit;
+    card__init(&cards[i]);
+    cards[i].face_val = src->hand.card[i].face_val;
+    cards[i].suit = src->hand.card[i].suit;
+    card_ptrs[i] = &cards[i]; // pointer to each card
   }
 
-  hand_msg.n_card = HAND_SIZE;
-  hand_msg.card = cards;
+  hand.n_card = HAND_SIZE;
+  hand.card = card_ptrs;
+  msg.hand = &hand;
 
-  // Serialize
+  // Fill in chips
+  msg.chips = src->chips;
+
+  // Serialize to buffer
   *size_out = player__get_packed_size(&msg);
   uint8_t *buffer = malloc(*size_out);
-  if (buffer)
-    player__pack(&msg, buffer);
-
-  // Cleanup
-  for (int i = 0; i < HAND_SIZE; ++i) {
-    free(cards[i]);
+  if (!buffer) {
+    *size_out = 0;
+    return NULL;
   }
-  free(cards);
 
+  player__pack(&msg, buffer);
   return buffer;
 }
 
 struct player_t deserialize_player(const uint8_t *data, size_t size) {
-  struct player_t out;
-  memset(&out, 0, sizeof(out));
-
-  if (!data || size == 0) {
-    fprintf(stderr, "Invalid input data for deserialization.\n");
-    exit(EXIT_FAILURE);
+  struct player_t player = {0};
+  Player *pb = player__unpack(NULL, size, data);
+  if (!pb) {
+    fprintf(stderr, "Failed to unpack Player\n");
+    return player;
   }
 
-  Player *msg = player__unpack(NULL, size, data);
-  if (!msg) {
-    fprintf(stderr, "Failed to unpack Player message.\n");
-    exit(EXIT_FAILURE);
+  strncpy(player.name, pb->name, sizeof(player.name) - 1);
+  player.id = pb->id;
+
+  if (pb->pos) {
+    player.pos.x = pb->pos->x;
+    player.pos.y = pb->pos->y;
   }
 
-  // Validate name field
-  if (!msg->name) {
-    fprintf(stderr, "Missing player name in message.\n");
-    player__free_unpacked(msg, NULL);
-    exit(EXIT_FAILURE);
-  }
-
-  snprintf(out.name, sizeof(out.name), "%s", msg->name ? msg->name : "");
-
-  // Validate hand
-  if (!msg->hand) {
-    fprintf(stderr, "Missing hand data in message.\n");
-    player__free_unpacked(msg, NULL);
-    exit(EXIT_FAILURE);
-  }
-
-  if (!msg->hand->card) {
-    fprintf(stderr, "Hand exists but card array is NULL.\n");
-    player__free_unpacked(msg, NULL);
-    exit(EXIT_FAILURE);
-  }
-
-  if (msg->hand->n_card > HAND_SIZE) {
-    fprintf(stderr, "Received more cards than HAND_SIZE allows (%zu > %d). Truncating.\n",
-            msg->hand->n_card, HAND_SIZE);
-  }
-
-  for (size_t i = 0; i < msg->hand->n_card && i < HAND_SIZE; ++i) {
-    if (!msg->hand->card[i]) {
-      fprintf(stderr, "Card entry %zu is NULL.\n", i);
-      continue;
+  if (pb->hand && pb->hand->n_card <= HAND_SIZE) {
+    for (size_t i = 0; i < pb->hand->n_card; i++) {
+      player.hand.card[i].face_val = pb->hand->card[i]->face_val;
+      player.hand.card[i].suit = pb->hand->card[i]->suit;
     }
-
-    out.hand.card[i].face_val = msg->hand->card[i]->face_val;
-    out.hand.card[i].suit = msg->hand->card[i]->suit;
   }
 
-  player__free_unpacked(msg, NULL);
-  return out;
+  player.chips = pb->chips;
+
+  player__free_unpacked(pb, NULL);
+  return player;
 }
 
 ssize_t send_all(int sockfd, const void *buf, size_t len) {

@@ -17,6 +17,7 @@ PROTOBUF_C__BEGIN_DECLS
 
 typedef struct Card Card;
 typedef struct Hand Hand;
+typedef struct Pos Pos;
 typedef struct Player Player;
 
 
@@ -47,15 +48,29 @@ struct  Hand
 , 0,NULL }
 
 
+struct  Pos
+{
+  ProtobufCMessage base;
+  int32_t x;
+  int32_t y;
+};
+#define POS__INIT \
+ { PROTOBUF_C_MESSAGE_INIT (&pos__descriptor) \
+, 0, 0 }
+
+
 struct  Player
 {
   ProtobufCMessage base;
   char *name;
+  int32_t id;
+  Pos *pos;
   Hand *hand;
+  int32_t chips;
 };
 #define PLAYER__INIT \
  { PROTOBUF_C_MESSAGE_INIT (&player__descriptor) \
-, (char *)protobuf_c_empty_string, NULL }
+, (char *)protobuf_c_empty_string, 0, NULL, NULL, 0 }
 
 
 /* Card methods */
@@ -96,6 +111,25 @@ Hand *
 void   hand__free_unpacked
                      (Hand *message,
                       ProtobufCAllocator *allocator);
+/* Pos methods */
+void   pos__init
+                     (Pos         *message);
+size_t pos__get_packed_size
+                     (const Pos   *message);
+size_t pos__pack
+                     (const Pos   *message,
+                      uint8_t             *out);
+size_t pos__pack_to_buffer
+                     (const Pos   *message,
+                      ProtobufCBuffer     *buffer);
+Pos *
+       pos__unpack
+                     (ProtobufCAllocator  *allocator,
+                      size_t               len,
+                      const uint8_t       *data);
+void   pos__free_unpacked
+                     (Pos *message,
+                      ProtobufCAllocator *allocator);
 /* Player methods */
 void   player__init
                      (Player         *message);
@@ -123,6 +157,9 @@ typedef void (*Card_Closure)
 typedef void (*Hand_Closure)
                  (const Hand *message,
                   void *closure_data);
+typedef void (*Pos_Closure)
+                 (const Pos *message,
+                  void *closure_data);
 typedef void (*Player_Closure)
                  (const Player *message,
                   void *closure_data);
@@ -134,6 +171,7 @@ typedef void (*Player_Closure)
 
 extern const ProtobufCMessageDescriptor card__descriptor;
 extern const ProtobufCMessageDescriptor hand__descriptor;
+extern const ProtobufCMessageDescriptor pos__descriptor;
 extern const ProtobufCMessageDescriptor player__descriptor;
 
 PROTOBUF_C__END_DECLS

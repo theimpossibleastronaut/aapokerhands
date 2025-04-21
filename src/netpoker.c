@@ -27,4 +27,3 @@
 */
 
 #include "netpoker.h"
-

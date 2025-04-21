@@ -73,6 +73,9 @@ int main(int argc, char *argv[]) {
   struct player_t player = deserialize_player(data, size);
 
   printf("Deserialized name: %s\n", player.name);
+  printf("Deserialized chips: %d\n", player.chips);
+  printf("Deserialized id: %d\n", player.id);
+  printf("Deserialized pos x,y: %d, %d\n", player.pos.x, player.pos.y);
   int i;
   for (i = 0; i < HAND_SIZE; ++i) {
     printf("Card %d: face=%d, suit=%s\n", i + 1, player.hand.card[i].face_val,

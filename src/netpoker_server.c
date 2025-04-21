@@ -36,6 +36,19 @@
 #include "netpoker.h"
 #include "netpoker.pb-c.h"
 
+// static void accept_thread(void *args) {
+// while (1) {
+// struct sockaddr_storage client_addr;
+// socklen_t addr_size = sizeof(client_addr);
+// socket_t connfd = accept(socket_info.sockfd, (struct sockaddr *)&client_addr, &addr_size);
+// if (socket_info.sockfd == INVALID_SOCKET) {
+// perror("Client connection failed");
+//} else
+// puts("Connection established");
+//};
+// return;
+//}
+
 static void init_players(struct player_t *player) {
   const struct preset_player_pos_t preset_player_pos = {
       .pos = {
@@ -55,12 +68,13 @@ static void init_players(struct player_t *player) {
           {.x = WINDOW_WIDTH - 70, .y = WINDOW_HEIGHT / 3},
       }};
 
-// This offers only a little extra protection if changes are made.
+  // This offers only a little extra protection if changes are made.
   _Static_assert(sizeof(preset_player_pos.pos) / sizeof(preset_player_pos.pos[0]) == 5,
-               "preset_player_pos.pos has wrong number of elements");
+                 "preset_player_pos.pos has wrong number of elements");
 
   for (int i = 0; i < MAX_PLAYERS; i++) {
-    player[i] = (struct player_t){.name = "Testy", .pos = preset_player_pos.pos[i]};
+    player[i] = (struct player_t){
+        .name = "Testy", .id = -1, .pos = preset_player_pos.pos[i], .chips = 20000};
   }
 }
 
@@ -78,6 +92,10 @@ int main(int argc, char *argv[]) {
       .host = NULL,
   };
   assign_tcp_dual_stack_server_fd(&socket_info);
+
+  // struct accept_args_t {
+  // socket_t sockfd;
+  //} accept_args = { .sockfd =
 
   struct sockaddr_storage client_addr;
   socklen_t addr_size = sizeof(client_addr);
