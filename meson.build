@@ -58,13 +58,15 @@ _lib = static_library(
   install: false,
 )
 
-executable(
+aapokerhands_bin = executable(
   'aapokerhands',
   'src/aapokerhands.c',
   dependencies: deckhandler_dep,
   link_with: _lib,
   install: true,
 )
+
+test('aapokerhands_bin_test', aapokerhands_bin, args: ['-n', '1000'])
 
 #net_binaries = ['netpoker_server', 'netpoker_client']
 

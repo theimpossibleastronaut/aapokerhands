@@ -39,12 +39,10 @@ jobs:
       run: meson setup _build -Db_sanitize=address,undefined
 
     - name: Build
-      run: |
-        meson compile -v -C _build
-        _build/aapokerhands -n 100 -v -s
+      run: meson compile -v -C _build
 
     - name: Test
       run: meson test -v -C _build
 
     - name: Dist test
-      run: meson dist --no-tests -C _build
+      run: meson dist -C _build

@@ -35,5 +35,7 @@ jobs:
         meson setup _build -Db_sanitize=address,undefined
         cd _build
         ninja -v
-        ./aapokerhands -n 100 -v -s
-        ninja dist
+
+    - name: Test
+      run: |
+        meson test -v -C _build
