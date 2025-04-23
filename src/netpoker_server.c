@@ -87,6 +87,18 @@ int main(int argc, char *argv[]) {
 
   srand(time(NULL));
 
+  #ifdef _WIN32_
+  WSADATA wsaData;
+    int iResult;
+
+    // Initialize Winsock version 2.2
+    iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
+    if (iResult != 0) {
+        printf("WSAStartup failed: %d\n", iResult);
+        return 1;
+    }
+  #endif
+
   struct socket_info_t socket_info = {
       .port = default_port,
       .host = NULL,
@@ -138,5 +150,10 @@ int main(int argc, char *argv[]) {
 
   if (connfd != INVALID_SOCKET)
     close_socket_checked(connfd);
+
+  #ifdef _WIN32_
+  WSACleanup();
+  #endif
+
   return 0;
 }
