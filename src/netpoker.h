@@ -34,7 +34,7 @@
 
 #define MAX_PLAYERS 5
 
-#define WINDOW_WIDTH 720
+#define WINDOW_WIDTH 1024
 #define WINDOW_HEIGHT 480
 
 struct pos_t {

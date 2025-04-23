@@ -74,8 +74,8 @@ void run_sdl_loop(SDL_Renderer *renderer, struct player_t *player) {
 
     // Draw each card
     for (int i = 0; i < HAND_SIZE; ++i) {
-      int card_x = 10 + i * (80 + 10);
-      int card_y = 50;
+      int card_x = player->pos.x + i * (80 + 10);
+      int card_y = player->pos.y;
 
       // Draw white card box
       SDL_Rect card_rect = {card_x, card_y, 80, 50};
