@@ -26,6 +26,7 @@
 
 */
 
+#include <pthread.h>
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
@@ -36,18 +37,50 @@
 #include "netpoker.h"
 #include "netpoker.pb-c.h"
 
-// static void accept_thread(void *args) {
-// while (1) {
-// struct sockaddr_storage client_addr;
-// socklen_t addr_size = sizeof(client_addr);
-// socket_t connfd = accept(socket_info.sockfd, (struct sockaddr *)&client_addr, &addr_size);
-// if (socket_info.sockfd == INVALID_SOCKET) {
-// perror("Client connection failed");
-//} else
-// puts("Connection established");
-//};
-// return;
-//}
+struct accept_args_t {
+  struct socket_info_t *socket_info;
+  struct player_t *player;
+  struct dh_deck *deck;
+};
+
+static void *accept_thread(void *arg) {
+  struct accept_args_t *args = (struct accept_args_t *)arg;
+  while (1) {
+    struct sockaddr_storage client_addr;
+    socklen_t addr_size = sizeof(client_addr);
+    socket_t connfd = accept(args->socket_info->sockfd, (struct sockaddr *)&client_addr, &addr_size);
+    if (connfd == INVALID_SOCKET) {
+      perror("Client connection failed");
+    } else
+      puts("Connection established");
+
+    for (int i = 0; i < 5; i++) {
+      args->player->hand.card[i].face_val = args->deck->card[i].face_val;
+      args->player->hand.card[i].suit = args->deck->card[i].suit;
+    }
+
+    size_t size = 0;
+    uint8_t *data = serialize_player(args->player, &size);
+    printf("size: %zd\n", size);
+
+    uint32_t size_net = htonl(size); // Ensure network byte order
+    printf("size_net: %d\n", size_net);
+    if (send_all(connfd, &size_net, sizeof(size_net)) != sizeof(size_net)) {
+      perror("send size");
+    }
+
+    // Send the serialized data
+    if (send_all(connfd, data, size) == -1)
+      perror("send");
+
+    free(data);
+
+    if (connfd != INVALID_SOCKET)
+      close_socket_checked(connfd);
+  }
+
+  return NULL;
+}
 
 static void init_players(struct player_t *player) {
   const struct preset_player_pos_t preset_player_pos = {
@@ -109,47 +142,20 @@ int main(int argc, char *argv[]) {
   // socket_t sockfd;
   //} accept_args = { .sockfd =
 
-  struct sockaddr_storage client_addr;
-  socklen_t addr_size = sizeof(client_addr);
-  socket_t connfd = accept(socket_info.sockfd, (struct sockaddr *)&client_addr, &addr_size);
-  if (connfd == INVALID_SOCKET) {
-    perror("Client connection failed");
-  } else
-    puts("Connection established");
-
   struct dh_deck deck;
   dh_init_deck(&deck);
   dh_shuffle_deck(&deck);
 
-  int i;
-  for (i = 0; i < 5; i++) {
-    player[0].hand.card[i].face_val = deck.card[i].face_val;
-    player[0].hand.card[i].suit = deck.card[i].suit;
-  }
+  struct accept_args_t accept_args = {
+    .socket_info = &socket_info,
+    .player = &player[0],
+    .deck = &deck,
+  };
 
-  bool final_hand[NUM_HAND_RANKS];
-  int hand_seq[ACE_HIGH];
-  short int hand_suits[MAX_SUITS];
-  init(hand_seq, final_hand, hand_suits);
+  pthread_t accepter;
+  pthread_create(&accepter, NULL, accept_thread, &accept_args);
+  pthread_join(accepter, NULL);
 
-  size_t size = 0;
-  uint8_t *data = serialize_player(&player[0], &size);
-  printf("size: %zd\n", size);
-
-  uint32_t size_net = htonl(size); // Ensure network byte order
-  printf("size_net: %d\n", size_net);
-  if (send_all(connfd, &size_net, sizeof(size_net)) != sizeof(size_net)) {
-    perror("send size");
-  }
-
-  // Send the serialized data
-  if (send_all(connfd, data, size) == -1)
-    perror("send");
-
-  free(data);
-
-  if (connfd != INVALID_SOCKET)
-    close_socket_checked(connfd);
 
   #ifdef _WIN32
   WSACleanup();
