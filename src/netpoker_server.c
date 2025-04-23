@@ -87,7 +87,7 @@ int main(int argc, char *argv[]) {
 
   srand(time(NULL));
 
-  #ifdef _WIN32_
+  #ifdef _WIN32
   WSADATA wsaData;
     int iResult;
 
@@ -151,7 +151,7 @@ int main(int argc, char *argv[]) {
   if (connfd != INVALID_SOCKET)
     close_socket_checked(connfd);
 
-  #ifdef _WIN32_
+  #ifdef _WIN32
   WSACleanup();
   #endif
 
