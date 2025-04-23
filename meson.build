@@ -39,7 +39,7 @@ extra_flags = [
 
 add_project_arguments(cc.get_supported_arguments(extra_flags), language: 'c')
 
-deckhandler_dep = dependency('deckhandler', default_options: 'default_library=shared',
+deckhandler_dep = dependency('deckhandler', default_options: 'default_library=static',
 )
 
 sdl_dep = dependency('SDL2')
