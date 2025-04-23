@@ -53,7 +53,7 @@ static void init_players(struct player_t *player) {
   const struct preset_player_pos_t preset_player_pos = {
       .pos = {
           // P0: bottom center
-          {.x = WINDOW_WIDTH / 2 - 25, .y = WINDOW_HEIGHT - 80},
+          {.x = WINDOW_WIDTH / 3, .y = WINDOW_HEIGHT - 80},
 
           // P1: top-left
           {.x = 20, .y = 20},
@@ -112,7 +112,7 @@ int main(int argc, char *argv[]) {
   struct sockaddr_storage client_addr;
   socklen_t addr_size = sizeof(client_addr);
   socket_t connfd = accept(socket_info.sockfd, (struct sockaddr *)&client_addr, &addr_size);
-  if (socket_info.sockfd == INVALID_SOCKET) {
+  if (connfd == INVALID_SOCKET) {
     perror("Client connection failed");
   } else
     puts("Connection established");
