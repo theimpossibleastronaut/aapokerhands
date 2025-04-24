@@ -56,7 +56,7 @@ aapokerhands_bin = executable(
   'src/aapokerhands.c',
   dependencies: deckhandler_dep,
   link_with: _lib,
-  install: true,
+  install: false,
 )
 
 test('aapokerhands_bin_test', aapokerhands_bin, args: ['-n', '1000'])
@@ -101,7 +101,7 @@ if host_sys == 'linux'
   subdir('tests')
 endif
 
-install_data(
-  files('COPYING', 'ChangeLog', 'README.md', 'example_output01.txt'),
-  install_dir: get_option('docdir'),
-)
+#install_data(
+#  files('COPYING', 'ChangeLog', 'README.md'),
+#  install_dir: get_option('docdir'),
+#)

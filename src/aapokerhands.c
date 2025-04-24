@@ -91,7 +91,7 @@ void show_totals(int *totals, int RUN_COUNT) {
 
   printf("Out of %d hands:\n\n", RUN_COUNT);
 
-  for (n = 0; n < NUM_HAND_RANKS; n++) {
+  for (n = PAIR; n < NUM_HAND_RANKS; n++) {
     printf("%20s: %9d\n", ranks[n], totals[n]);
   }
 }
@@ -102,10 +102,14 @@ void main_thread(struct dh_deck *deck, const int RUN_COUNT, int *totals) {
 
   /* Start main program loop */
   while (run_count++ < RUN_COUNT) {
-    int i, j, k;
-    i = j = k = 0;
+    int j, k;
+    j = k = 0;
 
-    dh_shuffle_deck(deck);
+    static int i = 0;
+    if (i > 49) {
+      i = 0;
+      dh_shuffle_deck(deck);
+    }
 
     if (verbose) {
       int copy_i = i;
@@ -138,7 +142,7 @@ void main_thread(struct dh_deck *deck, const int RUN_COUNT, int *totals) {
       i++;
     } while (++k < HAND_SIZE);
 
-    i = j = k = 0;
+    j = k = 0;
     do {
       if (SHOW_HAND) {
         printf("%5s of %2s", get_card_face(deck->card[i]), get_card_suit(deck->card[i]));
@@ -156,7 +160,8 @@ void main_thread(struct dh_deck *deck, const int RUN_COUNT, int *totals) {
     } while (++k < HAND_SIZE);
 
     short rank = evaluate_hand(hand);
-    totals[rank]++;
+    if (rank != NOTHING)
+      totals[rank]++;
     if (SHOW_HAND) {
       printf("\n\t\t-->");
       printf("%s", ranks[rank]);
@@ -187,6 +192,7 @@ int main(int argc, char *argv[]) {
   dh_init_deck(&deck);
 
   srand(time(NULL));
+  dh_shuffle_deck(&deck);
 
   main_thread(&deck, RUN_COUNT, totals);
 
