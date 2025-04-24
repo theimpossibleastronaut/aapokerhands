@@ -107,11 +107,6 @@ void main_thread(struct dh_deck *deck, const int RUN_COUNT, int *totals) {
 
     dh_shuffle_deck(deck);
 
-    bool final_hand[NUM_HAND_RANKS];
-    int hand_seq[ACE_HIGH];
-    short int hand_suits[MAX_SUITS];
-    init(hand_seq, final_hand, hand_suits);
-
     if (verbose) {
       int copy_i = i;
       int copy_j = j;
@@ -143,7 +138,6 @@ void main_thread(struct dh_deck *deck, const int RUN_COUNT, int *totals) {
       i++;
     } while (++k < HAND_SIZE);
 
-    int valuen;
     i = j = k = 0;
     do {
       if (SHOW_HAND) {
@@ -161,32 +155,11 @@ void main_thread(struct dh_deck *deck, const int RUN_COUNT, int *totals) {
 
     } while (++k < HAND_SIZE);
 
-    for (i = 0; i < HAND_SIZE; i++) {
-
-      /* if hand.card[i].face_value is 13 (King), valuen will equal 12
-       * so hand_seq[12] will be incremented. If there are 3
-       * Kings, hand_seq[12] will equal 3     */
-
-      valuen = hand.card[i].face_val - 1;
-      hand_seq[valuen]++;
-
-      /* if hand.card[i].suit == 2 (Spades), then hand_suits[2] will
-       * be incremented. If hand_suits[2] == 5, a flush will be
-       * found when is_flush() is called.    */
-
-      hand_suits[hand.card[i].suit]++;
-    }
-
-    short rank = hand_eval(hand_seq, hand_suits, final_hand);
-    if (rank != -1)
-      totals[rank]++;
+    short rank = evaluate_hand(hand);
+    totals[rank]++;
     if (SHOW_HAND) {
       printf("\n\t\t-->");
-      if (rank > -1)
-        printf("%s", ranks[rank]);
-      else
-        printf("Nothing");
-
+      printf("%s", ranks[rank]);
       printf("<--\n\n");
     }
   }
@@ -208,16 +181,11 @@ int main(int argc, char *argv[]) {
     return 1;
   }
 
-  int totals[9];
-
-  int i;
-  for (i = 0; i < NUM_HAND_RANKS; i++)
-    totals[i] = 0;
+  int totals[NUM_HAND_RANKS] = { 0 };
 
   struct dh_deck deck;
   dh_init_deck(&deck);
 
-  /* seeding the random number generator, used by dh_shuffle_deck() */
   srand(time(NULL));
 
   main_thread(&deck, RUN_COUNT, totals);

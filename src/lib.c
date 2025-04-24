@@ -29,10 +29,12 @@
 #ifndef TEST_LIB
 
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "lib.h"
 
-const char *ranks[NUM_HAND_RANKS] = {[PAIR] = "Pair",
+const char *ranks[NUM_HAND_RANKS] = {[NOTHING] = "Nothing",
+                                     [PAIR] = "Pair",
                                      [TWO_PAIR] = "Two Pair",
                                      [THREE_OF_A_KIND] = "Three-of-a-Kind",
                                      [STRAIGHT] = "Straight",
@@ -42,119 +44,92 @@ const char *ranks[NUM_HAND_RANKS] = {[PAIR] = "Pair",
                                      [STRAIGHT_FLUSH] = "Straight Flush",
                                      [ROYAL_FLUSH] = "Royal Flush"};
 
-void init(int *hand_seq, bool *final_hand, short int *hand_suits) {
-  int i;
-
-  for (i = 0; i < ACE_HIGH; i++)
-    hand_seq[i] = 0;
-
-  for (i = 0; i < MAX_SUITS; i++)
-    hand_suits[i] = 0;
-
-  /* set all array elements to 0 */
-  for (i = 0; i < NUM_HAND_RANKS; i++)
-    final_hand[i] = false;
+static int count_face(const struct hand_t *hand, int face_val) {
+  int count = 0;
+  for (int i = 0; i < HAND_SIZE; ++i)
+    if (hand->card[i].face_val == face_val)
+      count++;
+  return count;
 }
 
-static bool isStraight(int *hand_seq, bool *final_hand) {
-  int k = 13;
-
-  short state = 0;
-
-  /* Copy ACES for high straight/royal flush checking */
-  if (hand_seq[0] == 1)
-    hand_seq[13] = 1;
-
-  /* The hand is never sorted numerically, instead, just look for
-   * 5 consecutive 1's.*/
-  do {
-
-    /* May be a baby straight, not breaking if k == 13 */
-    if (hand_seq[k] == 1 && hand_seq[k - 1] == 0 && k != 13) {
-      break;
-    } else if (hand_seq[k] == 1 && hand_seq[k - 1] == 1) {
-      state++;
-      if (state == 4) {
-        final_hand[STRAIGHT] = 1;
-        if (k == 10) {
-          /* printf("High Straight"); */
-          return true;
-        }
+static void sort_hand(struct hand_t *hand) {
+  for (int i = 0; i < HAND_SIZE - 1; ++i) {
+    for (int j = i + 1; j < HAND_SIZE; ++j) {
+      if (hand->card[i].face_val > hand->card[j].face_val) {
+        struct dh_card tmp = hand->card[i];
+        hand->card[i] = hand->card[j];
+        hand->card[j] = tmp;
       }
     }
-
-  } while (--k && !final_hand[STRAIGHT]);
-
-  return false;
+  }
 }
 
-static bool is_flush(const short int *hand_suits) {
-  int i;
-  for (i = 0; i < MAX_SUITS; ++i) {
-    if (hand_suits[i] != HAND_SIZE && hand_suits[i])
-      break;
-    else if (hand_suits[i] == HAND_SIZE)
-      return true;
-  }
-  return false;
+static int compare_faces(const void *a, const void *b) { return (*(int *)a - *(int *)b); }
+
+static bool is_straight(const struct hand_t *hand) {
+  int faces[HAND_SIZE];
+  for (int i = 0; i < HAND_SIZE; ++i)
+    faces[i] = hand->card[i].face_val;
+
+  qsort(faces, HAND_SIZE, sizeof(int), compare_faces);
+
+  if (faces[0] == ACE && faces[1] == TWO && faces[2] == THREE && faces[3] == FOUR &&
+      faces[4] == FIVE)
+    return true;
+
+  if (faces[0] == ACE && faces[1] == TEN && faces[2] == JACK && faces[3] == QUEEN &&
+      faces[4] == KING)
+    return true;
+
+  for (int i = 1; i < HAND_SIZE; ++i)
+    if (faces[i] != faces[i - 1] + 1)
+      return false;
+
+  return true;
 }
 
-static short int find_matches(int *hand_seq, bool *final_hand) {
-  int face_val;
-  short paired = 0;
+short evaluate_hand(struct hand_t hand) {
+  sort_hand(&hand);
 
-  for (face_val = 0; face_val < ACE_HIGH; ++face_val) {
-    if (hand_seq[face_val] > 1) {
-      paired++;
-    }
-    if (hand_seq[face_val] == 2 && !final_hand[PAIR]) {
-      final_hand[PAIR] = 1;
-    } else if (hand_seq[face_val] == 2) {
-      final_hand[TWO_PAIR] = 1;
-      final_hand[PAIR] = 0;
-    } else if (hand_seq[face_val] == 3)
-      final_hand[THREE_OF_A_KIND] = 1;
-    else if (hand_seq[face_val] == 4) {
-      final_hand[FOUR_OF_A_KIND] = 1;
-      break;
-    }
-    if (paired > 1)
-      break;
-  }
-  return paired;
-}
+  bool flush = true;
+  for (int i = 1; i < HAND_SIZE; ++i)
+    if (hand.card[i].suit != hand.card[0].suit)
+      flush = false;
 
-short hand_eval(int *hand_seq, const short int *hand_suits, bool *final_hand) {
-  short eval = -1;
+  bool straight = is_straight(&hand);
 
-  short paired = find_matches(hand_seq, final_hand);
-  bool isHighStraight = false;
-
-  if (!paired) {
-    isHighStraight = isStraight(hand_seq, final_hand);
-    final_hand[FLUSH] = is_flush(hand_suits);
-  }
-
-  if (final_hand[STRAIGHT] && final_hand[FLUSH] && isHighStraight)
+  if (straight && flush && hand.card[0].face_val == ACE)
     return ROYAL_FLUSH;
-  if (final_hand[STRAIGHT] && final_hand[FLUSH])
+  if (straight && flush)
     return STRAIGHT_FLUSH;
-  if (final_hand[FOUR_OF_A_KIND])
+  if ((count_face(&hand, hand.card[0].face_val) == 4) ||
+      (count_face(&hand, hand.card[4].face_val) == 4))
     return FOUR_OF_A_KIND;
-  if (final_hand[PAIR] && final_hand[THREE_OF_A_KIND])
+  if ((count_face(&hand, hand.card[0].face_val) == 3 &&
+       count_face(&hand, hand.card[4].face_val) == 2) ||
+      (count_face(&hand, hand.card[0].face_val) == 2 &&
+       count_face(&hand, hand.card[4].face_val) == 3))
     return FULL_HOUSE;
-  if (final_hand[FLUSH] && !final_hand[STRAIGHT])
+  if (flush)
     return FLUSH;
-  if (final_hand[STRAIGHT] && !final_hand[FLUSH])
+  if (straight)
     return STRAIGHT;
-  if (final_hand[THREE_OF_A_KIND] && final_hand[PAIR] != 1)
+  if ((count_face(&hand, hand.card[0].face_val) == 3) ||
+      (count_face(&hand, hand.card[2].face_val) == 3) ||
+      (count_face(&hand, hand.card[4].face_val) == 3))
     return THREE_OF_A_KIND;
-  if (final_hand[TWO_PAIR])
+
+  int pair_count = 0;
+  for (int i = 0; i < HAND_SIZE; ++i)
+    if (count_face(&hand, hand.card[i].face_val) == 2)
+      pair_count++;
+
+  if (pair_count == 4)
     return TWO_PAIR;
-  if (final_hand[PAIR] && final_hand[THREE_OF_A_KIND] != 1)
+  if (pair_count == 2)
     return PAIR;
 
-  return eval;
+  return NOTHING;
 }
 
 #else
@@ -174,12 +149,8 @@ int main(int argc, char *argv[]) {
   (void)argv;
   srand(1);
 
-  bool final_hand[NUM_HAND_RANKS];
-  int hand_seq[ACE_HIGH];
-  short int hand_suits[MAX_SUITS];
-
   int num_loops = 8;
-  int cases[8] = {PAIR, -1, PAIR, TWO_PAIR, PAIR, -1, -1, PAIR};
+  int cases[8] = {PAIR, NOTHING, PAIR, TWO_PAIR, PAIR, NOTHING, NOTHING, PAIR};
   int i, t;
 
   for (t = 0; t < num_loops; t++) {
@@ -187,10 +158,9 @@ int main(int argc, char *argv[]) {
     struct dh_deck deck;
     dh_init_deck(&deck);
     dh_shuffle_deck(&deck);
-    init(hand_seq, final_hand, hand_suits);
 
     struct hand_t hand;
-    int k = 0, valuen;
+    int k = 0;
     do {
       hand.card[k].suit = deck.card[i].suit;
       hand.card[k].face_val = deck.card[i].face_val;
@@ -198,178 +168,130 @@ int main(int argc, char *argv[]) {
       i++;
     } while (++k < HAND_SIZE);
 
-    for (i = 0; i < HAND_SIZE; i++) {
-      fprintf(stderr, "%s:%s", get_card_face(hand.card[i]), get_card_suit(hand.card[i]));
-
-      valuen = hand.card[i].face_val - 1;
-      hand_seq[valuen]++;
-      hand_suits[hand.card[i].suit]++;
-    }
-    short rank = hand_eval(hand_seq, hand_suits, final_hand);
+    short rank = evaluate_hand(hand);
+    fprintf(stderr, "rank: %s\n", ranks[rank]);
     assert(rank == cases[t]);
-    fputc('\n', stderr);
   }
 
   struct hand_t hand;
-  hand.card[0].face_val = 1;
+  hand.card[0].face_val = ACE;
   hand.card[0].suit = HEARTS;
-  hand.card[1].face_val = 13;
+  hand.card[1].face_val = KING;
   hand.card[1].suit = HEARTS;
-  hand.card[2].face_val = 12;
+  hand.card[2].face_val = QUEEN;
   hand.card[2].suit = HEARTS;
-  hand.card[3].face_val = 11;
+  hand.card[3].face_val = JACK;
   hand.card[3].suit = HEARTS;
-  hand.card[4].face_val = 10;
+  hand.card[4].face_val = TEN;
   hand.card[4].suit = HEARTS;
 
-  init(hand_seq, final_hand, hand_suits);
-  for (i = 0; i < HAND_SIZE; i++) {
-    fprintf(stderr, "%s:%s", get_card_face(hand.card[i]), get_card_suit(hand.card[i]));
-
-    int valuen = hand.card[i].face_val - 1;
-    hand_seq[valuen]++;
-    hand_suits[hand.card[i].suit]++;
-  }
-  short rank = hand_eval(hand_seq, hand_suits, final_hand);
-  fprintf(stderr, "rank: %d\n", rank);
+  short rank = evaluate_hand(hand);
+  fprintf(stderr, "rank: %s\n", ranks[rank]);
   assert(rank == ROYAL_FLUSH);
 
-  hand.card[0].face_val = 1;
+  hand.card[0].face_val = ACE;
   hand.card[0].suit = HEARTS;
-  hand.card[1].face_val = 1;
+  hand.card[1].face_val = ACE;
   hand.card[1].suit = CLUBS;
-  hand.card[2].face_val = 1;
+  hand.card[2].face_val = ACE;
   hand.card[2].suit = DIAMONDS;
-  hand.card[3].face_val = 11;
+  hand.card[3].face_val = JACK;
   hand.card[3].suit = SPADES;
-  hand.card[4].face_val = 11;
+  hand.card[4].face_val = JACK;
   hand.card[4].suit = HEARTS;
 
-  init(hand_seq, final_hand, hand_suits);
-  for (i = 0; i < HAND_SIZE; i++) {
-    fprintf(stderr, "%s:%s", get_card_face(hand.card[i]), get_card_suit(hand.card[i]));
-
-    int valuen = hand.card[i].face_val - 1;
-    hand_seq[valuen]++;
-    hand_suits[hand.card[i].suit]++;
-  }
-  rank = hand_eval(hand_seq, hand_suits, final_hand);
-  fprintf(stderr, "rank: %d\n", rank);
+  rank = evaluate_hand(hand);
+  fprintf(stderr, "rank: %s\n", ranks[rank]);
   assert(rank == FULL_HOUSE);
 
-  hand.card[0].face_val = 1;
+  hand.card[0].face_val = ACE;
   hand.card[0].suit = HEARTS;
-  hand.card[1].face_val = 3;
+  hand.card[1].face_val = THREE;
   hand.card[1].suit = HEARTS;
-  hand.card[2].face_val = 8;
+  hand.card[2].face_val = EIGHT;
   hand.card[2].suit = HEARTS;
-  hand.card[3].face_val = 11;
+  hand.card[3].face_val = JACK;
   hand.card[3].suit = HEARTS;
-  hand.card[4].face_val = 12;
+  hand.card[4].face_val = QUEEN;
   hand.card[4].suit = HEARTS;
 
-  init(hand_seq, final_hand, hand_suits);
-  for (i = 0; i < HAND_SIZE; i++) {
-    fprintf(stderr, "%s:%s", get_card_face(hand.card[i]), get_card_suit(hand.card[i]));
-
-    int valuen = hand.card[i].face_val - 1;
-    hand_seq[valuen]++;
-    hand_suits[hand.card[i].suit]++;
-  }
-  rank = hand_eval(hand_seq, hand_suits, final_hand);
-  fprintf(stderr, "rank: %d\n", rank);
+  rank = evaluate_hand(hand);
+  fprintf(stderr, "rank: %s\n", ranks[rank]);
   assert(rank == FLUSH);
 
-  hand.card[0].face_val = 2;
+  hand.card[0].face_val = TWO;
   hand.card[0].suit = HEARTS;
-  hand.card[1].face_val = 4;
+  hand.card[1].face_val = FOUR;
   hand.card[1].suit = HEARTS;
-  hand.card[2].face_val = 3;
+  hand.card[2].face_val = THREE;
   hand.card[2].suit = CLUBS;
-  hand.card[3].face_val = 6;
+  hand.card[3].face_val = ACE;
   hand.card[3].suit = HEARTS;
-  hand.card[4].face_val = 5;
+  hand.card[4].face_val = FIVE;
   hand.card[4].suit = SPADES;
 
-  init(hand_seq, final_hand, hand_suits);
-  for (i = 0; i < HAND_SIZE; i++) {
-    fprintf(stderr, "%s:%s", get_card_face(hand.card[i]), get_card_suit(hand.card[i]));
-
-    int valuen = hand.card[i].face_val - 1;
-    hand_seq[valuen]++;
-    hand_suits[hand.card[i].suit]++;
-  }
-  rank = hand_eval(hand_seq, hand_suits, final_hand);
-  fprintf(stderr, "rank: %d\n", rank);
+  rank = evaluate_hand(hand);
+  fprintf(stderr, "rank: %s\n", ranks[rank]);
   assert(rank == STRAIGHT);
 
-  hand.card[0].face_val = 2;
-  hand.card[0].suit = CLUBS;
-  hand.card[1].face_val = 4;
-  hand.card[1].suit = CLUBS;
-  hand.card[2].face_val = 3;
+  hand.card[0].face_val = JACK;
+  hand.card[0].suit = HEARTS;
+  hand.card[1].face_val = KING;
+  hand.card[1].suit = HEARTS;
+  hand.card[2].face_val = QUEEN;
   hand.card[2].suit = CLUBS;
-  hand.card[3].face_val = 6;
+  hand.card[3].face_val = ACE;
+  hand.card[3].suit = HEARTS;
+  hand.card[4].face_val = TEN;
+  hand.card[4].suit = SPADES;
+
+  rank = evaluate_hand(hand);
+  fprintf(stderr, "rank: %s\n", ranks[rank]);
+  assert(rank == STRAIGHT);
+
+  hand.card[0].face_val = TEN;
+  hand.card[0].suit = CLUBS;
+  hand.card[1].face_val = QUEEN;
+  hand.card[1].suit = CLUBS;
+  hand.card[2].face_val = JACK;
+  hand.card[2].suit = CLUBS;
+  hand.card[3].face_val = KING;
   hand.card[3].suit = CLUBS;
-  hand.card[4].face_val = 5;
+  hand.card[4].face_val = NINE;
   hand.card[4].suit = CLUBS;
 
-  init(hand_seq, final_hand, hand_suits);
-  for (i = 0; i < HAND_SIZE; i++) {
-    fprintf(stderr, "%s:%s", get_card_face(hand.card[i]), get_card_suit(hand.card[i]));
-
-    int valuen = hand.card[i].face_val - 1;
-    hand_seq[valuen]++;
-    hand_suits[hand.card[i].suit]++;
-  }
-  rank = hand_eval(hand_seq, hand_suits, final_hand);
-  fprintf(stderr, "rank: %d\n", rank);
+  rank = evaluate_hand(hand);
+  fprintf(stderr, "rank: %s\n", ranks[rank]);
   assert(rank == STRAIGHT_FLUSH);
 
-  hand.card[0].face_val = 2;
+  hand.card[0].face_val = TWO;
   hand.card[0].suit = HEARTS;
-  hand.card[1].face_val = 3;
+  hand.card[1].face_val = THREE;
   hand.card[1].suit = HEARTS;
-  hand.card[2].face_val = 2;
+  hand.card[2].face_val = TWO;
   hand.card[2].suit = CLUBS;
-  hand.card[3].face_val = 6;
+  hand.card[3].face_val = SIX;
   hand.card[3].suit = HEARTS;
-  hand.card[4].face_val = 2;
+  hand.card[4].face_val = TWO;
   hand.card[4].suit = SPADES;
 
-  init(hand_seq, final_hand, hand_suits);
-  for (i = 0; i < HAND_SIZE; i++) {
-    fprintf(stderr, "%s:%s", get_card_face(hand.card[i]), get_card_suit(hand.card[i]));
-
-    int valuen = hand.card[i].face_val - 1;
-    hand_seq[valuen]++;
-    hand_suits[hand.card[i].suit]++;
-  }
-  rank = hand_eval(hand_seq, hand_suits, final_hand);
-  fprintf(stderr, "rank: %d\n", rank);
+  rank = evaluate_hand(hand);
+  fprintf(stderr, "rank: %s\n", ranks[rank]);
   assert(rank == THREE_OF_A_KIND);
 
-  hand.card[0].face_val = 2;
+  hand.card[0].face_val = TWO;
   hand.card[0].suit = HEARTS;
-  hand.card[1].face_val = 3;
+  hand.card[1].face_val = THREE;
   hand.card[1].suit = HEARTS;
-  hand.card[2].face_val = 2;
+  hand.card[2].face_val = TWO;
   hand.card[2].suit = CLUBS;
-  hand.card[3].face_val = 2;
+  hand.card[3].face_val = TWO;
   hand.card[3].suit = DIAMONDS;
-  hand.card[4].face_val = 2;
+  hand.card[4].face_val = TWO;
   hand.card[4].suit = SPADES;
 
-  init(hand_seq, final_hand, hand_suits);
-  for (i = 0; i < HAND_SIZE; i++) {
-    fprintf(stderr, "%s:%s", get_card_face(hand.card[i]), get_card_suit(hand.card[i]));
-
-    int valuen = hand.card[i].face_val - 1;
-    hand_seq[valuen]++;
-    hand_suits[hand.card[i].suit]++;
-  }
-  rank = hand_eval(hand_seq, hand_suits, final_hand);
-  fprintf(stderr, "rank: %d\n", rank);
+  rank = evaluate_hand(hand);
+  fprintf(stderr, "rank: %s\n", ranks[rank]);
   assert(rank == FOUR_OF_A_KIND);
 
   return 0;
