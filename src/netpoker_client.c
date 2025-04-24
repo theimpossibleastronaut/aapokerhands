@@ -61,7 +61,7 @@ int main(int argc, char *argv[]) {
     exit(1);
   }
 
-  ssize_t received = recv(socket_info.sockfd, data, size, 0);
+  ssize_t received = recv(socket_info.sockfd, (void *)data, size, 0);
   if (received <= 0) {
     perror("recv");
     free(data);

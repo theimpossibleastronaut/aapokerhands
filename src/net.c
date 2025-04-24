@@ -236,7 +236,7 @@ struct player_t deserialize_player(const uint8_t *data, size_t size) {
 
 ssize_t send_all(int sockfd, const void *buf, size_t len) {
   size_t total_sent = 0;
-  const uint8_t *p = buf;
+  const char *p = (const char *)buf;
 
   while (total_sent < len) {
     ssize_t n = send(sockfd, p + total_sent, len - total_sent, 0);
