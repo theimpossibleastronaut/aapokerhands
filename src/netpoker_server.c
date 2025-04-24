@@ -48,7 +48,8 @@ static void *accept_thread(void *arg) {
   while (1) {
     struct sockaddr_storage client_addr;
     socklen_t addr_size = sizeof(client_addr);
-    socket_t connfd = accept(args->socket_info->sockfd, (struct sockaddr *)&client_addr, &addr_size);
+    socket_t connfd =
+        accept(args->socket_info->sockfd, (struct sockaddr *)&client_addr, &addr_size);
     if (connfd == INVALID_SOCKET) {
       perror("Client connection failed");
     } else
@@ -120,17 +121,17 @@ int main(int argc, char *argv[]) {
 
   srand(time(NULL));
 
-  #ifdef _WIN32
+#ifdef _WIN32
   WSADATA wsaData;
-    int iResult;
+  int iResult;
 
-    // Initialize Winsock version 2.2
-    iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
-    if (iResult != 0) {
-        printf("WSAStartup failed: %d\n", iResult);
-        return 1;
-    }
-  #endif
+  // Initialize Winsock version 2.2
+  iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
+  if (iResult != 0) {
+    printf("WSAStartup failed: %d\n", iResult);
+    return 1;
+  }
+#endif
 
   struct socket_info_t socket_info = {
       .port = default_port,
@@ -147,19 +148,18 @@ int main(int argc, char *argv[]) {
   dh_shuffle_deck(&deck);
 
   struct accept_args_t accept_args = {
-    .socket_info = &socket_info,
-    .player = &player[0],
-    .deck = &deck,
+      .socket_info = &socket_info,
+      .player = &player[0],
+      .deck = &deck,
   };
 
   pthread_t accepter;
   pthread_create(&accepter, NULL, accept_thread, &accept_args);
   pthread_join(accepter, NULL);
 
-
-  #ifdef _WIN32
+#ifdef _WIN32
   WSACleanup();
-  #endif
+#endif
 
   return 0;
 }
