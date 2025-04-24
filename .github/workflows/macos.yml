@@ -25,17 +25,16 @@ jobs:
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v4
-      with:
-        submodules: true
     - name: Install Dependencies
       run: |
         brew update
         brew install meson protobuf-c sdl2 sdl2_ttf
-    - run: |
-        meson setup _build -Db_sanitize=address,undefined
-        cd _build
-        ninja -v
+
+    - name: Meson setup
+      run: meson setup _build -Db_sanitize=address,undefined -Dbuild_netpoker=true
+
+    - name: Build
+      run: meson compile -C _build
 
     - name: Test
-      run: |
-        meson test -v -C _build
+      run: meson test -v -C _build

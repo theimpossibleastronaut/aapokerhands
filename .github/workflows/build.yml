@@ -11,9 +11,6 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
     - uses: actions/checkout@v4
-      with:
-        submodules: true
-    # Runs a single command using the runners shell
     - name: Install required dependencies
       run: |
         sudo apt-get install -y \
@@ -30,7 +27,7 @@ jobs:
         wget -q https://github.com/TheAssassin/pyuploadtool/releases/download/continuous/pyuploadtool-x86_64.AppImage
         chmod +x pyuploadtool-x86_64.AppImage
     - run: |
-        meson setup _build -Dprefix=/usr -Dstrip=true --buildtype=release
+        meson setup _build -Dprefix=/usr -Dstrip=true --buildtype=release -Dbuild_netpoker=true
         cd _build
         ninja
         DESTDIR=AppDir ninja -v install

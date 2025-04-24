@@ -25,8 +25,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-      with:
-        submodules: true
     - name: Install Dependencies
       run: |
         sudo apt-get install -y \
@@ -36,7 +34,7 @@ jobs:
           libsdl2-ttf-dev
 
     - name: Meson setup
-      run: meson setup _build -Db_sanitize=address,undefined
+      run: meson setup _build -Db_sanitize=address,undefined -Dbuild_netpoker=true
 
     - name: Build
       run: meson compile -v -C _build

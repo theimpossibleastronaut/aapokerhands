@@ -1,6 +1,6 @@
 exe = executable(
     'test_lib',
-    lib_src,
+    '../src/lib.c',
     c_args: ['-DTEST_LIB'],
     dependencies: deckhandler_dep,
     link_with: _lib,
