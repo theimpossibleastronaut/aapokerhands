@@ -1,5 +1,5 @@
 /*
- netpoker.h
+ server.h
  https://github.com/theimpossibleastronaut/aapokerhands
 
  MIT License
@@ -26,32 +26,15 @@
 
 */
 
-#ifndef __NETPOKER_H
-#define __NETPOKER_H
+#include <pthread.h>
+#include <stdio.h>
+#include <string.h>
+#include <time.h>
 
+#include "deckhandler.h"
 #include "lib.h"
+#include "net.h"
+#include "types.h"
 #include "netpoker.pb-c.h"
 
-#define MAX_PLAYERS 5
-
-#define WINDOW_WIDTH 1024
-#define WINDOW_HEIGHT 480
-
-struct pos_t {
-  int x;
-  int y;
-};
-
-struct preset_player_pos_t {
-  struct pos_t pos[MAX_PLAYERS];
-};
-
-struct player_t {
-  char name[256];
-  int id;
-  struct pos_t pos;
-  struct hand_t hand;
-  int chips;
-};
-
-#endif
+int run_server(void);

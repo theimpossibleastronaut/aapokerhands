@@ -17,9 +17,9 @@ host_sys = host_machine.system()
 platform_is_windows = (host_sys == 'windows')
 
 win_deps = []
-if platform_is_windows == true
-    win_deps += cc.find_library('ws2_32')
-    win_deps += cc.find_library('winpthread', static: true)
+if platform_is_windows == true and get_option('build_netpoker')
+  win_deps += cc.find_library('ws2_32')
+  win_deps += cc.find_library('winpthread', static: true)
 endif
 
 definitions = ['-D_DEFAULT_SOURCE']
@@ -39,7 +39,9 @@ extra_flags = [
 
 add_project_arguments(cc.get_supported_arguments(extra_flags), language: 'c')
 
-deckhandler_dep = dependency('deckhandler', default_options: 'default_library=static',
+deckhandler_dep = dependency(
+  'deckhandler',
+  default_options: 'default_library=static',
 )
 
 _lib = static_library(
@@ -64,24 +66,21 @@ if get_option('build_netpoker')
   sdl_ttf_dep = dependency('SDL2_ttf')
   protobuf_dep = dependency('libprotobuf-c')
 
-  net_shared_dep = [deckhandler_dep, protobuf_dep, win_deps]
+  net_shared_dep = [
+    deckhandler_dep,
+    protobuf_dep,
+    win_deps,
+    sdl_dep,
+    sdl_ttf_dep,
+  ]
   net_shared_inc = include_directories('src/protobuf')
 
   subdir('src')
 
   executable(
-    'netpoker_server',
-    ['src/netpoker_server.c', net_shared_src],
+    'netpoker',
+    ['src/main.c', net_shared_src],
     dependencies: net_shared_dep,
-    link_with: _lib,
-    include_directories: net_shared_inc,
-    install: false,
-  )
-
-  executable(
-    'netpoker_client',
-    ['src/netpoker_client.c', net_shared_src, 'src/graphics.c'],
-    dependencies: [net_shared_dep, sdl_dep, sdl_ttf_dep],
     link_with: _lib,
     include_directories: net_shared_inc,
     install: false,

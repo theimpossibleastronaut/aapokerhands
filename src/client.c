@@ -1,5 +1,5 @@
 /*
- netpoker_client.c
+ client.c
  https://github.com/theimpossibleastronaut/aapokerhands
 
  MIT License
@@ -35,9 +35,7 @@
 #include "net.h"
 #include "netpoker.pb-c.h"
 
-int main(int argc, char *argv[]) {
-  (void)argc;
-  (void)argv;
+int run_client(void) {
 
   struct socket_info_t socket_info = {
       .port = default_port,

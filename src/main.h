@@ -1,5 +1,5 @@
 /*
- netpoker.c
+ main.h
  https://github.com/theimpossibleastronaut/aapokerhands
 
  MIT License
@@ -25,5 +25,3 @@
  SOFTWARE.
 
 */
-
-#include "netpoker.h"

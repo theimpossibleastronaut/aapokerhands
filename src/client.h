@@ -1,5 +1,5 @@
 /*
- graphics.h
+ client.h
  https://github.com/theimpossibleastronaut/aapokerhands
 
  MIT License
@@ -26,22 +26,13 @@
 
 */
 
-#ifndef __GRAPHICS_H
-#define __GRAPHICS_H
+#include <stdio.h>
+#include <string.h>
+#include <time.h>
 
-#include <SDL2/SDL.h>
+#include "deckhandler.h"
+#include "graphics.h"
+#include "net.h"
+#include "netpoker.pb-c.h"
 
-#include "types.h"
-
-struct sdl_context_t {
-  SDL_Renderer *renderer;
-  SDL_Window *window;
-};
-
-void init_sdl_window(struct sdl_context_t *sdl_context, const char *title);
-
-void run_sdl_loop(SDL_Renderer *renderer, struct player_t *player);
-
-void do_sdl_cleanup(struct sdl_context_t *sdl_context);
-
-#endif
+int run_client(void);

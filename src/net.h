@@ -41,7 +41,7 @@
 #include <poll.h>
 #endif
 
-#include "netpoker.h"
+#include "types.h"
 
 #define BACKLOG 10
 

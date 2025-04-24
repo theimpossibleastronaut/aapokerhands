@@ -1,5 +1,5 @@
 /*
- graphics.h
+ main.c
  https://github.com/theimpossibleastronaut/aapokerhands
 
  MIT License
@@ -26,22 +26,22 @@
 
 */
 
-#ifndef __GRAPHICS_H
-#define __GRAPHICS_H
+#include <stdio.h>
+#include <string.h>
 
-#include <SDL2/SDL.h>
+#include "client.h"
+#include "server.h"
+#include "main.h"
 
-#include "types.h"
+int main(int argc, char *argv[])
+{
+  if (argc == 2) {
+    if (strcmp(argv[1], "--server") == 0)
+      return run_server();
+    if (strcmp(argv[1], "--client") == 0)
+      return run_client();
+  }
+  puts("This program is not playable yet.");
 
-struct sdl_context_t {
-  SDL_Renderer *renderer;
-  SDL_Window *window;
-};
-
-void init_sdl_window(struct sdl_context_t *sdl_context, const char *title);
-
-void run_sdl_loop(SDL_Renderer *renderer, struct player_t *player);
-
-void do_sdl_cleanup(struct sdl_context_t *sdl_context);
-
-#endif
+  return 0;
+}

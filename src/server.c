@@ -1,5 +1,5 @@
 /*
- netpoker_server.c
+ server.c
  https://github.com/theimpossibleastronaut/aapokerhands
 
  MIT License
@@ -34,7 +34,8 @@
 #include "deckhandler.h"
 #include "lib.h"
 #include "net.h"
-#include "netpoker.h"
+#include "server.h"
+#include "types.h"
 #include "netpoker.pb-c.h"
 
 struct accept_args_t {
@@ -112,9 +113,7 @@ static void init_players(struct player_t *player) {
   }
 }
 
-int main(int argc, char *argv[]) {
-  (void)argc;
-  (void)argv;
+int run_server(void) {
 
   struct player_t player[MAX_PLAYERS];
   init_players(player);

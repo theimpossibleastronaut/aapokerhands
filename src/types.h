@@ -1,5 +1,5 @@
 /*
- graphics.h
+ types.h
  https://github.com/theimpossibleastronaut/aapokerhands
 
  MIT License
@@ -26,22 +26,32 @@
 
 */
 
-#ifndef __GRAPHICS_H
-#define __GRAPHICS_H
+#ifndef __NETPOKER_H
+#define __NETPOKER_H
 
-#include <SDL2/SDL.h>
+#include "lib.h"
+#include "netpoker.pb-c.h"
 
-#include "types.h"
+#define MAX_PLAYERS 5
 
-struct sdl_context_t {
-  SDL_Renderer *renderer;
-  SDL_Window *window;
+#define WINDOW_WIDTH 1024
+#define WINDOW_HEIGHT 480
+
+struct pos_t {
+  int x;
+  int y;
 };
 
-void init_sdl_window(struct sdl_context_t *sdl_context, const char *title);
+struct preset_player_pos_t {
+  struct pos_t pos[MAX_PLAYERS];
+};
 
-void run_sdl_loop(SDL_Renderer *renderer, struct player_t *player);
-
-void do_sdl_cleanup(struct sdl_context_t *sdl_context);
+struct player_t {
+  char name[256];
+  int id;
+  struct pos_t pos;
+  struct hand_t hand;
+  int chips;
+};
 
 #endif
