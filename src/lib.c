@@ -26,12 +26,12 @@
 
 */
 
-#ifndef TEST_LIB
-
 #include <stdio.h>
 #include <stdlib.h>
 
 #include "lib.h"
+
+#ifndef TEST_LIB
 
 const char *ranks[NUM_HAND_RANKS] = {[NOTHING] = "Nothing",
                                      [PAIR] = "Pair",
@@ -134,15 +134,49 @@ short evaluate_hand(struct hand_t hand) {
 
 #else
 
+#include <deckhandler.h>
+#include <string.h>
+
 #undef NDEBUG
-
 #include <assert.h>
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
 
-#include "deckhandler.h"
-#include "lib.h"
+#define TEST_HAND(expected_rank, f, s)                                                             \
+  do {                                                                                             \
+    int faces[HAND_SIZE];                                                                          \
+    int suits[HAND_SIZE];                                                                          \
+    static struct hand_t hand;                                                                     \
+    memcpy(faces, f, sizeof(faces));                                                               \
+    memcpy(suits, s, sizeof(suits));                                                               \
+    set_hand(&hand, faces, suits);                                                                 \
+    short rank = evaluate_hand(hand);                                                              \
+    fprintf(stderr, "rank: %s\n", ranks[rank]);                                                    \
+    assert(rank == expected_rank);                                                                 \
+  } while (0)
+
+static void set_hand(struct hand_t *hand, int faces[HAND_SIZE], int suits[HAND_SIZE]) {
+  for (int i = 0; i < HAND_SIZE; ++i) {
+    hand->card[i].face_val = faces[i];
+    hand->card[i].suit = suits[i];
+  }
+}
+
+static void test_static_hands(void) {
+  int rf_faces[] = {ACE, KING, QUEEN, JACK, TEN};
+  int rf_suits[] = {HEARTS, HEARTS, HEARTS, HEARTS, HEARTS};
+  TEST_HAND(ROYAL_FLUSH, rf_faces, rf_suits);
+
+  int fh_faces[] = {ACE, ACE, ACE, JACK, JACK};
+  int fh_suits[] = {HEARTS, CLUBS, DIAMONDS, SPADES, HEARTS};
+  TEST_HAND(FULL_HOUSE, fh_faces, fh_suits);
+
+  int fl_faces[] = {ACE, THREE, EIGHT, JACK, QUEEN};
+  int fl_suits[] = {HEARTS, HEARTS, HEARTS, HEARTS, HEARTS};
+  TEST_HAND(FLUSH, fl_faces, fl_suits);
+
+  int st_faces[] = {TWO, FOUR, THREE, ACE, FIVE};
+  int st_suits[] = {HEARTS, HEARTS, CLUBS, HEARTS, SPADES};
+  TEST_HAND(STRAIGHT, st_faces, st_suits);
+}
 
 int main(int argc, char *argv[]) {
   (void)argc;
@@ -173,126 +207,7 @@ int main(int argc, char *argv[]) {
     assert(rank == cases[t]);
   }
 
-  struct hand_t hand;
-  hand.card[0].face_val = ACE;
-  hand.card[0].suit = HEARTS;
-  hand.card[1].face_val = KING;
-  hand.card[1].suit = HEARTS;
-  hand.card[2].face_val = QUEEN;
-  hand.card[2].suit = HEARTS;
-  hand.card[3].face_val = JACK;
-  hand.card[3].suit = HEARTS;
-  hand.card[4].face_val = TEN;
-  hand.card[4].suit = HEARTS;
-
-  short rank = evaluate_hand(hand);
-  fprintf(stderr, "rank: %s\n", ranks[rank]);
-  assert(rank == ROYAL_FLUSH);
-
-  hand.card[0].face_val = ACE;
-  hand.card[0].suit = HEARTS;
-  hand.card[1].face_val = ACE;
-  hand.card[1].suit = CLUBS;
-  hand.card[2].face_val = ACE;
-  hand.card[2].suit = DIAMONDS;
-  hand.card[3].face_val = JACK;
-  hand.card[3].suit = SPADES;
-  hand.card[4].face_val = JACK;
-  hand.card[4].suit = HEARTS;
-
-  rank = evaluate_hand(hand);
-  fprintf(stderr, "rank: %s\n", ranks[rank]);
-  assert(rank == FULL_HOUSE);
-
-  hand.card[0].face_val = ACE;
-  hand.card[0].suit = HEARTS;
-  hand.card[1].face_val = THREE;
-  hand.card[1].suit = HEARTS;
-  hand.card[2].face_val = EIGHT;
-  hand.card[2].suit = HEARTS;
-  hand.card[3].face_val = JACK;
-  hand.card[3].suit = HEARTS;
-  hand.card[4].face_val = QUEEN;
-  hand.card[4].suit = HEARTS;
-
-  rank = evaluate_hand(hand);
-  fprintf(stderr, "rank: %s\n", ranks[rank]);
-  assert(rank == FLUSH);
-
-  hand.card[0].face_val = TWO;
-  hand.card[0].suit = HEARTS;
-  hand.card[1].face_val = FOUR;
-  hand.card[1].suit = HEARTS;
-  hand.card[2].face_val = THREE;
-  hand.card[2].suit = CLUBS;
-  hand.card[3].face_val = ACE;
-  hand.card[3].suit = HEARTS;
-  hand.card[4].face_val = FIVE;
-  hand.card[4].suit = SPADES;
-
-  rank = evaluate_hand(hand);
-  fprintf(stderr, "rank: %s\n", ranks[rank]);
-  assert(rank == STRAIGHT);
-
-  hand.card[0].face_val = JACK;
-  hand.card[0].suit = HEARTS;
-  hand.card[1].face_val = KING;
-  hand.card[1].suit = HEARTS;
-  hand.card[2].face_val = QUEEN;
-  hand.card[2].suit = CLUBS;
-  hand.card[3].face_val = ACE;
-  hand.card[3].suit = HEARTS;
-  hand.card[4].face_val = TEN;
-  hand.card[4].suit = SPADES;
-
-  rank = evaluate_hand(hand);
-  fprintf(stderr, "rank: %s\n", ranks[rank]);
-  assert(rank == STRAIGHT);
-
-  hand.card[0].face_val = TEN;
-  hand.card[0].suit = CLUBS;
-  hand.card[1].face_val = QUEEN;
-  hand.card[1].suit = CLUBS;
-  hand.card[2].face_val = JACK;
-  hand.card[2].suit = CLUBS;
-  hand.card[3].face_val = KING;
-  hand.card[3].suit = CLUBS;
-  hand.card[4].face_val = NINE;
-  hand.card[4].suit = CLUBS;
-
-  rank = evaluate_hand(hand);
-  fprintf(stderr, "rank: %s\n", ranks[rank]);
-  assert(rank == STRAIGHT_FLUSH);
-
-  hand.card[0].face_val = TWO;
-  hand.card[0].suit = HEARTS;
-  hand.card[1].face_val = THREE;
-  hand.card[1].suit = HEARTS;
-  hand.card[2].face_val = TWO;
-  hand.card[2].suit = CLUBS;
-  hand.card[3].face_val = SIX;
-  hand.card[3].suit = HEARTS;
-  hand.card[4].face_val = TWO;
-  hand.card[4].suit = SPADES;
-
-  rank = evaluate_hand(hand);
-  fprintf(stderr, "rank: %s\n", ranks[rank]);
-  assert(rank == THREE_OF_A_KIND);
-
-  hand.card[0].face_val = TWO;
-  hand.card[0].suit = HEARTS;
-  hand.card[1].face_val = THREE;
-  hand.card[1].suit = HEARTS;
-  hand.card[2].face_val = TWO;
-  hand.card[2].suit = CLUBS;
-  hand.card[3].face_val = TWO;
-  hand.card[3].suit = DIAMONDS;
-  hand.card[4].face_val = TWO;
-  hand.card[4].suit = SPADES;
-
-  rank = evaluate_hand(hand);
-  fprintf(stderr, "rank: %s\n", ranks[rank]);
-  assert(rank == FOUR_OF_A_KIND);
+  test_static_hands();
 
   return 0;
 }
