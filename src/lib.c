@@ -147,16 +147,16 @@ short evaluate_hand(struct hand_t hand) {
 int main(int argc, char *argv[]) {
   (void)argc;
   (void)argv;
-  srand(1);
 
-  int num_loops = 8;
-  int cases[8] = {PAIR, NOTHING, PAIR, TWO_PAIR, PAIR, NOTHING, NOTHING, PAIR};
-  int i, t;
+  int cases[] = {THREE_OF_A_KIND, NOTHING, PAIR, NOTHING, PAIR, PAIR, TWO_PAIR, PAIR};
 
-  for (t = 0; t < num_loops; t++) {
+  struct dh_deck deck;
+  dh_init_deck(&deck);
+  dh_pcg_srand(1, 1);
+
+  int i;
+  for (size_t t = 0; t < sizeof cases / sizeof cases[0]; t++) {
     i = 0;
-    struct dh_deck deck;
-    dh_init_deck(&deck);
     dh_shuffle_deck(&deck);
 
     struct hand_t hand;

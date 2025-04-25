@@ -59,7 +59,7 @@ aapokerhands_bin = executable(
   install: false,
 )
 
-test('aapokerhands_bin_test', aapokerhands_bin, args: ['-n', '1000'])
+test('aapokerhands_bin_test', aapokerhands_bin, args: ['-n', '100000'])
 
 if get_option('build_netpoker')
   sdl_dep = dependency('SDL2')
@@ -96,10 +96,7 @@ conf.set_quoted(
 )
 config_h = configure_file(output: 'config.h', configuration: conf)
 
-
-if host_sys == 'linux'
-  subdir('tests')
-endif
+subdir('tests')
 
 #install_data(
 #  files('COPYING', 'ChangeLog', 'README.md'),

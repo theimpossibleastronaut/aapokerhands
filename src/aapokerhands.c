@@ -102,14 +102,10 @@ void main_thread(struct dh_deck *deck, const int RUN_COUNT, int *totals) {
 
   /* Start main program loop */
   while (run_count++ < RUN_COUNT) {
-    int j, k;
-    j = k = 0;
+    int i, j, k;
+    i = j = k = 0;
 
-    static int i = 0;
-    if (i > 49) {
-      i = 0;
-      dh_shuffle_deck(deck);
-    }
+    dh_shuffle_deck(deck);
 
     if (verbose) {
       int copy_i = i;
@@ -142,7 +138,7 @@ void main_thread(struct dh_deck *deck, const int RUN_COUNT, int *totals) {
       i++;
     } while (++k < HAND_SIZE);
 
-    j = k = 0;
+    i = j = k = 0;
     do {
       if (SHOW_HAND) {
         printf("%5s of %2s", get_card_face(deck->card[i]), get_card_suit(deck->card[i]));
@@ -190,9 +186,7 @@ int main(int argc, char *argv[]) {
 
   struct dh_deck deck;
   dh_init_deck(&deck);
-
-  srand(time(NULL));
-  dh_shuffle_deck(&deck);
+  dh_pcg_srand_auto();
 
   main_thread(&deck, RUN_COUNT, totals);
 
