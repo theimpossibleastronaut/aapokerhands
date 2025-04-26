@@ -5,18 +5,9 @@
 # aapokerhands
 Will analyze for poker hands
 
-I wrote this
-(see [first uploaded version](https://github.com/andy5995/aapokerhands/commit/809629820fe14868cae5f2a675d8f51f55cd729c))
-several years ago for practice. I've refactored some code since then.
-
 ## Dependencies
 
-* [deckhandler](https://github.com/theimpossibleastronaut/deckhandler)
 * [meson](http://mesonbuild.com/Quick-guide.html) (for the build system)
-
-From the *aapokerhands* directory, to download latest *deckhandler* code:
-
-    git submodule update --init --recursive
 
 ## Building
 
@@ -60,15 +51,3 @@ Out of 1000000 hands:
       Straight Flush:        13
          Royal Flush:         5
 ```
-
-## Installation
-
-To specify the installation directory (defaults to /usr/local) and
-install the program:
-
-    From *builddir*: `meson configure --prefix=
-    ninja install
-
-To uninstall:
-
-    ninja uninstall
