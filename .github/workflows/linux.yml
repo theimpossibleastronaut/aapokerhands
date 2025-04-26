@@ -44,3 +44,6 @@ jobs:
 
     - name: Dist test
       run: meson dist -C _build
+
+    - name: Install test
+      run: meson install --destdir=install_test -C _build

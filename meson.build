@@ -56,7 +56,7 @@ aapokerhands_bin = executable(
   'src/aapokerhands.c',
   dependencies: deckhandler_dep,
   link_with: _lib,
-  install: install,
+  install: true,
 )
 
 test('aapokerhands_bin_test', aapokerhands_bin, args: ['-n', '100000'])
