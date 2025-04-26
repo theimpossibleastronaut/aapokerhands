@@ -1,7 +1,7 @@
 [wrap-git]
 url = https://github.com/theimpossibleastronaut/deckhandler.git
 
-revision = HEAD
+revision = afa655a8a0884de40f541f2d8eb71f5c69ae84e8
 depth = 1
 
 [provide]

@@ -26,16 +26,62 @@
 
 */
 
+#include <deckhandler.h>
 #include <stdio.h>
 #include <string.h>
-#include <time.h>
 
-#include "deckhandler.h"
 #include "graphics.h"
 #include "net.h"
 #include "netpoker.pb-c.h"
 
+static void assign_tcp_dual_stack_client_fd(struct socket_info_t *socket_info) {
+  struct addrinfo hints, *res, *p;
+
+  // Set up hints for getaddrinfo()
+  memset(&hints, 0, sizeof(hints));
+  hints.ai_family = AF_UNSPEC; // Allow both IPv4 and IPv6
+  hints.ai_socktype = SOCK_STREAM;
+
+  // Get address info
+  if (getaddrinfo(socket_info->host, socket_info->port, &hints, &res) != 0) {
+    perror("getaddrinfo");
+    exit(EXIT_FAILURE);
+  }
+
+  // Try to connect to one of the results
+  for (p = res; p != NULL; p = p->ai_next) {
+    socket_info->sockfd = socket(p->ai_family, p->ai_socktype, p->ai_protocol);
+    if (socket_info->sockfd == INVALID_SOCKET)
+      continue;
+
+    if (connect(socket_info->sockfd, p->ai_addr, p->ai_addrlen) == 0)
+      break; // Connected successfully
+
+    close_socket_checked(socket_info->sockfd);
+  }
+
+  freeaddrinfo(res);
+
+  if (!p) {
+    perror("Failed to connect");
+    exit(EXIT_FAILURE);
+  }
+  return;
+}
+
 int run_client(void) {
+
+#ifdef _WIN32
+  WSADATA wsaData;
+  int iResult;
+
+  // Initialize Winsock version 2.2
+  iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
+  if (iResult != 0) {
+    printf("WSAStartup failed: %d\n", iResult);
+    return 1;
+  }
+#endif
 
   struct socket_info_t socket_info = {
       .port = default_port,
@@ -84,6 +130,10 @@ int run_client(void) {
 
   if (socket_info.sockfd != INVALID_SOCKET)
     close_socket_checked(socket_info.sockfd);
+
+#ifdef _WIN32
+  WSACleanup();
+#endif
 
   struct sdl_context_t sdl_context;
   init_sdl_window(&sdl_context, "Net Poker");

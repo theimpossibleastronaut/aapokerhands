@@ -26,17 +26,97 @@
 
 */
 
+#include <deckhandler.h>
 #include <pthread.h>
 #include <stdio.h>
 #include <string.h>
-#include <time.h>
 
-#include "deckhandler.h"
 #include "lib.h"
 #include "net.h"
 #include "server.h"
 #include "types.h"
 #include "netpoker.pb-c.h"
+
+static void set_sock_reuse(socket_t sockfd) {
+  int r = -1;
+#ifdef _WIN32
+  // When starting the server immediately after it was killed,
+  // prevent the error "Address already in use" when running
+  // See https://linux.die.net/man/3/setsockopt for more information.
+  const char opt = 1;
+  r = (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0);
+
+#else
+  int opt = 1;
+  r = (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0);
+
+#endif
+  if (r == -1)
+    perror("setsockopt SO_REUSEADDR");
+}
+
+static void set_sock_ipv6_v6only_disable(socket_t sockfd, const int ai_family) {
+  int r = -1;
+#ifdef _WIN32
+  if (ai_family == AF_INET6) {
+    const char optval = 0;
+    r = (setsockopt(sockfd, IPPROTO_IPV6, IPV6_V6ONLY, &optval, sizeof(optval)) < 0);
+  }
+#else
+  (void)ai_family;
+  int optval = 0;
+  r = (setsockopt(sockfd, IPPROTO_IPV6, IPV6_V6ONLY, &optval, sizeof(optval)) < 0);
+#endif
+  if (r == -1)
+    perror("setsockopt IPV6_V6ONLY");
+}
+
+static void assign_tcp_dual_stack_server_fd(struct socket_info_t *socket_info) {
+
+  struct addrinfo hints, *res, *p;
+
+  // Set up hints for dual-stack
+  memset(&hints, 0, sizeof(hints));
+  // Use IPv6, but allow IPv4 via v6-mapped addresses
+  hints.ai_family = AF_INET6;
+  hints.ai_socktype = SOCK_STREAM;
+  hints.ai_flags = AI_PASSIVE; // Auto-fill IP
+
+  // Get address info
+  if (getaddrinfo(socket_info->host, socket_info->port, &hints, &res) != 0) {
+    perror("getaddrinfo");
+    exit(EXIT_FAILURE);
+  }
+
+  // Create and bind socket
+  for (p = res; p != NULL; p = p->ai_next) {
+    socket_info->sockfd = socket(p->ai_family, p->ai_socktype, p->ai_protocol);
+    if (socket_info->sockfd == INVALID_SOCKET)
+      continue;
+
+    set_sock_reuse(socket_info->sockfd);
+    set_sock_ipv6_v6only_disable(socket_info->sockfd, p->ai_family);
+
+    if (bind(socket_info->sockfd, p->ai_addr, p->ai_addrlen) == 0)
+      break; // Success
+    close_socket_checked(socket_info->sockfd);
+  }
+
+  freeaddrinfo(res);
+  if (!p) {
+    perror("Failed to bind");
+    exit(EXIT_FAILURE);
+  }
+
+  // Start listening
+  if (listen(socket_info->sockfd, BACKLOG) == -1) {
+    perror("listen");
+    exit(EXIT_FAILURE);
+  }
+
+  printf("Server listening on port %s...\n", socket_info->port);
+  return;
+}
 
 struct accept_args_t {
   struct socket_info_t *socket_info;
@@ -118,7 +198,7 @@ int run_server(void) {
   struct player_t player[MAX_PLAYERS];
   init_players(player);
 
-  srand(time(NULL));
+  dh_pcg_srand_auto();
 
 #ifdef _WIN32
   WSADATA wsaData;

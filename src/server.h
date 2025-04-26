@@ -26,12 +26,11 @@
 
 */
 
+#include <deckhandler.h>
 #include <pthread.h>
 #include <stdio.h>
 #include <string.h>
-#include <time.h>
 
-#include "deckhandler.h"
 #include "lib.h"
 #include "net.h"
 #include "types.h"

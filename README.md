@@ -1,4 +1,6 @@
-[![C Build](https://github.com/theimpossibleastronaut/aapokerhands/actions/workflows/c-cpp.yml/badge.svg)](https://github.com/theimpossibleastronaut/aapokerhands/actions/workflows/c-cpp.yml)
+[![Linux](https://github.com/theimpossibleastronaut/aapokerhands/actions/workflows/linux.yml/badge.svg)](https://github.com/theimpossibleastronaut/aapokerhands/actions/workflows/linux.yml)
+[![MacOS](https://github.com/theimpossibleastronaut/aapokerhands/actions/workflows/macos.yml/badge.svg)](https://github.com/theimpossibleastronaut/aapokerhands/actions/workflows/macos.yml)
+[![Windows](https://github.com/theimpossibleastronaut/aapokerhands/actions/workflows/windows.yml/badge.svg)](https://github.com/theimpossibleastronaut/aapokerhands/actions/workflows/windows.yml)
 
 # aapokerhands
 Will analyze for poker hands

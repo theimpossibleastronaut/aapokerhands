@@ -26,11 +26,10 @@
 
 */
 
+#include <deckhandler.h>
 #include <stdio.h>
 #include <string.h>
-#include <time.h>
 
-#include "deckhandler.h"
 #include "graphics.h"
 #include "net.h"
 #include "netpoker.pb-c.h"
