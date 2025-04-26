@@ -30,11 +30,10 @@
 #include <string.h>
 
 #include "client.h"
-#include "server.h"
 #include "main.h"
+#include "server.h"
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
   if (argc == 2) {
     if (strcmp(argv[1], "--server") == 0)
       return run_server();

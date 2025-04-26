@@ -141,3 +141,27 @@ int recv_all(int sock, void *buffer, size_t length) {
   }
   return 0;
 }
+
+/**
+ * Sends a block of data reliably over a TCP socket.
+ *
+ * @param sock The TCP socket to send on.
+ * @param data Pointer to the data buffer to send.
+ * @param length Number of bytes to send.
+ * @return 0 on success, -1 on failure.
+ */
+int send_all_tcp(TCPsocket sock, const void *data, size_t length) {
+  const uint8_t *buf = (const uint8_t *)data;
+  size_t total_sent = 0;
+
+  while (total_sent < length) {
+    int sent = SDLNet_TCP_Send(sock, buf + total_sent, (int)(length - total_sent));
+    if (sent <= 0) {
+      fprintf(stderr, "SDLNet_TCP_Send failed: %s\n", SDLNet_GetError());
+      return -1;
+    }
+    total_sent += sent;
+  }
+
+  return 0;
+}

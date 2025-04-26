@@ -19,7 +19,6 @@ platform_is_windows = (host_sys == 'windows')
 win_deps = []
 if platform_is_windows == true and get_option('build_netpoker')
   win_deps += cc.find_library('ws2_32')
-  win_deps += cc.find_library('winpthread', static: true)
 endif
 
 definitions = ['-D_DEFAULT_SOURCE']
@@ -62,17 +61,20 @@ aapokerhands_bin = executable(
 test('aapokerhands_bin_test', aapokerhands_bin, args: ['-n', '100000'])
 
 if get_option('build_netpoker')
-  sdl_dep = dependency('SDL2')
-  sdl_ttf_dep = dependency('SDL2_ttf')
   protobuf_dep = dependency('libprotobuf-c')
 
-  net_shared_dep = [
-    deckhandler_dep,
-    protobuf_dep,
-    win_deps,
-    sdl_dep,
-    sdl_ttf_dep,
-  ]
+  net_shared_dep = [deckhandler_dep, win_deps]
+  dep_names = [
+    'libprotobuf-c',
+    'SDL2',
+    'SDL2_ttf',
+    'sdl2_net',
+    ]
+
+  foreach dep : dep_names
+    net_shared_dep += dependency(dep)
+  endforeach
+
   net_shared_inc = include_directories('src/protobuf')
 
   subdir('src')

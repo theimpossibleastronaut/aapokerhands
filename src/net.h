@@ -29,6 +29,7 @@
 #ifndef __NET_H
 #define __NET_H
 
+#include <SDL2/SDL_net.h>
 #include <stdint.h>
 #include <stdlib.h>
 
@@ -70,5 +71,7 @@ struct player_t deserialize_player(const uint8_t *data, size_t size);
 ssize_t send_all(int sockfd, const void *buf, size_t len);
 
 int recv_all(int sock, void *buffer, size_t length);
+
+int send_all_tcp(TCPsocket sock, const void *data, size_t length);
 
 #endif

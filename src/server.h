@@ -27,13 +27,12 @@
 */
 
 #include <deckhandler.h>
-#include <pthread.h>
 #include <stdio.h>
 #include <string.h>
 
 #include "lib.h"
 #include "net.h"
-#include "types.h"
 #include "netpoker.pb-c.h"
+#include "types.h"
 
 int run_server(void);

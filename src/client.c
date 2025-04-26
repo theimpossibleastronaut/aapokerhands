@@ -31,7 +31,7 @@
 #include <string.h>
 
 #include "graphics.h"
-#include "net.h"
+#include "client.h"
 #include "netpoker.pb-c.h"
 
 static void assign_tcp_dual_stack_client_fd(struct socket_info_t *socket_info) {
