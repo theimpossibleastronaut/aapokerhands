@@ -1,10 +1,7 @@
 [wrap-git]
 url = https://github.com/theimpossibleastronaut/deckhandler.git
 
-#
-# When "head" is used for the revision value, git clone fails on Slackware 15.0:
-#
-revision = 62a84065230071c2dfd8a4fea4c2185e59caf826
+revision = afa655a8a0884de40f541f2d8eb71f5c69ae84e8
 depth = 1
 
 [provide]

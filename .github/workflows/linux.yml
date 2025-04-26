@@ -1,0 +1,46 @@
+name: Linux
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: true
+
+on:
+  push:
+    branches: [ master ]
+    paths:
+    - '**'
+    - '!**.yml'
+    - '!**.md'
+    - '**/linux.yml'
+
+  pull_request:
+    branches: [ master ]
+    paths:
+    - '**'
+    - '!**.yml'
+    - '!**.md'
+    - '**/linux.yml'
+
+jobs:
+  Ubuntu:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install Dependencies
+      run: |
+        sudo apt-get install -y \
+          meson \
+          libprotobuf-c-dev \
+          libsdl2-dev \
+          libsdl2-ttf-dev
+
+    - name: Meson setup
+      run: meson setup _build -Db_sanitize=address,undefined -Dbuild_netpoker=true
+
+    - name: Build
+      run: meson compile -v -C _build
+
+    - name: Test
+      run: meson test -v -C _build
+
+    - name: Dist test
+      run: meson dist -C _build

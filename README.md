@@ -1,4 +1,6 @@
-[![C Build](https://github.com/theimpossibleastronaut/aapokerhands/actions/workflows/c-cpp.yml/badge.svg)](https://github.com/theimpossibleastronaut/aapokerhands/actions/workflows/c-cpp.yml)
+[![Linux](https://github.com/theimpossibleastronaut/aapokerhands/actions/workflows/linux.yml/badge.svg)](https://github.com/theimpossibleastronaut/aapokerhands/actions/workflows/linux.yml)
+[![MacOS](https://github.com/theimpossibleastronaut/aapokerhands/actions/workflows/macos.yml/badge.svg)](https://github.com/theimpossibleastronaut/aapokerhands/actions/workflows/macos.yml)
+[![Windows](https://github.com/theimpossibleastronaut/aapokerhands/actions/workflows/windows.yml/badge.svg)](https://github.com/theimpossibleastronaut/aapokerhands/actions/workflows/windows.yml)
 
 # aapokerhands
 Will analyze for poker hands
@@ -22,10 +24,8 @@ From the *aapokerhands* directory, to download latest *deckhandler* code:
     cd builddir
     ninja
 
-The resulting binary will be in *src/*
-
 ## Usage
-    src/aapokerhands: -n [hands] -s -v
+    ./aapokerhands: -n [hands] -s -v
 
 # Downloads
 [Releases](https://github.com/theimpossibleastronaut/aapokerhands/releases)
@@ -33,47 +33,33 @@ The resulting binary will be in *src/*
 ## Example Output
 
 ```
-andy@oceanus:~/src/aapokerhands$ ./aapokerhands -n 100000
+$ ./aapokerhands -n 100000
 Out of 100000 hands:
 
-                Pair:     42250
-            Two Pair:      4683
-     Three-of-a-Kind:      2081
-            Straight:       422
-               Flush:       200
-          Full House:       137
-      Four-of-a-Kind:        18
-      Straight Flush:         3
+                Pair:     42155
+            Two Pair:      4717
+     Three-of-a-Kind:      2144
+            Straight:       411
+               Flush:       188
+          Full House:       150
+      Four-of-a-Kind:        24
+      Straight Flush:         0
          Royal Flush:         0
 
-andy@oceanus:~/src/aapokerhands/src$ ./aapokerhands -n 1000000
+
+$ ./aapokerhands -n 1000000
 Out of 1000000 hands:
 
-                Pair:    422821
-            Two Pair:     47282
-     Three-of-a-Kind:     20919
-            Straight:      3996
-               Flush:      1973
-          Full House:      1533
-      Four-of-a-Kind:       237
-      Straight Flush:        15
-         Royal Flush:         1
-
-andy@oceanus:~/src/aapokerhands/src$ nice -n 19 ./aapokerhands -n 1000000000
-Out of 1000000000 hands:
-
-                Pair: 422573272
-            Two Pair:  47540875
-     Three-of-a-Kind:  21118955
-            Straight:   3927170
-               Flush:   1963944
-          Full House:   1439822
-      Four-of-a-Kind:    241218
-      Straight Flush:     13920
-         Royal Flush:      1552
+                Pair:    421917
+            Two Pair:     47511
+     Three-of-a-Kind:     21150
+            Straight:      3907
+               Flush:      2020
+          Full House:      1481
+      Four-of-a-Kind:       224
+      Straight Flush:        13
+         Royal Flush:         5
 ```
-
-[More Example Output](https://github.com/theimpossibleastronaut/aapokerhands/blob/master/example_output01.txt)
 
 ## Installation
 
