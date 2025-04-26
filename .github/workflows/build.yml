@@ -3,8 +3,6 @@ on:
   push:
     branches: [ master ]
 jobs:
-
-  # This workflow contains a single job called "build"
   build:
     runs-on: ubuntu-22.04
     env:
@@ -27,7 +25,11 @@ jobs:
         wget -q https://github.com/TheAssassin/pyuploadtool/releases/download/continuous/pyuploadtool-x86_64.AppImage
         chmod +x pyuploadtool-x86_64.AppImage
     - run: |
-        meson setup _build -Dprefix=/usr -Dstrip=true --buildtype=release -Dbuild_netpoker=true
+        meson setup _build2 \
+          -Dprefix=/usr \
+          --buildtype=release \
+          -Dbuild_netpoker=true \
+          -Db_sanitize=none
         cd _build
         ninja
         DESTDIR=AppDir ninja -v install
