@@ -28,10 +28,11 @@ jobs:
     - name: Install Dependencies
       run: |
         brew update
-        brew install meson protobuf-c sdl2 sdl2_ttf
+        brew install \
+          meson
 
     - name: Meson setup
-      run: meson setup _build -Db_sanitize=address,undefined -Dbuild_netpoker=true
+      run: meson setup _build
 
     - name: Build
       run: meson compile -C _build

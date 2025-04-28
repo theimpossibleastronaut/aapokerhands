@@ -28,13 +28,10 @@ jobs:
     - name: Install Dependencies
       run: |
         sudo apt-get install -y \
-          meson \
-          libprotobuf-c-dev \
-          libsdl2-dev \
-          libsdl2-ttf-dev
+          meson
 
     - name: Meson setup
-      run: meson setup _build -Db_sanitize=address,undefined -Dbuild_netpoker=true
+      run: meson setup _build
 
     - name: Build
       run: meson compile -v -C _build

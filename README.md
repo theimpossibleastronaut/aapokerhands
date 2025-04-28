@@ -3,7 +3,7 @@
 [![Windows](https://github.com/theimpossibleastronaut/aapokerhands/actions/workflows/windows.yml/badge.svg)](https://github.com/theimpossibleastronaut/aapokerhands/actions/workflows/windows.yml)
 
 # aapokerhands
-Will analyze for poker hands
+Evaluates poker hands
 
 ## Dependencies
 
@@ -11,12 +11,21 @@ Will analyze for poker hands
 
 ## Building
 
-    meson setup builddir
-    cd builddir
-    ninja
+```sh
+meson setup builddir
+cd builddir
+ninja
+```
 
 ## Usage
-    ./aapokerhands: -n [hands] -s -v
+
+```sh
+# Run without arguments, defaults to 100000 hands
+./aapokerhands
+
+# Show available options
+./aapokerhands -h
+```
 
 # Downloads
 [Releases](https://github.com/theimpossibleastronaut/aapokerhands/releases)
