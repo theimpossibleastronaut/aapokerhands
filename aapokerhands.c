@@ -29,13 +29,11 @@
 
 #include <deckhandler.h>
 #include <limits.h>
-#include <stdbool.h>
+#include <pokeval.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
 #include "globals.h"
-#include "lib.h"
 
 bool SHOW_HAND;
 bool verbose;
@@ -49,7 +47,7 @@ static void usage(const char *argv_one) {
 -V                  display Version information\n\
 ");
 
-  exit(1);
+  exit(EXIT_FAILURE);
 }
 
 void getopts(int argc, char *argv[], int *RUN_COUNT) {
@@ -184,7 +182,7 @@ int main(int argc, char *argv[]) {
     return 1;
   }
 
-  int totals[NUM_HAND_RANKS] = { 0 };
+  int totals[NUM_HAND_RANKS] = {0};
 
   struct dh_deck deck;
   dh_init_deck(&deck);

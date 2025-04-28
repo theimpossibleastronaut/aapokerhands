@@ -1,4 +1,6 @@
 *~
-/builddir/
-/_build/
-/subprojects/deckhandler/
+subprojects/**
+!subprojects/**/*.wrap
+
+# This is downloaded via the pokeval dependency
+subprojects/deckhandler.wrap
