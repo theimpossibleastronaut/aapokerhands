@@ -1,7 +1,7 @@
 [wrap-git]
 url = https://github.com/Dealer-s-Choice/pokeval.git
 
-revision = c446b3eb7818b69b1aebc1203583fece7c612d12
+revision = a2a82ba296cbb88b9449c4a841eb872eb0d268e0
 depth = 1
 
 [provide]
